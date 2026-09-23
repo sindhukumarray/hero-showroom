@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #08090C;
+    color: #F8F9FA;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    overflow-x: hidden;
+    max-width: 100vw;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Accessible focus rings */
+  :focus-visible {
+    outline: 2px solid #E52328;
+    outline-offset: 3px;
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #08090C;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #232834;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3E475E;
+  }
+}
+
+@layer components {
+  /* Typography Hierarchy Standards */
+  .typography-display {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(2.5rem, 5vw + 1rem, 4.75rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .typography-h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .typography-h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.5rem, 2.5vw + 0.25rem, 2.25rem);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .typography-h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.2rem, 1.8vw + 0.1rem, 1.6rem);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+  }
+
+  .typography-body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #CED4DA;
+  }
+
+  .typography-small {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #9DA7BC;
+  }
+
+  .typography-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #717B91;
+  }
+
+  .typography-button {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* Luxury Glassmorphism Surface */
+  .glass-surface {
+    background: rgba(16, 19, 25, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .glass-surface-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-surface-hover:hover {
+    background: rgba(23, 27, 35, 0.85);
+    border-color: rgba(229, 35, 40, 0.3);
+    box-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.6), 0 0 20px -2px rgba(229, 35, 40, 0.15);
+  }
+}
+
+/* Accessible reduced-motion support fallback */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
