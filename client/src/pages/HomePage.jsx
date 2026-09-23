@@ -263,26 +263,31 @@ const HomePage = () => {
               </NavLink>
             </motion.div>
 
-            {/* Highlight Telemetry Stats */}
+            {/* Highlight Telemetry Stats (Sample UI Representation) */}
             <motion.div
               variants={accessibleFadeIn}
               className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 w-full border-t border-border/60"
             >
               <div className="text-center space-y-1">
                 <div className="font-display font-black text-2xl md:text-3xl text-surface-50">1,500+</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Authorized Outlets</div>
+                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Network Outlets*</div>
               </div>
               <div className="text-center space-y-1">
                 <div className="font-display font-black text-2xl md:text-3xl text-brand-red">40+</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Flagship Models</div>
+                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Featured Models*</div>
               </div>
               <div className="text-center space-y-1">
                 <div className="font-display font-black text-2xl md:text-3xl text-surface-50">100%</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Verified Locations</div>
+                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Verified Dealers*</div>
               </div>
               <div className="text-center space-y-1">
-                <div className="font-display font-black text-2xl md:text-3xl text-emerald-400">Zero Markup</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Transparent Specs</div>
+                <div className="font-display font-black text-2xl md:text-3xl text-emerald-400">Direct</div>
+                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Transparent Specs*</div>
+              </div>
+              <div className="col-span-2 md:col-span-4 text-center">
+                <span className="text-[10px] text-muted-foreground/80 tracking-wider">
+                  *Sample metrics for Phase 1 UI architecture & layout verification.
+                </span>
               </div>
             </motion.div>
           </motion.div>
