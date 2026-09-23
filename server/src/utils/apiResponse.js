@@ -1,6 +1,6 @@
 /**
  * Standardized API Response Utilities
- * Follows the project-wide API response contract.
+ * Follows the project-wide API response contract with optional pagination metadata.
  */
 
 /**
@@ -9,8 +9,15 @@
  * @param {string} message
  * @param {object|array|null} [data]
  * @param {number} [statusCode=200]
+ * @param {object} [meta] Optional pagination or query metadata
  */
-const sendSuccess = (res, message = 'Request successful', data = undefined, statusCode = 200) => {
+const sendSuccess = (
+  res,
+  message = 'Request successful',
+  data = undefined,
+  statusCode = 200,
+  meta = undefined
+) => {
   const payload = {
     success: true,
     message
@@ -18,6 +25,10 @@ const sendSuccess = (res, message = 'Request successful', data = undefined, stat
 
   if (data !== undefined) {
     payload.data = data;
+  }
+
+  if (meta !== undefined) {
+    payload.meta = meta;
   }
 
   return res.status(statusCode).json(payload);
