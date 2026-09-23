@@ -7,6 +7,7 @@ This service provides the Node.js/Express REST API foundation and MongoDB/Mongoo
 - **Phase 2 Step 1 Established:** Complete Mongoose model foundation for core discovery entities (`Brand`, `City`, `Showroom`, `Bike`, `BikeVariant`), entity relationships, indexing, and database connection lifecycle management.
 - **Phase 2 Step 2A Established:** Layered architecture (`Route → Controller → Validator → Service → Model`) for Catalogue APIs with read-only endpoints for `Brand` and `City`, standardized pagination metadata, safe query escaping, and database availability protection.
 - **Phase 2 Step 2B Established:** Read-only Showroom Discovery API with multi-field filtering, relationship population (`Brand`, `City`), stable sorting whitelist, and geospatial discovery groundwork (`/api/showrooms/nearby` using `2dsphere` index and GeoJSON `Point`).
+- **Phase 2 Step 2C Established:** Read-only Bike Model and Variant Catalogue APIs with multi-field filtering (`brand`, `category`, `fuelType`, `transmission`, `minPrice`, `maxPrice`, `isActive`, `search`), relationship population, price range validation, and parent-child variant querying (`/api/bikes/:slug/variants`).
 
 ---
 
@@ -19,12 +20,12 @@ The backend strictly follows a layered architectural pattern:
 server/
 ├── src/
 │   ├── config/          # Configuration modules (database, env)
-│   ├── controllers/     # HTTP request handling (brandController, cityController, showroomController, healthController)
+│   ├── controllers/     # HTTP request handling (brand, city, showroom, bike, bikeVariant, health)
 │   ├── middleware/      # Centralized error handler, 404 handler, CORS, body parsers
 │   ├── models/          # Mongoose data schemas (Brand, City, Showroom, Bike, BikeVariant)
-│   ├── routes/          # Express route definitions (brandRoutes, cityRoutes, showroomRoutes, healthRoutes)
-│   ├── services/        # Business logic & safe queries (brandService, cityService, showroomService)
-│   ├── validators/      # Request parameter & query validation (brandValidator, cityValidator, showroomValidator)
+│   ├── routes/          # Express route definitions (brand, city, showroom, bike, bikeVariant, health)
+│   ├── services/        # Business logic & safe queries (brand, city, showroom, bike, bikeVariant)
+│   ├── validators/      # Request parameter & query validation (brand, city, showroom, bike, bikeVariant)
 │   ├── utils/           # Shared response utilities (sendSuccess, sendError)
 │   ├── app.js           # Express application configuration
 │   └── server.js        # Server bootstrap & lifecycle management
@@ -32,6 +33,7 @@ server/
 ├── test-step2-models.js # Mongoose models schema & index audit
 ├── test-step2a-catalogue-api.js # Brand & City Catalogue API test suite
 ├── test-step2b-showroom-api.js  # Showroom Discovery & Geospatial API test suite
+├── test-step2c-bike-api.js      # Bike & Variant Catalogue API test suite
 ├── .env.example         # Environment variable template
 ├── package.json         # Server dependencies and scripts
 └── README.md            # Backend documentation
@@ -42,7 +44,7 @@ server/
 ## Catalogue & Discovery Endpoints
 
 > [!NOTE]
-> All Brand, City, and Showroom endpoints are strictly **read-only** at this stage. Seed data has not yet been populated into the database. Write operations (POST/PUT/PATCH/DELETE), Bike/BikeVariant CRUD, and authentication are deferred to subsequent steps.
+> All Brand, City, Showroom, Bike, and BikeVariant endpoints are strictly **read-only** at this stage. Seed data has not yet been populated into the database. Write operations (POST/PUT/PATCH/DELETE), comparison engine, EMI calculator, and authentication are deferred to subsequent steps.
 
 ### Standard Response Envelope
 All endpoints use the standardized API response structure:
@@ -50,7 +52,7 @@ All endpoints use the standardized API response structure:
 ```json
 {
   "success": true,
-  "message": "Showrooms retrieved successfully",
+  "message": "Bikes retrieved successfully",
   "data": [...],
   "meta": {
     "page": 1,
@@ -76,63 +78,56 @@ All endpoints use the standardized API response structure:
 ---
 
 ### Showroom Endpoints (`/api/showrooms`)
+- `GET /api/showrooms` — List physical dealerships and flagship lounges with populated `brand` and `city` references.
+- `GET /api/showrooms/nearby` — Geospatial discovery ordered by distance using MongoDB `$near` and `2dsphere` index (must supply `lat`, `lng`, and optional `maxDistance`).
+- `GET /api/showrooms/:slug` — Retrieve comprehensive showroom details with populated `brand` and `city` references.
 
-#### 1. List Showrooms
-- **Method / Path:** `GET /api/showrooms`
-- **Description:** Retrieve paginated list of physical dealerships and flagship lounges with populated `brand` (`_id`, `name`, `slug`, `logo`) and `city` (`_id`, `name`, `slug`, `state`).
+---
+
+### Bike Endpoints (`/api/bikes`)
+
+#### 1. List Bike Models
+- **Method / Path:** `GET /api/bikes`
+- **Description:** Retrieve paginated motorcycle catalogue models with populated `brand` (`_id`, `name`, `slug`, `logo`).
 - **Query Parameters:**
   | Parameter | Type | Default | Description |
   | :--- | :--- | :--- | :--- |
   | `page` | integer | `1` | Page number (must be $\ge 1$) |
   | `limit` | integer | `20` | Items per page (integer between `1` and `100`) |
-  | `search` | string | — | Case-insensitive search on `name`, `address.fullAddress`, or `address.area` |
+  | `search` | string | — | Case-insensitive search on `name`, `tagline`, and `description` |
   | `brand` | string | — | 24-character hex MongoDB ObjectId of the Brand |
-  | `city` | string | — | 24-character hex MongoDB ObjectId of the City |
-  | `showroomType` | string | — | Whitelisted enum: `'Standard Dealership'`, `'Premia Flagship'`, `'Experience Center'`, `'Service Hub'` |
+  | `category` | string | — | Whitelisted enum: `'Commuter'`, `'Sport'`, `'Cruiser'`, `'Tourer'`, `'Adventure'`, `'Scooter'`, `'Electric'` |
+  | `fuelType` | string | — | Whitelisted enum: `'Petrol'`, `'Electric'`, `'Hybrid'` |
+  | `transmission` | string | — | Transmission type string (e.g. `'Manual'`) |
+  | `minPrice` | number | — | Non-negative number for lower price bound |
+  | `maxPrice` | number | — | Non-negative number for upper price bound (must be $\ge \text{minPrice}$) |
   | `isActive` | boolean | — | Filter by status (`'true'` or `'false'`) |
-  | `sort` | string | `'newest'` | Whitelisted sort: `'nameAsc'`, `'nameDesc'`, `'ratingDesc'`, `'newest'` |
+  | `sort` | string | `'newest'` | Whitelisted sort: `'nameAsc'`, `'nameDesc'`, `'priceLow'`, `'priceHigh'`, `'newest'` |
 
-#### 2. Nearby Showrooms (Geospatial Discovery)
-- **Method / Path:** `GET /api/showrooms/nearby`
-- **Description:** Find showrooms within a specified radial distance from geographic coordinates, sorted by distance from closest to farthest using MongoDB `$near` and `2dsphere` index.
-- **Route Precedence:** Registered *before* `/:slug` to avoid path collisions.
+#### 2. Get Bike Model by Slug
+- **Method / Path:** `GET /api/bikes/:slug`
+- **Description:** Retrieve single bike model details with populated `brand` (`_id`, `name`, `slug`, `logo`, `website`, `originCountry`, `description`).
+- **Responses:**
+  - `200 OK`: Bike object returned in `data`.
+  - `400 Bad Request`: Invalid slug format.
+  - `404 Not Found`: No bike model found with the requested slug.
+
+#### 3. List Variants for a Bike Model
+- **Method / Path:** `GET /api/bikes/:slug/variants`
+- **Description:** Retrieve paginated trims, colorways, and configurations for a specific parent bike model.
+- **Route Precedence:** Registered *before* `/:slug` to prevent dynamic path shadowing.
 - **Query Parameters:**
   | Parameter | Type | Default | Description |
   | :--- | :--- | :--- | :--- |
-  | `lat` | number | *required* | Latitude (between `-90` and `90`) |
-  | `lng` | number | *required* | Longitude (between `-180` and `180`) |
-  | `maxDistance` | number | `50000` | Search radius in meters (positive number up to `500000` m / 500 km) |
-  | `limit` | integer | `20` | Items to return (between `1` and `100`) |
-  | `brand` | string | — | Optional Brand ObjectId filter |
-  | `showroomType` | string | — | Optional showroom type enum filter |
-  | `isActive` | boolean | — | Optional active status filter |
-
-#### 3. Get Showroom by Slug
-- **Method / Path:** `GET /api/showrooms/:slug`
-- **Description:** Retrieve comprehensive showroom details with populated `brand` and `city` references.
-- **Parameters:**
-  | Parameter | Type | Description |
-  | :--- | :--- | :--- |
-  | `slug` | string | URL-safe identifier (e.g., `hero-premia-south-mumbai`) |
+  | `page` | integer | `1` | Page number (must be $\ge 1$) |
+  | `limit` | integer | `20` | Items per page (between `1` and `100`) |
+  | `minPrice` | number | — | Minimum ex-showroom price ($\ge 0$) |
+  | `maxPrice` | number | — | Maximum ex-showroom price (must be $\ge \text{minPrice}$) |
+  | `isActive` | boolean | — | Filter active/inactive variants (`'true'` or `'false'`) |
+  | `sort` | string | `'priceLow'` | Whitelisted sort: `'priceLow'`, `'priceHigh'`, `'nameAsc'`, `'nameDesc'`, `'newest'` |
 - **Responses:**
-  - `200 OK`: Showroom object returned in `data`.
-  - `400 Bad Request`: Invalid slug format.
-  - `404 Not Found`: No showroom found with the requested slug.
-
----
-
-## Geospatial Structure & Coordinate Conventions
-All showroom spatial locations follow standard GeoJSON:
-
-```json
-{
-  "type": "Point",
-  "coordinates": [72.8258, 18.975]
-}
-```
-
-> [!IMPORTANT]
-> GeoJSON coordinate order is strictly **`[longitude, latitude]`** as specified in RFC 7946, not `[lat, lng]`.
+  - `200 OK`: Array of variant documents in `data` with parent `bike` summary and pagination `meta`.
+  - `404 Not Found`: Parent bike model does not exist.
 
 ---
 
@@ -148,7 +143,10 @@ All showroom spatial locations follow standard GeoJSON:
 # Run full server test battery
 npm test --prefix server
 
-# Run Phase 2 Step 2B Showroom API audit specifically
+# Run Phase 2 Step 2C Bike & Variant API audit specifically
+node server/test-step2c-bike-api.js
+
+# Run Phase 2 Step 2B Showroom API audit
 node server/test-step2b-showroom-api.js
 
 # Run Phase 2 Step 2A Brand & City API audit
@@ -162,19 +160,18 @@ node server/test-step2-models.js
 
 ## Scope & Deferred Boundaries
 
-### Implemented in Phase 2 Step 2B
-- Read-only Showroom listing, slug retrieval, and geospatial radius discovery
+### Implemented in Phase 2 Step 2C
+- Read-only Bike listing, slug retrieval, and parent-child variant discovery
 - Pagination and pagination metadata (`page`, `limit`, `total`, `pages`)
-- Explicit query filters: `brand`, `city`, `showroomType`, `isActive`, `search`
-- Whitelisted stable sorting options: `nameAsc`, `nameDesc`, `ratingDesc`, `newest`
-- Safe population of Brand and City relationships
-- Geospatial groundwork (`2dsphere`, `$near`, coordinate bounds validation)
+- Explicit query filters: `brand`, `category`, `fuelType`, `transmission`, `minPrice`, `maxPrice`, `isActive`, `search`
+- Whitelisted stable sorting options for bikes and variants
+- Relationship population: `Bike.brand` and `BikeVariant.brand`
+- Parent bike model resolution before variant querying
 
 ### Intentionally Deferred Scope
 - Database seed data has **NOT** yet been populated.
-- Showroom write operations (POST, PUT, PATCH, DELETE) deferred to admin management (Phase 6).
-- Bike and BikeVariant catalogue CRUD endpoints (Phase 2 Step 2C).
-- User authentication, JWT sessions, customer registration (Phase 3).
+- Bike and Variant write operations (POST, PUT, PATCH, DELETE) deferred to admin management (Phase 6).
 - Vehicle comparison engine & EMI calculator (Phase 4).
+- User authentication, JWT sessions, customer registration (Phase 3).
 - Lead submission & test-ride booking (Phase 5).
 - Admin management endpoints (Phase 6).
