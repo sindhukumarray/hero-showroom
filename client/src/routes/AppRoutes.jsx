@@ -3,7 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import RootLayout from '../layouts/RootLayout';
 import HomePage from '../pages/HomePage';
 import ShowroomsPage from '../pages/ShowroomsPage';
+import ShowroomDetailPage from '../pages/ShowroomDetailPage';
 import BikesPage from '../pages/BikesPage';
+import BikeDetailPage from '../pages/BikeDetailPage';
 import ComparePage from '../pages/ComparePage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
@@ -17,7 +19,9 @@ const AppRoutes = () => {
       <Route path="/" element={<RootLayout />}>
         <Route index element={<HomePage />} />
         <Route path="showrooms" element={<ShowroomsPage />} />
+        <Route path="showrooms/:slug" element={<ShowroomDetailPage />} />
         <Route path="bikes" element={<BikesPage />} />
+        <Route path="bikes/:slug" element={<BikeDetailPage />} />
         <Route path="compare" element={<ComparePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />

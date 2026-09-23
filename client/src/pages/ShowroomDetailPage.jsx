@@ -1,0 +1,357 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Clock,
+  ShieldCheck,
+  Star,
+  CheckCircle,
+  ArrowLeft,
+  Navigation,
+  Compass,
+  Bike
+} from 'lucide-react';
+import { Container, Card, Badge, Button, Loading, ErrorState } from '../components';
+import { showroomService } from '../services';
+import { useSEO } from '../hooks/useSEO';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { fadeIn, getAccessibleVariant } from '../animations/variants';
+
+const ShowroomDetailPage = () => {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const shouldReduceMotion = usePrefersReducedMotion();
+  const accessibleFadeIn = getAccessibleVariant(fadeIn, shouldReduceMotion);
+
+  const [showroom, setShowroom] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useSEO({
+    title: showroom ? `${showroom.name} — Authorized Showroom` : 'Showroom Details',
+    description: showroom
+      ? `Visit ${showroom.name} in ${showroom.city?.name || 'India'}. Address, facilities, working hours, and contact details.`
+      : 'Authorized showroom details and amenities.'
+  });
+
+  const fetchShowroom = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await showroomService.getShowroomBySlug(slug);
+      if (res.success && res.data) {
+        setShowroom(res.data);
+      } else {
+        setError('Showroom details could not be found.');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to load showroom details.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (slug) {
+      fetchShowroom();
+    }
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <Container className="py-12 md:py-16">
+        <Loading type="spinner" text="Loading showroom details..." size="lg" />
+      </Container>
+    );
+  }
+
+  if (error || !showroom) {
+    return (
+      <Container className="py-12 md:py-16">
+        <ErrorState
+          title="Showroom Not Found"
+          message={error || 'The requested dealership location does not exist or has been relocated.'}
+          onRetry={fetchShowroom}
+          retryLabel="Try Again"
+        />
+        <div className="text-center mt-6">
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={ArrowLeft}
+            onClick={() => navigate('/showrooms')}
+          >
+            Back to All Showrooms
+          </Button>
+        </div>
+      </Container>
+    );
+  }
+
+  const coordinates = showroom.location?.coordinates || [0, 0];
+  const [longitude, latitude] = coordinates;
+
+  return (
+    <Container className="py-8 md:py-14 space-y-8">
+      {/* Navigation Breadcrumb */}
+      <motion.div variants={accessibleFadeIn} initial="hidden" animate="visible">
+        <Button
+          variant="ghost"
+          size="sm"
+          icon={ArrowLeft}
+          onClick={() => navigate(-1)}
+          className="text-muted-foreground hover:text-white"
+        >
+          Back
+        </Button>
+      </motion.div>
+
+      {/* Hero Showcase Card */}
+      <motion.div
+        variants={accessibleFadeIn}
+        initial="hidden"
+        animate="visible"
+        className="glass-surface p-6 sm:p-8 md:p-10 rounded-card-lg border border-border/80 shadow-card-hover relative overflow-hidden"
+      >
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+          <div className="space-y-4 max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Badge variant="brand" size="md">
+                {showroom.brand?.name || 'Authorized Dealer'}
+              </Badge>
+              <Badge variant="default" size="md">
+                {showroom.showroomType || 'Dealership'}
+              </Badge>
+              {showroom.isVerified && (
+                <Badge variant="success" size="md" dot>
+                  Verified Dealership
+                </Badge>
+              )}
+            </div>
+
+            <h1 className="typography-h1 text-surface-50 font-black">{showroom.name}</h1>
+
+            {showroom.dealerName && (
+              <p className="typography-small text-muted-foreground text-sm">
+                Operated by <span className="text-surface-100 font-semibold">{showroom.dealerName}</span>
+              </p>
+            )}
+
+            <div className="flex items-start gap-2 text-surface-200 text-sm pt-1">
+              <MapPin className="w-5 h-5 text-brand-red shrink-0 mt-0.5" />
+              <span>
+                {showroom.address?.fullAddress || 'Address details available upon inquiry.'}
+                {showroom.address?.pincode ? ` — ${showroom.address.pincode}` : ''}
+              </span>
+            </div>
+          </div>
+
+          {/* Rating Summary Box */}
+          <div className="shrink-0 bg-surface-900/90 border border-border p-5 rounded-card text-center min-w-[160px] space-y-2">
+            <div className="flex items-center justify-center gap-1.5 text-amber-400">
+              <Star className="w-5 h-5 fill-amber-400" />
+              <span className="font-display font-black text-2xl text-surface-50">
+                {showroom.rating?.average ? showroom.rating.average.toFixed(1) : '4.5'}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {showroom.rating?.count ? `${showroom.rating.count} Customer Reviews` : 'Verified Rating'}
+            </p>
+            <div className="pt-2 border-t border-border/60">
+              <span className="text-[11px] text-emerald-400 font-semibold flex items-center justify-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5" /> Official Outlet
+              </span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Grid of Key Info Sections */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Contact & Inquiries */}
+        <Card variant="elevated" className="space-y-4">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-border/60">
+            <div className="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
+              <Phone className="w-4 h-4" />
+            </div>
+            <h3 className="typography-h3 text-surface-50 text-base">Contact & Desk</h3>
+          </div>
+
+          <div className="space-y-3 text-sm">
+            {showroom.contact?.phone && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-brand-red" /> Phone
+                </span>
+                <a
+                  href={`tel:${showroom.contact.phone}`}
+                  className="font-medium text-surface-100 hover:text-brand-red transition-colors"
+                >
+                  {showroom.contact.phone}
+                </a>
+              </div>
+            )}
+
+            {showroom.contact?.alternatePhone && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Alternate</span>
+                <a
+                  href={`tel:${showroom.contact.alternatePhone}`}
+                  className="font-medium text-surface-100 hover:text-brand-red transition-colors"
+                >
+                  {showroom.contact.alternatePhone}
+                </a>
+              </div>
+            )}
+
+            {showroom.contact?.email && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-brand-red" /> Email
+                </span>
+                <a
+                  href={`mailto:${showroom.contact.email}`}
+                  className="font-medium text-surface-100 hover:text-brand-red transition-colors text-xs truncate max-w-[180px]"
+                >
+                  {showroom.contact.email}
+                </a>
+              </div>
+            )}
+
+            {showroom.contact?.website && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-brand-red" /> Portal
+                </span>
+                <a
+                  href={showroom.contact.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-brand-red hover:underline text-xs"
+                >
+                  Visit Website
+                </a>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Operating Hours */}
+        <Card variant="elevated" className="space-y-4">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-border/60">
+            <div className="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
+              <Clock className="w-4 h-4" />
+            </div>
+            <h3 className="typography-h3 text-surface-50 text-base">Operating Schedule</h3>
+          </div>
+
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Working Hours</span>
+              <span className="font-medium text-surface-100">
+                {showroom.openingHours?.displayText || '9:00 AM - 8:00 PM'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Days Open</span>
+              <span className="font-medium text-surface-100">
+                {showroom.openingHours?.daysOpen || 'Monday to Sunday'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between pt-2 border-t border-border/40">
+              <span className="text-muted-foreground">City Hub</span>
+              <span className="font-semibold text-brand-red">
+                {showroom.city?.name || 'Regional Hub'}, {showroom.city?.state || 'India'}
+              </span>
+            </div>
+          </div>
+        </Card>
+
+        {/* Geo Location Coordinates */}
+        <Card variant="elevated" className="space-y-4">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-border/60">
+            <div className="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
+              <Navigation className="w-4 h-4" />
+            </div>
+            <h3 className="typography-h3 text-surface-50 text-base">Geographic Coordinates</h3>
+          </div>
+
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Latitude</span>
+              <span className="font-mono text-surface-100 font-medium">
+                {latitude ? latitude.toFixed(4) : 'N/A'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Longitude</span>
+              <span className="font-mono text-surface-100 font-medium">
+                {longitude ? longitude.toFixed(4) : 'N/A'}
+              </span>
+            </div>
+            {latitude && longitude ? (
+              <a
+                href={`https://www.google.com/maps?q=${latitude},${longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full pt-1"
+              >
+                <Button variant="outline" size="sm" fullWidth icon={Compass}>
+                  Open in Maps
+                </Button>
+              </a>
+            ) : null}
+          </div>
+        </Card>
+      </div>
+
+      {/* Facilities & Amenities */}
+      {Array.isArray(showroom.facilities) && showroom.facilities.length > 0 && (
+        <Card variant="default" className="space-y-4">
+          <h3 className="typography-h3 text-surface-50">Dealership Amenities & Services</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {showroom.facilities.map((facility, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-2.5 p-3 rounded-lg bg-surface-900 border border-border/60 text-sm text-surface-100"
+              >
+                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>{facility}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Action Strip */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-card glass-surface border border-border">
+        <div>
+          <h4 className="font-display font-bold text-surface-50 text-base">Explore Models at this Dealer</h4>
+          <p className="typography-small text-xs text-muted-foreground">
+            Browse compatible motorcycle models from {showroom.brand?.name || 'this brand'}
+          </p>
+        </div>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {showroom.brand?._id && (
+            <Link to={`/bikes?brand=${showroom.brand._id}`} className="w-full sm:w-auto">
+              <Button variant="primary" size="md" icon={Bike} fullWidth className="sm:w-auto">
+                View Brand Bikes
+              </Button>
+            </Link>
+          )}
+          <Link to="/showrooms" className="w-full sm:w-auto">
+            <Button variant="secondary" size="md" fullWidth className="sm:w-auto">
+              All Showrooms
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </Container>
+  );
+};
+
+export default ShowroomDetailPage;
