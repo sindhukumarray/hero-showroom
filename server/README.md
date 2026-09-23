@@ -8,6 +8,7 @@ This service provides the Node.js/Express REST API foundation and MongoDB/Mongoo
 - **Phase 2 Step 2A Established:** Layered architecture (`Route → Controller → Validator → Service → Model`) for Catalogue APIs with read-only endpoints for `Brand` and `City`, standardized pagination metadata, safe query escaping, and database availability protection.
 - **Phase 2 Step 2B Established:** Read-only Showroom Discovery API with multi-field filtering, relationship population (`Brand`, `City`), stable sorting whitelist, and geospatial discovery groundwork (`/api/showrooms/nearby` using `2dsphere` index and GeoJSON `Point`).
 - **Phase 2 Step 2C Established:** Read-only Bike Model and Variant Catalogue APIs with multi-field filtering (`brand`, `category`, `fuelType`, `transmission`, `minPrice`, `maxPrice`, `isActive`, `search`), relationship population, price range validation, and parent-child variant querying (`/api/bikes/:slug/variants`).
+- **Phase 2 Step 3 Established:** Real MongoDB integration with credential sanitization, reusable connection verification, and an idempotent development seed system (`npm run seed`) providing 10 brands, 15 cities, 30 showrooms, 30 bikes, and 68 bike variants with strict relationship resolution and live verification testing (`test-step3-live-db.js`).
 
 ---
 
@@ -24,6 +25,7 @@ server/
 │   ├── middleware/      # Centralized error handler, 404 handler, CORS, body parsers
 │   ├── models/          # Mongoose data schemas (Brand, City, Showroom, Bike, BikeVariant)
 │   ├── routes/          # Express route definitions (brand, city, showroom, bike, bikeVariant, health)
+│   ├── seeds/           # Idempotent seed engine (seed.js, seedData.js)
 │   ├── services/        # Business logic & safe queries (brand, city, showroom, bike, bikeVariant)
 │   ├── validators/      # Request parameter & query validation (brand, city, showroom, bike, bikeVariant)
 │   ├── utils/           # Shared response utilities (sendSuccess, sendError)
@@ -34,6 +36,7 @@ server/
 ├── test-step2a-catalogue-api.js # Brand & City Catalogue API test suite
 ├── test-step2b-showroom-api.js  # Showroom Discovery & Geospatial API test suite
 ├── test-step2c-bike-api.js      # Bike & Variant Catalogue API test suite
+├── test-step3-live-db.js        # Real MongoDB & live API verification suite
 ├── .env.example         # Environment variable template
 ├── package.json         # Server dependencies and scripts
 └── README.md            # Backend documentation
@@ -44,7 +47,7 @@ server/
 ## Catalogue & Discovery Endpoints
 
 > [!NOTE]
-> All Brand, City, Showroom, Bike, and BikeVariant endpoints are strictly **read-only** at this stage. Seed data has not yet been populated into the database. Write operations (POST/PUT/PATCH/DELETE), comparison engine, EMI calculator, and authentication are deferred to subsequent steps.
+> All Brand, City, Showroom, Bike, and BikeVariant endpoints are currently **read-only**. Write operations (POST/PUT/PATCH/DELETE), comparison engine, EMI calculator, and authentication are deferred to subsequent steps.
 
 ### Standard Response Envelope
 All endpoints use the standardized API response structure:
@@ -131,8 +134,31 @@ All endpoints use the standardized API response structure:
 
 ---
 
+## Development Seeding System
+
+The server provides a safe, deterministic, and idempotent seed system for development and demonstration environments:
+
+```bash
+npm run seed --prefix server
+```
+
+### Dataset Scope
+| Entity | Count | Key Attributes |
+| :--- | :--- | :--- |
+| **Brands** | 10 | Hero MotoCorp, Hero Premia, Vida, Harley-Davidson, Hero Motorsports, Honda, TVS, Bajaj, Royal Enfield, Ather |
+| **Cities** | 15 | Tier 1, Metro, and Tier 2 hubs across India with precise geospatial coordinates |
+| **Showrooms** | 30 | Standard dealerships, Premia flagships, and experience centers with GeoJSON `Point` coordinates |
+| **Bikes** | 30 | Flagship commuters, sport roadsters, adventure bikes, and EVs with full technical specs |
+| **Bike Variants** | 68 | Trim packages (at least 2 per bike model) with distinct colorways and ex-showroom pricing |
+
+### Idempotency Strategy
+The seed process uses `findOneAndUpdate` upsert logic keyed on unique document identifiers (`slug` for Brands, Cities, Showrooms, Bikes; `{ bike, slug }` compound key for BikeVariants). Running `npm run seed` repeatedly updates existing records in place without creating uncontrolled duplicate documents or inflating collection counts.
+
+---
+
 ## Database Connection & Resilience
 - **Database Safety:** All queries explicitly whitelist and map supported parameters. Arbitrary MongoDB operators (starting with `$`) are strictly forbidden and rejected with `400 Bad Request`.
+- **Credential Protection:** Error messages and connection logs sanitize MongoDB URI credentials to prevent accidental secret leakage.
 - **Offline / Disconnected Behavior:** When MongoDB is disconnected, API endpoints fail gracefully with status `503 Service Unavailable` and standardized error envelopes, avoiding hanging connections or credential leakage.
 
 ---
@@ -140,8 +166,11 @@ All endpoints use the standardized API response structure:
 ## Testing & Verification
 
 ```bash
-# Run full server test battery
+# Run full offline server test battery (models, health, catalogue APIs)
 npm test --prefix server
+
+# Run Phase 2 Step 3 Real Database Verification (requires MONGODB_URI)
+node server/test-step3-live-db.js
 
 # Run Phase 2 Step 2C Bike & Variant API audit specifically
 node server/test-step2c-bike-api.js
@@ -160,18 +189,17 @@ node server/test-step2-models.js
 
 ## Scope & Deferred Boundaries
 
-### Implemented in Phase 2 Step 2C
-- Read-only Bike listing, slug retrieval, and parent-child variant discovery
-- Pagination and pagination metadata (`page`, `limit`, `total`, `pages`)
-- Explicit query filters: `brand`, `category`, `fuelType`, `transmission`, `minPrice`, `maxPrice`, `isActive`, `search`
-- Whitelisted stable sorting options for bikes and variants
-- Relationship population: `Bike.brand` and `BikeVariant.brand`
-- Parent bike model resolution before variant querying
+### Implemented in Phase 2 Step 3
+- Safe MongoDB connection lifecycle with credential sanitization and ready-state verification
+- Idempotent seed engine (`npm run seed`) with 10 brands, 15 cities, 30 showrooms, 30 bikes, and 68 bike variants
+- Strict relationship integrity linking Showrooms to Brands/Cities and Variants to Bikes/Brands
+- Real database verification test runner (`test-step3-live-db.js`) supporting live verification when `MONGODB_URI` is provided and graceful skipping in offline mode
+- Offline test suite resilience across all existing endpoints and models
 
 ### Intentionally Deferred Scope
-- Database seed data has **NOT** yet been populated.
 - Bike and Variant write operations (POST, PUT, PATCH, DELETE) deferred to admin management (Phase 6).
 - Vehicle comparison engine & EMI calculator (Phase 4).
 - User authentication, JWT sessions, customer registration (Phase 3).
 - Lead submission & test-ride booking (Phase 5).
 - Admin management endpoints (Phase 6).
+- Frontend integration with live API endpoints (Phase 3/4).
