@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = require('./app');
-const { connectDB } = require('./config/database');
+const { connectDatabase } = require('./config/database');
 
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -16,7 +16,7 @@ const startServer = async () => {
         '[Database Warning] MONGODB_URI is not configured in environment. Server starting without database connection for testing/health verification.'
       );
     } else {
-      await connectDB();
+      await connectDatabase();
     }
   } catch (error) {
     console.error(`[Database Startup Error] ${error.message}`);

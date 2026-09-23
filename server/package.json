@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "node test-step2.js"
+    "test": "node test-step2.js && node test-step2-models.js"
   },
   "keywords": [
     "express",
