@@ -46,7 +46,29 @@ const login = async (req, res, next) => {
   }
 };
 
+/**
+ * Controller: Get currently authenticated user profile
+ * GET /api/auth/me
+ */
+const getMe = async (req, res, next) => {
+  try {
+    const user = await authService.getUserProfile(req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      message: 'User profile retrieved successfully',
+      data: {
+        user
+      },
+      user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
-  login
+  login,
+  getMe
 };

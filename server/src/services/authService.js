@@ -151,8 +151,45 @@ const loginUser = async ({ email, password }) => {
   };
 };
 
+const mongoose = require('mongoose');
+
+/**
+ * Retrieve safe user profile by ID.
+ * Verifies existence and active status.
+ * @param {string} userId
+ * @returns {Promise<object>} Safe user profile
+ */
+const getUserProfile = async (userId) => {
+  assertDatabaseConnected();
+
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    const authError = new Error('Invalid or expired token');
+    authError.statusCode = 401;
+    throw authError;
+  }
+
+  const user = await User.findById(userId).lean();
+  if (!user || !user.isActive) {
+    const authError = new Error('Invalid or expired token');
+    authError.statusCode = 401;
+    throw authError;
+  }
+
+  return {
+    id: user._id.toString(),
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    phone: user.phone || '',
+    isActive: user.isActive,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  };
+};
+
 module.exports = {
   registerUser,
   loginUser,
-  generateAccessToken
+  generateAccessToken,
+  getUserProfile
 };
