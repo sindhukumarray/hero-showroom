@@ -22,6 +22,31 @@ const register = async (req, res, next) => {
   }
 };
 
+/**
+ * Controller: Authenticate user and issue JWT access token
+ * POST /api/auth/login
+ */
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const result = await authService.loginUser({ email, password });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        accessToken: result.accessToken,
+        user: result.user
+      },
+      accessToken: result.accessToken,
+      user: result.user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
-  register
+  register,
+  login
 };

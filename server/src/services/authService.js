@@ -73,6 +73,86 @@ const registerUser = async ({ name, email, password, phone }) => {
   }
 };
 
+const jwt = require('jsonwebtoken');
+const authConfig = require('../config/auth');
+
+/**
+ * Generate a signed JWT access token for an authenticated user.
+ * Claims include minimum necessary identifiers: sub and role.
+ * @param {object} user Safe user representation
+ * @returns {string} Signed JWT access token
+ */
+const generateAccessToken = (user) => {
+  const secret = authConfig.getJwtSecret();
+  const expiresIn = authConfig.jwtExpiresIn;
+
+  return jwt.sign(
+    {
+      sub: user.id || user._id.toString(),
+      role: user.role
+    },
+    secret,
+    { expiresIn }
+  );
+};
+
+/**
+ * Authenticate a user and return safe credentials along with a JWT access token.
+ * Uses generic authentication failure messages to prevent account enumeration.
+ * @param {object} credentials
+ * @param {string} credentials.email
+ * @param {string} credentials.password
+ * @returns {Promise<{ accessToken: string, user: object }>}
+ */
+const loginUser = async ({ email, password }) => {
+  assertDatabaseConnected();
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // 1. Generic authentication error template (401 Unauthorized)
+  const genericAuthError = new Error('Invalid email or password');
+  genericAuthError.statusCode = 401;
+
+  // 2. Lookup user by email
+  const user = await User.findOne({ email: normalizedEmail });
+  if (!user) {
+    throw genericAuthError;
+  }
+
+  // 3. Check account active status
+  if (!user.isActive) {
+    throw genericAuthError;
+  }
+
+  // 4. Verify password with stored bcrypt hash
+  const isMatch = await bcrypt.compare(password, user.passwordHash);
+  if (!isMatch) {
+    throw genericAuthError;
+  }
+
+  // 5. Build sanitized user object
+  const safeUser = {
+    id: user._id.toString(),
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    phone: user.phone || '',
+    isActive: user.isActive,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  };
+
+  // 6. Generate signed JWT access token
+  const accessToken = generateAccessToken(safeUser);
+
+  return {
+    accessToken,
+    user: safeUser
+  };
+};
+
 module.exports = {
-  registerUser
+  registerUser,
+  loginUser,
+  generateAccessToken
 };

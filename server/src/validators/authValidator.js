@@ -102,6 +102,71 @@ const validateRegister = (req, res, next) => {
   next();
 };
 
+/**
+ * Middleware: Validate Login Request Payload
+ * POST /api/auth/login
+ */
+const validateLogin = (req, res, next) => {
+  const errors = [];
+
+  if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+    return sendError(
+      res,
+      'Validation failed for login input',
+      ['Request body must be a valid JSON object.'],
+      400
+    );
+  }
+
+  const { email, password, role, passwordHash, userId } = req.body;
+
+  // Prevent MongoDB operator injection in body keys
+  for (const key of Object.keys(req.body)) {
+    if (key.startsWith('$')) {
+      errors.push(`Invalid field '${key}': operators are forbidden.`);
+    }
+  }
+
+  // Security: Reject unexpected sensitive fields in login payload
+  if (role !== undefined) {
+    errors.push("Field 'role' is forbidden in login payload.");
+  }
+  if (passwordHash !== undefined) {
+    errors.push("Field 'passwordHash' is forbidden in login payload.");
+  }
+  if (userId !== undefined) {
+    errors.push("Field 'userId' is forbidden in login payload.");
+  }
+
+  // Validate email
+  if (email === undefined || email === null || typeof email !== 'string') {
+    errors.push("Field 'email' is required.");
+  } else {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      errors.push("Field 'email' cannot be empty.");
+    } else if (!EMAIL_REGEX.test(trimmedEmail)) {
+      errors.push("Please provide a valid email address.");
+    } else {
+      req.body.email = trimmedEmail.toLowerCase();
+    }
+  }
+
+  // Validate password
+  if (password === undefined || password === null || typeof password !== 'string') {
+    errors.push("Field 'password' is required.");
+  } else if (password.length === 0) {
+    errors.push("Field 'password' cannot be empty.");
+  }
+
+  if (errors.length > 0) {
+    return sendError(res, 'Validation failed for login input', errors, 400);
+  }
+
+  next();
+};
+
 module.exports = {
-  validateRegister
+  validateRegister,
+  validateLogin
 };

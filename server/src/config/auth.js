@@ -1,11 +1,23 @@
 /**
- * Authentication Configuration Foundation
+ * Authentication Configuration
  * Centralizes JWT and auth-related configuration options.
- * Does not generate JWT tokens or implement auth endpoints in this step.
  */
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.trim() === '') {
+    throw new Error('JWT_SECRET is not configured in environment variables');
+  }
+  return secret.trim();
+};
+
 const authConfig = {
-  jwtSecret: process.env.JWT_SECRET || '',
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d'
+  get jwtSecret() {
+    return process.env.JWT_SECRET || '';
+  },
+  getJwtSecret,
+  get jwtExpiresIn() {
+    return process.env.JWT_EXPIRES_IN || '7d';
+  }
 };
 
 module.exports = authConfig;
