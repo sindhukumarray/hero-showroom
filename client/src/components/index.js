@@ -7,3 +7,4 @@ export { default as Input } from './Input';
 export { default as Loading } from './Loading';
 export { default as ErrorState } from './ErrorState';
 export { default as EmptyState } from './EmptyState';
+export { default as ProtectedRoute } from './auth/ProtectedRoute';

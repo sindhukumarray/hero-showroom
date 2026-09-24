@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Menu, X, Compass, Bike, GitCompare, LogIn, UserPlus } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Menu, X, Compass, Bike, GitCompare, LogIn, UserPlus, LogOut, User as UserIcon } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import Container from './Container';
 import Button from './Button';
 
 /**
  * Refined Global Header Component
- * Provides responsive navigation, active route styling, and accessible mobile controls.
+ * Provides responsive navigation, active route styling, session controls, and accessible mobile controls.
  */
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const navLinks = [
     { to: '/', label: 'Home' },
     { to: '/showrooms', label: 'Showrooms', icon: Compass },
     { to: '/bikes', label: 'Bikes', icon: Bike },
-    { to: '/compare', label: 'Compare', icon: GitCompare },
+    { to: '/compare', label: 'Compare', icon: GitCompare }
   ];
+
+  const handleLogout = async () => {
+    setMobileMenuOpen(false);
+    await logout();
+    navigate('/', { replace: true });
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full glass-surface border-b border-border/80 transition-all">
@@ -58,18 +67,39 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Desktop Authentication / Entry Links */}
+        {/* Desktop Authentication / Session Links */}
         <div className="hidden md:flex items-center gap-3">
-          <NavLink to="/register">
-            <Button variant="ghost" size="sm" icon={UserPlus} className="text-xs">
-              Register
-            </Button>
-          </NavLink>
-          <NavLink to="/login">
-            <Button variant="primary" size="sm" icon={LogIn} className="text-xs">
-              Sign In
-            </Button>
-          </NavLink>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2.5">
+              <NavLink to="/dashboard">
+                <Button variant="ghost" size="sm" icon={UserIcon} className="text-xs">
+                  {user?.name?.split(' ')[0] || 'Dashboard'}
+                </Button>
+              </NavLink>
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={LogOut}
+                onClick={handleLogout}
+                className="text-xs"
+              >
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <>
+              <NavLink to="/register">
+                <Button variant="ghost" size="sm" icon={UserPlus} className="text-xs">
+                  Register
+                </Button>
+              </NavLink>
+              <NavLink to="/login">
+                <Button variant="primary" size="sm" icon={LogIn} className="text-xs">
+                  Sign In
+                </Button>
+              </NavLink>
+            </>
+          )}
         </div>
 
         {/* Mobile Navigation Trigger */}
@@ -108,24 +138,49 @@ const Header = () => {
           ))}
 
           <div className="pt-4 border-t border-border/80 flex flex-col gap-2.5">
-            <NavLink
-              to="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full"
-            >
-              <Button variant="primary" fullWidth size="md" icon={LogIn}>
-                Sign In
-              </Button>
-            </NavLink>
-            <NavLink
-              to="/register"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full"
-            >
-              <Button variant="secondary" fullWidth size="md" icon={UserPlus}>
-                Create Account
-              </Button>
-            </NavLink>
+            {isAuthenticated ? (
+              <>
+                <NavLink
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full"
+                >
+                  <Button variant="ghost" fullWidth size="md" icon={UserIcon}>
+                    Dashboard ({user?.name || 'User'})
+                  </Button>
+                </NavLink>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  size="md"
+                  icon={LogOut}
+                  onClick={handleLogout}
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <NavLink
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full"
+                >
+                  <Button variant="primary" fullWidth size="md" icon={LogIn}>
+                    Sign In
+                  </Button>
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full"
+                >
+                  <Button variant="secondary" fullWidth size="md" icon={UserPlus}>
+                    Create Account
+                  </Button>
+                </NavLink>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -12,11 +12,13 @@ import RegisterPage from '../pages/RegisterPage';
 import DashboardPage from '../pages/DashboardPage';
 import AdminPage from '../pages/AdminPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<RootLayout />}>
+        {/* Public Routes */}
         <Route index element={<HomePage />} />
         <Route path="showrooms" element={<ShowroomsPage />} />
         <Route path="showrooms/:slug" element={<ShowroomDetailPage />} />
@@ -25,8 +27,18 @@ const AppRoutes = () => {
         <Route path="compare" element={<ComparePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="admin" element={<AdminPage />} />
+
+        {/* Protected Customer Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="dashboard" element={<DashboardPage />} />
+        </Route>
+
+        {/* Protected Admin Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="admin" element={<AdminPage />} />
+        </Route>
+
+        {/* Catch-all 404 Route */}
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
