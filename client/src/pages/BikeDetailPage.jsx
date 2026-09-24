@@ -13,9 +13,11 @@ import {
   Compass,
   Layers,
   Sparkles,
-  Info
+  Info,
+  Calendar,
+  Send
 } from 'lucide-react';
-import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState } from '../components';
+import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm } from '../components';
 import { bikeService } from '../services';
 import { formatCurrency, formatPriceRange } from '../utils/formatters';
 import { useSEO } from '../hooks/useSEO';
@@ -33,6 +35,8 @@ const BikeDetailPage = () => {
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isTestRideModalOpen, setIsTestRideModalOpen] = useState(false);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
 
   useSEO({
     title: bike ? `${bike.name} — Technical Specifications & Pricing` : 'Bike Model Details',
@@ -171,10 +175,30 @@ const BikeDetailPage = () => {
             <span className="inline-block text-[11px] text-muted-foreground">
               Indicative base pricing excluding RTO & Insurance
             </span>
-            <div className="pt-2 border-t border-border/60">
+            <div className="pt-2 border-t border-border/60 space-y-2">
+              <Button
+                variant="primary"
+                size="sm"
+                fullWidth
+                icon={Calendar}
+                onClick={() => setIsTestRideModalOpen(true)}
+                className="text-xs"
+              >
+                Book Test Ride
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                fullWidth
+                icon={Send}
+                onClick={() => setIsLeadModalOpen(true)}
+                className="text-xs"
+              >
+                Enquire / Get Quote
+              </Button>
               {bike.brand?._id && (
-                <Link to={`/showrooms?brand=${bike.brand._id}`}>
-                  <Button variant="outline" size="sm" fullWidth icon={Compass} className="text-xs">
+                <Link to={`/showrooms?brand=${bike.brand._id}`} className="block">
+                  <Button variant="ghost" size="sm" fullWidth icon={Compass} className="text-xs text-muted-foreground hover:text-surface-100">
                     Find Dealerships
                   </Button>
                 </Link>
@@ -451,30 +475,74 @@ const BikeDetailPage = () => {
         <div>
           <h4 className="font-display font-bold text-surface-50 text-base">Ready to Experience {bike.name}?</h4>
           <p className="typography-small text-xs text-muted-foreground">
-            Locate authorized dealer showrooms to inspect the vehicle in person
+            Schedule a free dealership test ride or request official on-road price quotes
           </p>
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <Button
+            variant="primary"
+            size="md"
+            icon={Calendar}
+            onClick={() => setIsTestRideModalOpen(true)}
+            className="w-full sm:w-auto"
+          >
+            Book Test Ride
+          </Button>
+          <Button
+            variant="secondary"
+            size="md"
+            icon={Send}
+            onClick={() => setIsLeadModalOpen(true)}
+            className="w-full sm:w-auto"
+          >
+            Enquire Now
+          </Button>
           {bike.brand?._id ? (
             <Link to={`/showrooms?brand=${bike.brand._id}`} className="w-full sm:w-auto">
-              <Button variant="primary" size="md" icon={Compass} fullWidth className="sm:w-auto">
+              <Button variant="outline" size="md" icon={Compass} fullWidth className="sm:w-auto">
                 Find Showrooms
               </Button>
             </Link>
           ) : (
             <Link to="/showrooms" className="w-full sm:w-auto">
-              <Button variant="primary" size="md" icon={Compass} fullWidth className="sm:w-auto">
+              <Button variant="outline" size="md" icon={Compass} fullWidth className="sm:w-auto">
                 All Showrooms
               </Button>
             </Link>
           )}
-          <Link to="/bikes" className="w-full sm:w-auto">
-            <Button variant="secondary" size="md" fullWidth className="sm:w-auto">
-              Browse More Bikes
-            </Button>
-          </Link>
         </div>
       </div>
+
+      {/* Book Test Ride Modal */}
+      <Modal
+        isOpen={isTestRideModalOpen}
+        onClose={() => setIsTestRideModalOpen(false)}
+        title={`Book Test Ride: ${bike.name}`}
+        subtitle="Choose your preferred appointment schedule at an authorized dealership."
+      >
+        <TestRideForm
+          bike={bike}
+          variant={selectedVariant}
+          onSuccess={() => {}}
+          onCancel={() => setIsTestRideModalOpen(false)}
+        />
+      </Modal>
+
+      {/* Send Lead / Enquiry Modal */}
+      <Modal
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        title={`Request Quote: ${bike.name}`}
+        subtitle="Get in touch with authorized dealers for immediate on-road pricing and stock availability."
+      >
+        <LeadForm
+          bike={bike}
+          variant={selectedVariant}
+          source="bike"
+          onSuccess={() => {}}
+          onCancel={() => setIsLeadModalOpen(false)}
+        />
+      </Modal>
     </Container>
   );
 };

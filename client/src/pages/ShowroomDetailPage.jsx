@@ -13,9 +13,11 @@ import {
   ArrowLeft,
   Navigation,
   Compass,
-  Bike
+  Bike,
+  Send,
+  Calendar
 } from 'lucide-react';
-import { Container, Card, Badge, Button, Loading, ErrorState } from '../components';
+import { Container, Card, Badge, Button, Loading, ErrorState, Modal, LeadForm, TestRideForm } from '../components';
 import { showroomService } from '../services';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -30,6 +32,8 @@ const ShowroomDetailPage = () => {
   const [showroom, setShowroom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [isTestRideModalOpen, setIsTestRideModalOpen] = useState(false);
 
   useSEO({
     title: showroom ? `${showroom.name} — Authorized Showroom` : 'Showroom Details',
@@ -147,6 +151,25 @@ const ShowroomDetailPage = () => {
                 {showroom.address?.fullAddress || 'Address details available upon inquiry.'}
                 {showroom.address?.pincode ? ` — ${showroom.address.pincode}` : ''}
               </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-3">
+              <Button
+                variant="primary"
+                size="md"
+                icon={Send}
+                onClick={() => setIsLeadModalOpen(true)}
+              >
+                Contact Showroom
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                icon={Calendar}
+                onClick={() => setIsTestRideModalOpen(true)}
+              >
+                Book Test Ride
+              </Button>
             </div>
           </div>
 
@@ -330,26 +353,71 @@ const ShowroomDetailPage = () => {
       {/* Action Strip */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-card glass-surface border border-border">
         <div>
-          <h4 className="font-display font-bold text-surface-50 text-base">Explore Models at this Dealer</h4>
+          <h4 className="font-display font-bold text-surface-50 text-base">Get in Touch with this Dealership</h4>
           <p className="typography-small text-xs text-muted-foreground">
-            Browse compatible motorcycle models from {showroom.brand?.name || 'this brand'}
+            Connect directly with {showroom.name} to enquire about models, pricing, or book a test ride.
           </p>
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <Button
+            variant="primary"
+            size="md"
+            icon={Send}
+            onClick={() => setIsLeadModalOpen(true)}
+            className="w-full sm:w-auto"
+          >
+            Contact Showroom
+          </Button>
+          <Button
+            variant="secondary"
+            size="md"
+            icon={Calendar}
+            onClick={() => setIsTestRideModalOpen(true)}
+            className="w-full sm:w-auto"
+          >
+            Book Test Ride
+          </Button>
           {showroom.brand?._id && (
             <Link to={`/bikes?brand=${showroom.brand._id}`} className="w-full sm:w-auto">
-              <Button variant="primary" size="md" icon={Bike} fullWidth className="sm:w-auto">
+              <Button variant="ghost" size="md" icon={Bike} fullWidth className="sm:w-auto">
                 View Brand Bikes
               </Button>
             </Link>
           )}
           <Link to="/showrooms" className="w-full sm:w-auto">
-            <Button variant="secondary" size="md" fullWidth className="sm:w-auto">
+            <Button variant="ghost" size="md" fullWidth className="sm:w-auto">
               All Showrooms
             </Button>
           </Link>
         </div>
       </div>
+
+      {/* Lead / Enquiry Modal */}
+      <Modal
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        title={`Contact ${showroom.name}`}
+      >
+        <LeadForm
+          showroom={showroom}
+          source="showroom"
+          onSuccess={() => {}}
+          onCancel={() => setIsLeadModalOpen(false)}
+        />
+      </Modal>
+
+      {/* Test Ride Modal */}
+      <Modal
+        isOpen={isTestRideModalOpen}
+        onClose={() => setIsTestRideModalOpen(false)}
+        title={`Schedule Test Ride at ${showroom.name}`}
+      >
+        <TestRideForm
+          showroom={showroom}
+          onSuccess={() => {}}
+          onCancel={() => setIsTestRideModalOpen(false)}
+        />
+      </Modal>
     </Container>
   );
 };

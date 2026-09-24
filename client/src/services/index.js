@@ -4,3 +4,5 @@ export * as cityService from './cityService';
 export * as showroomService from './showroomService';
 export * as bikeService from './bikeService';
 export * as authService from './authService';
+export * as leadService from './leadService';
+export * as testRideService from './testRideService';

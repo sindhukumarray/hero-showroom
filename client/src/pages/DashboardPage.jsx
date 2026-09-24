@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -8,26 +8,29 @@ import {
   User as UserIcon,
   Mail,
   Phone,
-  ShieldCheck,
   Calendar,
   ArrowUpRight,
   Clock,
-  Sparkles
+  Sparkles,
+  RefreshCw
 } from 'lucide-react';
 import { pageTransition, getAccessibleVariant } from '../animations/variants';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useSEO } from '../hooks/useSEO';
 import { useAuth } from '../context/AuthContext';
+import { leadService, testRideService } from '../services';
 import Container from '../components/Container';
 import Badge from '../components/Badge';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
+import LeadActivityList from '../components/dashboard/LeadActivityList';
+import TestRideActivityList from '../components/dashboard/TestRideActivityList';
 
 /**
  * Customer Dashboard Page
- * Provides authenticated profile summary, immediate catalogue quick actions, and clean empty states for future activity.
+ * Provides authenticated profile summary, immediate catalogue quick actions, and active lead & test ride tracking.
  */
 const DashboardPage = () => {
   const { user, isLoading } = useAuth();
@@ -39,6 +42,36 @@ const DashboardPage = () => {
     title: 'Customer Dashboard',
     description: 'Access your profile summary, authorized dealerships, and flagship motorbike discovery tools.'
   });
+
+  // Recent Activity State
+  const [leads, setLeads] = useState([]);
+  const [testRides, setTestRides] = useState([]);
+  const [activityLoading, setActivityLoading] = useState(true);
+  const [activityError, setActivityError] = useState(null);
+  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads'
+
+  const fetchUserActivity = async () => {
+    try {
+      setActivityLoading(true);
+      setActivityError(null);
+      const [leadsRes, ridesRes] = await Promise.all([
+        leadService.getMyLeads(),
+        testRideService.getMyTestRides()
+      ]);
+      setLeads(leadsRes?.data || []);
+      setTestRides(ridesRes?.data || []);
+    } catch (err) {
+      setActivityError(err?.message || 'Failed to load your recent activity. Please try again.');
+    } finally {
+      setActivityLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchUserActivity();
+    }
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -86,6 +119,8 @@ const DashboardPage = () => {
     }
   ];
 
+  const totalActivityCount = leads.length + testRides.length;
+
   return (
     <Container className="py-10 md:py-16">
       <motion.div
@@ -98,24 +133,22 @@ const DashboardPage = () => {
         {/* ============================================================== */}
         {/* 1. Hero / Welcome Summary */}
         {/* ============================================================== */}
-        <section aria-labelledby="dashboard-welcome-heading" className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Badge variant="brand" size="sm" dot>
-              Showroom Account
+        <section aria-labelledby="welcome-heading" className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="brand" size="sm" className="font-semibold tracking-wider">
+              SHOWROOM ACCOUNT
             </Badge>
-            <Badge variant="secondary" size="sm">
+            <Badge variant="outline" size="sm" className="font-mono text-xs">
               {userRole}
             </Badge>
           </div>
 
-          <h1
-            id="dashboard-welcome-heading"
-            className="typography-h1 text-surface-50 tracking-tight"
-          >
-            Welcome back, <span className="text-brand-red">{firstName}</span>
+          <h1 id="welcome-heading" className="typography-h1 text-surface-50 font-bold tracking-tight">
+            Welcome back, {firstName}
           </h1>
-          <p className="typography-body text-surface-200 max-w-2xl text-base">
-            Your centralized automotive portal for managing your profile, exploring authorized dealer networks, and tracking model discovery.
+
+          <p className="typography-body text-surface-200 text-sm md:text-base max-w-2xl">
+            Manage your motorcycle discovery journey, view scheduled dealership test rides, and track price quotes across authorized hubs.
           </p>
         </section>
 
@@ -245,26 +278,101 @@ const DashboardPage = () => {
         </section>
 
         {/* ============================================================== */}
-        {/* 4. Future Activity Area (Clear Polished Empty State) */}
+        {/* 4. Real Activity Area: Test Rides & Leads */}
         {/* ============================================================== */}
-        <section aria-labelledby="recent-activity-heading" className="space-y-4">
-          <div className="space-y-1">
-            <h2 id="recent-activity-heading" className="typography-h3 text-surface-100">
-              Recent Activity
-            </h2>
-            <p className="typography-small text-muted-foreground">
-              Scheduled test rides, showroom queries, and saved vehicle builds.
-            </p>
+        <section aria-labelledby="recent-activity-heading" className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <h2 id="recent-activity-heading" className="typography-h3 text-surface-100">
+                Recent Activity
+              </h2>
+              <p className="typography-small text-muted-foreground">
+                Scheduled test rides, showroom queries, and saved vehicle builds.
+              </p>
+            </div>
+
+            {/* Refresh Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              icon={RefreshCw}
+              onClick={fetchUserActivity}
+              disabled={activityLoading}
+              className="self-start sm:self-auto text-xs"
+            >
+              {activityLoading ? 'Updating...' : 'Refresh Activity'}
+            </Button>
           </div>
 
-          <EmptyState
-            icon={Clock}
-            title="No activity yet"
-            message="You have not scheduled any test rides or saved bike models yet. Explore authorized showrooms and flagship motorcycles to start your journey."
-            actionLabel="Explore Motorcycles"
-            onAction={() => navigate('/bikes')}
-            className="border-dashed max-w-full py-12"
-          />
+          {/* Activity State Container */}
+          {!activityLoading && totalActivityCount === 0 && !activityError ? (
+            <EmptyState
+              icon={Clock}
+              title="No activity yet"
+              message="You have not scheduled any test rides or saved bike models yet. Explore authorized showrooms and flagship motorcycles to start your journey."
+              actionLabel="Explore Motorcycles"
+              onAction={() => navigate('/bikes')}
+              className="border-dashed max-w-full py-12"
+            />
+          ) : (
+            <div className="space-y-4">
+              {/* Tab Navigation */}
+              <div className="flex items-center gap-2 border-b border-border/60 pb-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('testRides')}
+                  className={`
+                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
+                    ${activeTab === 'testRides'
+                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
+                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
+                  `}
+                >
+                  <Calendar className="w-4 h-4" aria-hidden="true" />
+                  <span>Test Rides</span>
+                  <Badge variant={activeTab === 'testRides' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
+                    {testRides.length}
+                  </Badge>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('leads')}
+                  className={`
+                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
+                    ${activeTab === 'leads'
+                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
+                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
+                  `}
+                >
+                  <Mail className="w-4 h-4" aria-hidden="true" />
+                  <span>Dealership Enquiries</span>
+                  <Badge variant={activeTab === 'leads' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
+                    {leads.length}
+                  </Badge>
+                </button>
+              </div>
+
+              {/* Active Tab Content */}
+              {activeTab === 'testRides' ? (
+                <TestRideActivityList
+                  testRides={testRides}
+                  isLoading={activityLoading}
+                  error={activityError}
+                  onRetry={fetchUserActivity}
+                  onExplore={() => navigate('/bikes')}
+                />
+              ) : (
+                <LeadActivityList
+                  leads={leads}
+                  isLoading={activityLoading}
+                  error={activityError}
+                  onRetry={fetchUserActivity}
+                  onExplore={() => navigate('/bikes')}
+                />
+              )}
+            </div>
+          )}
         </section>
       </motion.div>
     </Container>
