@@ -7,7 +7,7 @@ const { sendSuccess } = require('../utils/apiResponse');
  */
 const createLead = async (req, res, next) => {
   try {
-    const { name, email, phone, showroom, bike, variant, source, message } = req.body;
+    const { name, email, phone, showroom, bike, variant, offer, source, message } = req.body;
 
     const lead = await leadService.createLead({
       userId: req.user.id,
@@ -17,6 +17,7 @@ const createLead = async (req, res, next) => {
       showroomId: showroom,
       bikeId: bike,
       variantId: variant,
+      offerId: offer,
       source,
       message
     });

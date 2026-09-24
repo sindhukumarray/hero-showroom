@@ -15,10 +15,11 @@ import {
   Compass,
   Bike,
   Send,
-  Calendar
+  Calendar,
+  Tag
 } from 'lucide-react';
 import { Container, Card, Badge, Button, Loading, ErrorState, Modal, LeadForm, TestRideForm } from '../components';
-import { showroomService } from '../services';
+import { showroomService, offerService } from '../services';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { fadeIn, getAccessibleVariant } from '../animations/variants';
@@ -30,6 +31,7 @@ const ShowroomDetailPage = () => {
   const accessibleFadeIn = getAccessibleVariant(fadeIn, shouldReduceMotion);
 
   const [showroom, setShowroom] = useState(null);
+  const [showroomOffers, setShowroomOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
@@ -49,6 +51,19 @@ const ShowroomDetailPage = () => {
       const res = await showroomService.getShowroomBySlug(slug);
       if (res.success && res.data) {
         setShowroom(res.data);
+        // Fetch active offers for this showroom
+        try {
+          const offersRes = await offerService.getOffers({
+            showroom: res.data._id,
+            active: 'true',
+            limit: 3
+          });
+          if (offersRes?.success && Array.isArray(offersRes?.data)) {
+            setShowroomOffers(offersRes.data);
+          }
+        } catch {
+          setShowroomOffers([]);
+        }
       } else {
         setError('Showroom details could not be found.');
       }
@@ -170,6 +185,18 @@ const ShowroomDetailPage = () => {
               >
                 Book Test Ride
               </Button>
+              {showroomOffers.length > 0 && (
+                <Link to={`/offers?showroom=${showroom._id}`}>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    icon={Tag}
+                    className="text-brand-red border-brand-red/40 hover:bg-brand-red/10"
+                  >
+                    Special Offers ({showroomOffers.length})
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
 
@@ -191,6 +218,49 @@ const ShowroomDetailPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Active Promotional Offer Banner */}
+        {showroomOffers.length > 0 && (
+          <div className="mt-6 pt-5 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-red/5 p-4 rounded-card border border-brand-red/20">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-brand-red text-white flex items-center justify-center shrink-0 shadow-glow-red">
+                <Tag className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-red">Dealership Offer</span>
+                  {showroomOffers[0].offerType && (
+                    <Badge variant="outline" size="sm" className="text-[10px] capitalize">
+                      {showroomOffers[0].offerType}
+                    </Badge>
+                  )}
+                </div>
+                <h4 className="text-surface-50 font-bold text-sm">
+                  {showroomOffers[0].title}
+                </h4>
+                {showroomOffers[0].description && (
+                  <p className="text-xs text-surface-200 line-clamp-1">
+                    {showroomOffers[0].description}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link to={`/offers/${showroomOffers[0].slug || showroomOffers[0]._id}`}>
+                <Button variant="primary" size="sm" className="text-xs">
+                  View Offer Details →
+                </Button>
+              </Link>
+              {showroomOffers.length > 1 && (
+                <Link to={`/offers?showroom=${showroom._id}`}>
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-white">
+                    All Offers ({showroomOffers.length})
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </motion.div>
 
       {/* Grid of Key Info Sections */}

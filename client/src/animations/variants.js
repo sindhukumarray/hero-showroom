@@ -126,6 +126,17 @@ export const heroContainer = {
   }
 };
 
+export const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.05
+    }
+  }
+};
+
 export const heroImageReveal = {
   hidden: { opacity: 0, scale: 1.08, filter: 'blur(8px)' },
   visible: {

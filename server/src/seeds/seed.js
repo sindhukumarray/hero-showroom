@@ -4,9 +4,9 @@ const dotenv = require('dotenv');
 // Load environment variables from server/.env if present
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-const { Brand, City, Showroom, Bike, BikeVariant } = require('../models');
+const { Brand, City, Showroom, Bike, BikeVariant, Offer } = require('../models');
 const { connectDatabase, disconnectDatabase } = require('../config/database');
-const { brandsData, citiesData, showroomsData, bikesData } = require('./seedData');
+const { brandsData, citiesData, showroomsData, bikesData, offersData } = require('./seedData');
 
 /**
  * Idempotently seed development demo data into MongoDB.
@@ -147,12 +147,51 @@ const seedDatabase = async () => {
     }
   }
 
-  // 5. Query and verify final database counts
+  // 5. Seed Offers
+  console.log('Seeding offers...');
+  const offerStats = { created: 0, updated: 0 };
+  for (const offer of offersData) {
+    const bikeDoc = await Bike.findOne({ slug: offer.bikeSlug }).select('_id');
+    if (!bikeDoc) {
+      console.warn(`[Seed Warning] Missing bike (${offer.bikeSlug}) for offer ${offer.title}`);
+      continue;
+    }
+
+    let showroomId = null;
+    if (offer.showroomSlug) {
+      const showroomDoc = await Showroom.findOne({ slug: offer.showroomSlug }).select('_id');
+      if (showroomDoc) {
+        showroomId = showroomDoc._id;
+      }
+    }
+
+    const { bikeSlug, showroomSlug, ...offerFields } = offer;
+    const offerPayload = {
+      ...offerFields,
+      bike: bikeDoc._id,
+      showroom: showroomId
+    };
+
+    const existing = await Offer.findOne({ slug: offer.slug }).select('_id');
+    await Offer.findOneAndUpdate(
+      { slug: offer.slug },
+      { $set: offerPayload },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    if (existing) {
+      offerStats.updated++;
+    } else {
+      offerStats.created++;
+    }
+  }
+
+  // 6. Query and verify final database counts
   const finalBrands = await Brand.countDocuments();
   const finalCities = await City.countDocuments();
   const finalShowrooms = await Showroom.countDocuments();
   const finalBikes = await Bike.countDocuments();
   const finalVariants = await BikeVariant.countDocuments();
+  const finalOffers = await Offer.countDocuments();
 
   console.log('\n-----------------------------------------------------');
   console.log(`Brands: ${finalBrands} (created: ${brandStats.created}, updated/reused: ${brandStats.updated})`);
@@ -160,6 +199,7 @@ const seedDatabase = async () => {
   console.log(`Showrooms: ${finalShowrooms} (created: ${showroomStats.created}, updated/reused: ${showroomStats.updated})`);
   console.log(`Bikes: ${finalBikes} (created: ${bikeStats.created}, updated/reused: ${bikeStats.updated})`);
   console.log(`Bike variants: ${finalVariants} (created: ${variantStats.created}, updated/reused: ${variantStats.updated})`);
+  console.log(`Offers: ${finalOffers} (created: ${offerStats.created}, updated/reused: ${offerStats.updated})`);
   console.log('-----------------------------------------------------');
   console.log('Seed completed successfully\n');
 
@@ -169,12 +209,14 @@ const seedDatabase = async () => {
     showrooms: finalShowrooms,
     bikes: finalBikes,
     variants: finalVariants,
+    offers: finalOffers,
     stats: {
       brands: brandStats,
       cities: cityStats,
       showrooms: showroomStats,
       bikes: bikeStats,
-      variants: variantStats
+      variants: variantStats,
+      offers: offerStats
     }
   };
 };

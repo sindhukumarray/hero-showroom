@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Building2, Bike, Calendar, MessageSquare, AlertCircle } from 'lucide-react';
+import { Mail, Building2, Bike, Calendar, MessageSquare, AlertCircle, Tag } from 'lucide-react';
 import Card from '../Card';
 import Badge from '../Badge';
 import EmptyState from '../EmptyState';
@@ -24,7 +24,7 @@ const getStatusBadgeVariant = (status) => {
 
 /**
  * Customer Dashboard Lead Activity List
- * Renders submitted showroom and motorcycle enquiries.
+ * Renders submitted showroom, motorcycle, and promotional offer enquiries.
  */
 const LeadActivityList = ({
   leads = [],
@@ -71,6 +71,7 @@ const LeadActivityList = ({
   return (
     <div className="space-y-3">
       {leads.map((lead) => {
+        const isOfferLead = lead.source === 'offer' || Boolean(lead.offer);
         const bikeName = lead.bike?.name || 'Selected Motorcycle';
         const showroomName = lead.showroom?.name || 'Authorized Dealership';
         const formattedDate = lead.createdAt
@@ -92,11 +93,16 @@ const LeadActivityList = ({
                 <Badge variant={getStatusBadgeVariant(lead.status)} size="sm">
                   {lead.status ? lead.status.toUpperCase() : 'NEW'}
                 </Badge>
-                {lead.source && (
+                {isOfferLead ? (
+                  <Badge variant="brand" size="sm" className="text-[10px] flex items-center gap-1">
+                    <Tag className="w-3 h-3" />
+                    Offer Enquiry
+                  </Badge>
+                ) : lead.source ? (
                   <Badge variant="outline" size="sm" className="capitalize text-[10px]">
                     via {lead.source}
                   </Badge>
-                )}
+                ) : null}
                 {lead.variant?.name && (
                   <span className="text-[11px] text-surface-200 font-medium bg-surface-800 px-2 py-0.5 rounded border border-border/40">
                     {lead.variant.name}
@@ -105,6 +111,12 @@ const LeadActivityList = ({
               </div>
 
               <div className="space-y-1">
+                {lead.offer?.title && (
+                  <p className="typography-small text-brand-red text-xs font-semibold flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-brand-red shrink-0" aria-hidden="true" />
+                    <span>Offer: {lead.offer.title}</span>
+                  </p>
+                )}
                 <h4 className="font-sans font-semibold text-surface-50 text-sm md:text-base flex items-center gap-2">
                   <Bike className="w-4 h-4 text-brand-red shrink-0" aria-hidden="true" />
                   <span>{bikeName}</span>

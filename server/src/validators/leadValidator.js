@@ -139,6 +139,17 @@ const validateCreateLead = (req, res, next) => {
     req.body.variant = null;
   }
 
+  // Validate optional offer reference
+  if (req.body.offer !== undefined && req.body.offer !== null && req.body.offer !== '') {
+    if (!isValidObjectId(String(req.body.offer).trim())) {
+      errors.push("Field 'offer' must be a valid MongoDB ObjectId.");
+    } else {
+      req.body.offer = String(req.body.offer).trim();
+    }
+  } else {
+    req.body.offer = null;
+  }
+
   // Validate source (optional)
   if (source !== undefined && source !== null && source !== '') {
     if (!ALLOWED_LEAD_SOURCES.includes(source)) {

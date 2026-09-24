@@ -2274,9 +2274,97 @@ const bikesData = [
   }
 ];
 
+const offersData = [
+  {
+    title: 'Festive Cashback on Hero Mavrick 440',
+    slug: 'festive-cashback-hero-mavrick-440',
+    description: 'Celebrate this season with an exclusive cashback of ₹10,000 and complimentary 5-year roadside assistance on the Hero Mavrick 440.',
+    bikeSlug: 'hero-mavrick-440',
+    showroomSlug: 'hero-premia-bhopal',
+    offerType: 'cashback',
+    discountValue: 10000,
+    benefits: ['₹10,000 Direct Cashback', 'Complimentary 5-Year Roadside Assistance (RSA)', 'Zero Processing Fee on Select Banks'],
+    terms: 'Offer valid on bookings confirmed before the validity period. Terms apply.',
+    validFrom: new Date('2026-01-01'),
+    validUntil: new Date('2026-12-31'),
+    isActive: true
+  },
+  {
+    title: 'Exchange Bonus on Karizma XMR',
+    slug: 'exchange-bonus-karizma-xmr',
+    description: 'Upgrade your ride! Bring in any old two-wheeler and get an exchange bonus of up to ₹7,500 on the iconic Hero Karizma XMR.',
+    bikeSlug: 'hero-karizma-xmr-210',
+    showroomSlug: null,
+    offerType: 'exchange',
+    discountValue: 7500,
+    benefits: ['Up to ₹7,500 Exchange Bonus', 'Instant On-Spot Valuation', 'Free Helmet & Riding Kit Voucher'],
+    terms: 'Exchange value evaluated based on vehicle condition. Subject to showroom inspection.',
+    validFrom: new Date('2026-01-01'),
+    validUntil: new Date('2026-12-31'),
+    isActive: true
+  },
+  {
+    title: 'Zero Down Payment on Xtreme 125R',
+    slug: 'zero-down-payment-xtreme-125r',
+    description: 'Ride home the sharp and sporty Hero Xtreme 125R with special introductory zero down-payment finance schemes and free accessories pack.',
+    bikeSlug: 'hero-xtreme-125r',
+    showroomSlug: null,
+    offerType: 'accessories',
+    discountValue: 4000,
+    benefits: ['Complimentary Engine Guard & Grip Covers', 'Special 6.99% Interest Rate Scheme', 'Free First Year Labor Service'],
+    terms: 'Financing schemes subject to credit approval by partner NBFCs/banks.',
+    validFrom: new Date('2026-01-01'),
+    validUntil: new Date('2026-12-31'),
+    isActive: true
+  },
+  {
+    title: 'Corporate Benefit on Vida V1 Pro',
+    slug: 'corporate-benefit-vida-v1-pro',
+    description: 'Exclusive corporate employee discount of ₹8,000 on the all-electric Vida V1 Pro with complimentary portable fast-charging cable.',
+    bikeSlug: 'vida-v1-pro',
+    showroomSlug: 'hero-premia-bhopal',
+    offerType: 'discount',
+    discountValue: 8000,
+    benefits: ['₹8,000 Corporate Discount', 'Free Home Charging Station Installation', '3-Year Battery Warranty Coverage'],
+    terms: 'Valid on presentation of valid employee ID at authorized Premia dealerships.',
+    validFrom: new Date('2026-01-01'),
+    validUntil: new Date('2026-12-31'),
+    isActive: true
+  },
+  {
+    title: 'Royal Enfield Hunter 350 Custom Gear Bundle',
+    slug: 'hunter-350-custom-gear-bundle',
+    description: 'Purchase a new Royal Enfield Hunter 350 and receive an authentic touring accessories kit worth ₹6,500 free of charge.',
+    bikeSlug: 'royal-enfield-hunter-350',
+    showroomSlug: null,
+    offerType: 'accessories',
+    discountValue: 6500,
+    benefits: ['Free Bar-end Mirrors & Sump Guard', 'Royal Enfield Commuter Backpack', '1 Free Maintenance Check'],
+    terms: 'Available on select color variants at participating dealerships.',
+    validFrom: new Date('2026-01-01'),
+    validUntil: new Date('2026-12-31'),
+    isActive: true
+  },
+  {
+    title: 'Splendor Plus 0% Processing Festive Deal',
+    slug: 'splendor-plus-zero-processing-deal',
+    description: 'India’s most trusted motorcycle now comes with a festive gift voucher of ₹2,500 and zero processing charges on finance.',
+    bikeSlug: 'hero-splendor-plus',
+    showroomSlug: null,
+    offerType: 'discount',
+    discountValue: 2500,
+    benefits: ['₹2,500 Festive Savings', 'Zero Loan Processing Charges', '5-Year Comprehensive Warranty'],
+    terms: 'Limited period festive promotional offer.',
+    validFrom: new Date('2026-01-01'),
+    validUntil: new Date('2026-12-31'),
+    isActive: true
+  }
+];
+
 module.exports = {
   brandsData,
   citiesData,
   showroomsData,
-  bikesData
+  bikesData,
+  offersData
 };

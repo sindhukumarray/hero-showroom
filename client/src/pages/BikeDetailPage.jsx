@@ -15,10 +15,11 @@ import {
   Sparkles,
   Info,
   Calendar,
-  Send
+  Send,
+  Tag
 } from 'lucide-react';
 import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm } from '../components';
-import { bikeService } from '../services';
+import { bikeService, offerService } from '../services';
 import { formatCurrency, formatPriceRange } from '../utils/formatters';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -33,6 +34,7 @@ const BikeDetailPage = () => {
   const [bike, setBike] = useState(null);
   const [variants, setVariants] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [bikeOffers, setBikeOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isTestRideModalOpen, setIsTestRideModalOpen] = useState(false);
@@ -60,6 +62,21 @@ const BikeDetailPage = () => {
         setVariants(variantList);
         if (variantList.length > 0) {
           setSelectedVariant(variantList[0]);
+        }
+
+        // Fetch active offers for this bike
+        try {
+          const offersRes = await offerService.getOffers({
+            bike: bikeRes.data._id,
+            active: 'true',
+            limit: 3
+          });
+          if (offersRes?.success && Array.isArray(offersRes?.data)) {
+            setBikeOffers(offersRes.data);
+          }
+        } catch {
+          // Graceful fallback if offers cannot be loaded
+          setBikeOffers([]);
         }
       } else {
         setError('Bike model could not be found.');
@@ -196,6 +213,19 @@ const BikeDetailPage = () => {
               >
                 Enquire / Get Quote
               </Button>
+              {bikeOffers.length > 0 && (
+                <Link to={`/offers?bike=${bike._id}`} className="block">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    fullWidth
+                    icon={Tag}
+                    className="text-xs text-brand-red border-brand-red/30 hover:bg-brand-red/10"
+                  >
+                    View {bikeOffers.length} {bikeOffers.length === 1 ? 'Offer' : 'Offers'}
+                  </Button>
+                </Link>
+              )}
               {bike.brand?._id && (
                 <Link to={`/showrooms?brand=${bike.brand._id}`} className="block">
                   <Button variant="ghost" size="sm" fullWidth icon={Compass} className="text-xs text-muted-foreground hover:text-surface-100">
@@ -206,6 +236,49 @@ const BikeDetailPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Active Promotional Offer Banner */}
+        {bikeOffers.length > 0 && (
+          <div className="mt-6 pt-5 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-red/5 p-4 rounded-card border border-brand-red/20">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-brand-red text-white flex items-center justify-center shrink-0 shadow-glow-red">
+                <Tag className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-red">Special Offer</span>
+                  {bikeOffers[0].offerType && (
+                    <Badge variant="outline" size="sm" className="text-[10px] capitalize">
+                      {bikeOffers[0].offerType}
+                    </Badge>
+                  )}
+                </div>
+                <h4 className="text-surface-50 font-bold text-sm">
+                  {bikeOffers[0].title}
+                </h4>
+                {bikeOffers[0].description && (
+                  <p className="text-xs text-surface-200 line-clamp-1">
+                    {bikeOffers[0].description}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link to={`/offers/${bikeOffers[0].slug || bikeOffers[0]._id}`}>
+                <Button variant="primary" size="sm" className="text-xs">
+                  View Offer Details →
+                </Button>
+              </Link>
+              {bikeOffers.length > 1 && (
+                <Link to={`/offers?bike=${bike._id}`}>
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-white">
+                    All Offers ({bikeOffers.length})
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </motion.div>
 
       {/* Technical Specifications Grid */}

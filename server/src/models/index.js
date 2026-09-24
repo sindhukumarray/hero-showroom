@@ -6,6 +6,7 @@ const BikeVariant = require('./BikeVariant');
 const User = require('./User');
 const Lead = require('./Lead');
 const TestRide = require('./TestRide');
+const Offer = require('./Offer');
 
 module.exports = {
   Brand,
@@ -15,5 +16,6 @@ module.exports = {
   BikeVariant,
   User,
   Lead,
-  TestRide
+  TestRide,
+  Offer
 };

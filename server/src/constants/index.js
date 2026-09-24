@@ -9,6 +9,10 @@ const {
   TEST_RIDE_STATUS,
   ALLOWED_TEST_RIDE_STATUS
 } = require('./testRides');
+const {
+  OFFER_TYPES,
+  ALLOWED_OFFER_TYPES
+} = require('./offers');
 
 module.exports = {
   ROLES,
@@ -18,5 +22,7 @@ module.exports = {
   LEAD_SOURCES,
   ALLOWED_LEAD_SOURCES,
   TEST_RIDE_STATUS,
-  ALLOWED_TEST_RIDE_STATUS
+  ALLOWED_TEST_RIDE_STATUS,
+  OFFER_TYPES,
+  ALLOWED_OFFER_TYPES
 };

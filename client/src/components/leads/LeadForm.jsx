@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Send, CheckCircle2, AlertCircle, LogIn, Building2, Bike as BikeIcon, Loader2 } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, LogIn, Building2, Bike as BikeIcon, Loader2, Tag } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { leadService, showroomService, bikeService } from '../../services';
 import Button from '../Button';
@@ -20,6 +20,7 @@ const LeadForm = ({
   showroom: initialShowroom = null,
   bike: initialBike = null,
   variant: initialVariant = null,
+  offer: initialOffer = null,
   source = 'showroom',
   onSuccess,
   onCancel,
@@ -28,10 +29,16 @@ const LeadForm = ({
   const { user, isAuthenticated } = useAuth();
   const location = useLocation();
 
+  // Resolve contextual entities (can derive from offer if passed)
+  const resolvedBike = initialBike || (initialOffer?.bike && typeof initialOffer.bike === 'object' ? initialOffer.bike : null);
+  const resolvedShowroom = initialShowroom || (initialOffer?.showroom && typeof initialOffer.showroom === 'object' ? initialOffer.showroom : null);
+  const resolvedVariant = initialVariant || (initialOffer?.variant && typeof initialOffer.variant === 'object' ? initialOffer.variant : null);
+
   // Extract ID or object
-  const showroomId = initialShowroom?._id || (typeof initialShowroom === 'string' ? initialShowroom : '');
-  const bikeId = initialBike?._id || (typeof initialBike === 'string' ? initialBike : '');
-  const variantId = initialVariant?._id || (typeof initialVariant === 'string' ? initialVariant : '');
+  const showroomId = resolvedShowroom?._id || (typeof resolvedShowroom === 'string' ? resolvedShowroom : (initialOffer?.showroom?._id || (typeof initialOffer?.showroom === 'string' ? initialOffer.showroom : '')));
+  const bikeId = resolvedBike?._id || (typeof resolvedBike === 'string' ? resolvedBike : (initialOffer?.bike?._id || (typeof initialOffer?.bike === 'string' ? initialOffer.bike : '')));
+  const variantId = resolvedVariant?._id || (typeof resolvedVariant === 'string' ? resolvedVariant : (initialOffer?.variant?._id || (typeof initialOffer?.variant === 'string' ? initialOffer.variant : '')));
+  const offerId = initialOffer?._id || (typeof initialOffer === 'string' ? initialOffer : '');
 
   // Form State
   const [formData, setFormData] = useState({
@@ -41,6 +48,7 @@ const LeadForm = ({
     showroom: showroomId,
     bike: bikeId,
     variant: variantId,
+    offer: offerId,
     message: ''
   });
 
@@ -174,6 +182,7 @@ const LeadForm = ({
         showroom: formData.showroom,
         bike: formData.bike,
         variant: formData.variant || undefined,
+        offer: formData.offer || undefined,
         source,
         message: formData.message.trim()
       };
@@ -242,6 +251,14 @@ const LeadForm = ({
         </div>
 
         <div className="p-4 rounded-lg bg-surface-950 border border-border/80 text-left text-xs space-y-2 max-w-md mx-auto">
+          {(createdLead?.offer?.title || initialOffer?.title) && (
+            <div className="flex justify-between items-center text-amber-400">
+              <span className="text-muted-foreground flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" /> Offer:
+              </span>
+              <span className="font-semibold">{createdLead?.offer?.title || initialOffer.title}</span>
+            </div>
+          )}
           {createdLead?.showroom?.name && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">Showroom:</span>
@@ -290,8 +307,14 @@ const LeadForm = ({
       )}
 
       {/* Context Summary Pill */}
-      {(initialBike || initialShowroom) && (
+      {(initialBike || initialShowroom || initialOffer) && (
         <div className="p-3 rounded-lg bg-surface-950 border border-border/80 text-xs flex flex-wrap items-center gap-3">
+          {initialOffer?.title && (
+            <span className="flex items-center gap-1.5 text-amber-300">
+              <Tag className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+              <span>Offer: <strong>{initialOffer.title}</strong></span>
+            </span>
+          )}
           {initialShowroom?.name && (
             <span className="flex items-center gap-1.5 text-surface-200">
               <Building2 className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />

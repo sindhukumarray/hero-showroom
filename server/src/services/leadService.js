@@ -1,4 +1,4 @@
-const { Lead, User, Showroom, Bike, BikeVariant } = require('../models');
+const { Lead, User, Showroom, Bike, BikeVariant, Offer } = require('../models');
 const { isConnected } = require('../config/database');
 
 /**
@@ -25,6 +25,7 @@ const createLead = async ({
   showroomId,
   bikeId,
   variantId,
+  offerId = null,
   source = 'showroom',
   message = ''
 }) => {
@@ -85,7 +86,33 @@ const createLead = async ({
     }
   }
 
-  // 5. Persist lead enquiry strictly with status="new" and server-assigned user
+  // 5. Verify optional offer relationship integrity
+  let offer = null;
+  if (offerId) {
+    offer = await Offer.findById(offerId);
+    if (!offer) {
+      const error = new Error('Offer not found');
+      error.statusCode = 404;
+      throw error;
+    }
+    if (offer.isActive === false) {
+      const error = new Error('Offer is currently inactive');
+      error.statusCode = 400;
+      throw error;
+    }
+    if (offer.validUntil && new Date(offer.validUntil) < new Date()) {
+      const error = new Error('Offer has expired');
+      error.statusCode = 400;
+      throw error;
+    }
+    if (offer.bike.toString() !== bike._id.toString()) {
+      const error = new Error('Offer does not apply to the selected bike model');
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+
+  // 6. Persist lead enquiry strictly with status="new" and server-assigned user
   const lead = await Lead.create({
     user: user._id,
     name: name.trim(),
@@ -94,17 +121,19 @@ const createLead = async ({
     showroom: showroom._id,
     bike: bike._id,
     variant: variant ? variant._id : null,
+    offer: offer ? offer._id : null,
     source,
     status: 'new',
     message: message ? message.trim() : ''
   });
 
-  // 6. Return populated document without sensitive credentials
+  // 7. Return populated document without sensitive credentials
   const populated = await Lead.findById(lead._id)
     .populate('user', 'name email phone')
     .populate('showroom', 'name slug address contact showroomType isActive')
     .populate('bike', 'name slug category images priceRange isActive')
-    .populate('variant', 'name trim exShowroomPrice isActive');
+    .populate('variant', 'name trim exShowroomPrice isActive')
+    .populate('offer', 'title slug offerType discountValue validUntil');
 
   return populated;
 };
@@ -130,7 +159,8 @@ const getUserLeads = async ({ userId, page = 1, limit = 20 }) => {
     .limit(limitNum)
     .populate('showroom', 'name slug address contact showroomType')
     .populate('bike', 'name slug category images priceRange')
-    .populate('variant', 'name trim exShowroomPrice');
+    .populate('variant', 'name trim exShowroomPrice')
+    .populate('offer', 'title slug offerType discountValue validUntil');
 
   return {
     data: leads,

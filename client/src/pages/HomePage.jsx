@@ -27,7 +27,8 @@ import {
   Badge,
   Input,
   Loading,
-  ErrorState
+  ErrorState,
+  OfferCard
 } from '../components';
 import {
   heroHeadline,
@@ -41,7 +42,8 @@ import {
   brandService,
   cityService,
   bikeService,
-  showroomService
+  showroomService,
+  offerService
 } from '../services';
 import { formatPriceRange } from '../utils/formatters';
 
@@ -95,6 +97,8 @@ const HomePage = () => {
   const [showroomsLoading, setShowroomsLoading] = useState(true);
   const [showroomsError, setShowroomsError] = useState(null);
 
+  const [offers, setOffers] = useState([]);
+
   useSEO({
     title: 'Hero Showroom — Discover Authorized Showrooms & Flagship Bikes',
     description: 'Explore verified dealer showrooms, flagship motorcycle catalogues, specs comparison, and transparent automotive discovery.'
@@ -137,6 +141,14 @@ const HomePage = () => {
       })
       .catch((err) => setShowroomsError(err.message || 'Failed to load showrooms'))
       .finally(() => setShowroomsLoading(false));
+
+    // 5. Fetch Active Promotional Offers
+    offerService
+      .getOffers({ limit: 3, active: 'true' })
+      .then((res) => {
+        if (res.success && Array.isArray(res.data)) setOffers(res.data);
+      })
+      .catch(() => setOffers([]));
   }, []);
 
   const handleSearchSubmit = (e) => {
@@ -537,6 +549,31 @@ const HomePage = () => {
           </div>
         )}
       </Section>
+
+      {/* ================================================== */}
+      {/* 5B. EXCLUSIVE PROMOTIONAL OFFERS SECTION           */}
+      {/* ================================================== */}
+      {offers.length > 0 && (
+        <Section
+          id="promotional-offers"
+          eyebrow="Limited-Time Deals"
+          title="Exclusive Offers & Benefits"
+          description="Explore seasonal discounts, exchange bonuses, zero-downpayment financing perks, and complimentary service packages."
+          actions={
+            <NavLink to="/offers">
+              <Button variant="outline" size="sm" icon={ArrowRight} iconPosition="right">
+                View All Offers
+              </Button>
+            </NavLink>
+          }
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {offers.map((offer) => (
+              <OfferCard key={offer._id} offer={offer} />
+            ))}
+          </div>
+        </Section>
+      )}
 
       {/* ================================================== */}
       {/* 6. FEATURED SHOWROOMS SECTION                      */}

@@ -6,3 +6,4 @@ export * as bikeService from './bikeService';
 export * as authService from './authService';
 export * as leadService from './leadService';
 export * as testRideService from './testRideService';
+export * as offerService from './offerService';

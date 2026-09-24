@@ -13,3 +13,4 @@ export { default as LeadForm } from './leads/LeadForm';
 export { default as TestRideForm } from './testRides/TestRideForm';
 export { default as LeadActivityList } from './dashboard/LeadActivityList';
 export { default as TestRideActivityList } from './dashboard/TestRideActivityList';
+export { default as OfferCard } from './offers/OfferCard';

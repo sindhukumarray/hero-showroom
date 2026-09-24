@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Compass, Bike, GitCompare, LogIn, UserPlus, LogOut, User as UserIcon } from 'lucide-react';
+import { Menu, X, Compass, Bike, GitCompare, LogIn, UserPlus, LogOut, User as UserIcon, Home, Tag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Container from './Container';
 import Button from './Button';
@@ -15,9 +15,10 @@ const Header = () => {
   const navigate = useNavigate();
 
   const navLinks = [
-    { to: '/', label: 'Home' },
+    { to: '/', label: 'Home', icon: Home },
     { to: '/showrooms', label: 'Showrooms', icon: Compass },
     { to: '/bikes', label: 'Bikes', icon: Bike },
+    { to: '/offers', label: 'Offers', icon: Tag },
     { to: '/compare', label: 'Compare', icon: GitCompare }
   ];
 

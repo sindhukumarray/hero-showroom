@@ -12,6 +12,8 @@ import RegisterPage from '../pages/RegisterPage';
 import DashboardPage from '../pages/DashboardPage';
 import AdminPage from '../pages/AdminPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import OffersPage from '../pages/OffersPage';
+import OfferDetailPage from '../pages/OfferDetailPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 const AppRoutes = () => {
@@ -24,6 +26,8 @@ const AppRoutes = () => {
         <Route path="showrooms/:slug" element={<ShowroomDetailPage />} />
         <Route path="bikes" element={<BikesPage />} />
         <Route path="bikes/:slug" element={<BikeDetailPage />} />
+        <Route path="offers" element={<OffersPage />} />
+        <Route path="offers/:id" element={<OfferDetailPage />} />
         <Route path="compare" element={<ComparePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />

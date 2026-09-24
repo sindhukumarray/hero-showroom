@@ -49,6 +49,12 @@ const leadSchema = new mongoose.Schema(
       ref: 'BikeVariant',
       default: null
     },
+    offer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Offer',
+      default: null,
+      index: true
+    },
     source: {
       type: String,
       enum: {
