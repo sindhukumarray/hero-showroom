@@ -18,7 +18,7 @@ import {
   Send,
   Tag
 } from 'lucide-react';
-import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm } from '../components';
+import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm, FavoriteButton } from '../components';
 import { bikeService, offerService } from '../services';
 import { formatCurrency, formatPriceRange } from '../utils/formatters';
 import { useSEO } from '../hooks/useSEO';
@@ -233,6 +233,15 @@ const BikeDetailPage = () => {
                   </Button>
                 </Link>
               )}
+              <div className="pt-1">
+                <FavoriteButton
+                  entityType="bike"
+                  entityId={bike._id}
+                  size="md"
+                  showLabel
+                  className="w-full justify-center"
+                />
+              </div>
             </div>
           </div>
         </div>

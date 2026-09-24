@@ -7,6 +7,7 @@ const User = require('./User');
 const Lead = require('./Lead');
 const TestRide = require('./TestRide');
 const Offer = require('./Offer');
+const Favorite = require('./Favorite');
 
 module.exports = {
   Brand,
@@ -17,5 +18,6 @@ module.exports = {
   User,
   Lead,
   TestRide,
-  Offer
+  Offer,
+  Favorite
 };

@@ -18,7 +18,7 @@ import {
   Calendar,
   Tag
 } from 'lucide-react';
-import { Container, Card, Badge, Button, Loading, ErrorState, Modal, LeadForm, TestRideForm } from '../components';
+import { Container, Card, Badge, Button, Loading, ErrorState, Modal, LeadForm, TestRideForm, FavoriteButton } from '../components';
 import { showroomService, offerService } from '../services';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -196,6 +196,14 @@ const ShowroomDetailPage = () => {
                     Special Offers ({showroomOffers.length})
                   </Button>
                 </Link>
+              )}
+              {showroom._id && (
+                <FavoriteButton
+                  entityType="showroom"
+                  entityId={showroom._id}
+                  size="md"
+                  showLabel
+                />
               )}
             </div>
           </div>

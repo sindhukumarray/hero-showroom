@@ -8,6 +8,7 @@ const authRoutes = require('./authRoutes');
 const leadRoutes = require('./leadRoutes');
 const testRideRoutes = require('./testRideRoutes');
 const offerRoutes = require('./offerRoutes');
+const favoriteRoutes = require('./favoriteRoutes');
 
 const router = express.Router();
 
@@ -21,5 +22,6 @@ router.use('/auth', authRoutes);
 router.use('/leads', leadRoutes);
 router.use('/test-rides', testRideRoutes);
 router.use('/offers', offerRoutes);
+router.use('/favorites', favoriteRoutes);
 
 module.exports = router;

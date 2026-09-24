@@ -5,6 +5,7 @@ import {
   Bike,
   Compass,
   GitCompare,
+  Heart,
   User as UserIcon,
   Mail,
   Phone,
@@ -18,7 +19,7 @@ import { pageTransition, getAccessibleVariant } from '../animations/variants';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useSEO } from '../hooks/useSEO';
 import { useAuth } from '../context/AuthContext';
-import { leadService, testRideService } from '../services';
+import { leadService, testRideService, favoriteService } from '../services';
 import Container from '../components/Container';
 import Badge from '../components/Badge';
 import Card from '../components/Card';
@@ -27,6 +28,7 @@ import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
 import LeadActivityList from '../components/dashboard/LeadActivityList';
 import TestRideActivityList from '../components/dashboard/TestRideActivityList';
+import FavoritesActivityList from '../components/dashboard/FavoritesActivityList';
 
 /**
  * Customer Dashboard Page
@@ -46,20 +48,23 @@ const DashboardPage = () => {
   // Recent Activity State
   const [leads, setLeads] = useState([]);
   const [testRides, setTestRides] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [activityLoading, setActivityLoading] = useState(true);
   const [activityError, setActivityError] = useState(null);
-  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads'
+  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads' | 'favorites'
 
   const fetchUserActivity = async () => {
     try {
       setActivityLoading(true);
       setActivityError(null);
-      const [leadsRes, ridesRes] = await Promise.all([
+      const [leadsRes, ridesRes, favsRes] = await Promise.all([
         leadService.getMyLeads(),
-        testRideService.getMyTestRides()
+        testRideService.getMyTestRides(),
+        favoriteService.getMyFavorites()
       ]);
       setLeads(leadsRes?.data || []);
       setTestRides(ridesRes?.data || []);
+      setFavorites(favsRes?.data || []);
     } catch (err) {
       setActivityError(err?.message || 'Failed to load your recent activity. Please try again.');
     } finally {
@@ -119,7 +124,7 @@ const DashboardPage = () => {
     }
   ];
 
-  const totalActivityCount = leads.length + testRides.length;
+  const totalActivityCount = leads.length + testRides.length + favorites.length;
 
   return (
     <Container className="py-10 md:py-16">
@@ -351,6 +356,23 @@ const DashboardPage = () => {
                     {leads.length}
                   </Badge>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('favorites')}
+                  className={`
+                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
+                    ${activeTab === 'favorites'
+                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
+                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
+                  `}
+                >
+                  <Heart className="w-4 h-4" aria-hidden="true" />
+                  <span>Saved Items</span>
+                  <Badge variant={activeTab === 'favorites' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
+                    {favorites.length}
+                  </Badge>
+                </button>
               </div>
 
               {/* Active Tab Content */}
@@ -365,6 +387,16 @@ const DashboardPage = () => {
               ) : (
                 <LeadActivityList
                   leads={leads}
+                  isLoading={activityLoading}
+                  error={activityError}
+                  onRetry={fetchUserActivity}
+                  onExplore={() => navigate('/bikes')}
+                />
+              )}
+
+              {activeTab === 'favorites' && (
+                <FavoritesActivityList
+                  favorites={favorites}
                   isLoading={activityLoading}
                   error={activityError}
                   onRetry={fetchUserActivity}
