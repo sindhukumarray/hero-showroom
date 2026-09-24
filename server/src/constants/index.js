@@ -1,6 +1,22 @@
 const { ROLES, ALLOWED_ROLES } = require('./roles');
+const {
+  LEAD_STATUS,
+  ALLOWED_LEAD_STATUS,
+  LEAD_SOURCES,
+  ALLOWED_LEAD_SOURCES
+} = require('./leads');
+const {
+  TEST_RIDE_STATUS,
+  ALLOWED_TEST_RIDE_STATUS
+} = require('./testRides');
 
 module.exports = {
   ROLES,
-  ALLOWED_ROLES
+  ALLOWED_ROLES,
+  LEAD_STATUS,
+  ALLOWED_LEAD_STATUS,
+  LEAD_SOURCES,
+  ALLOWED_LEAD_SOURCES,
+  TEST_RIDE_STATUS,
+  ALLOWED_TEST_RIDE_STATUS
 };

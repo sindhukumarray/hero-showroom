@@ -5,6 +5,8 @@ const cityRoutes = require('./cityRoutes');
 const showroomRoutes = require('./showroomRoutes');
 const bikeRoutes = require('./bikeRoutes');
 const authRoutes = require('./authRoutes');
+const leadRoutes = require('./leadRoutes');
+const testRideRoutes = require('./testRideRoutes');
 
 const router = express.Router();
 
@@ -15,5 +17,7 @@ router.use('/cities', cityRoutes);
 router.use('/showrooms', showroomRoutes);
 router.use('/bikes', bikeRoutes);
 router.use('/auth', authRoutes);
+router.use('/leads', leadRoutes);
+router.use('/test-rides', testRideRoutes);
 
 module.exports = router;

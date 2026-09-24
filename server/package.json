@@ -7,7 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "seed": "node src/seeds/seed.js",
-    "test": "node test-step2.js && node test-step2-models.js && node test-step2a-catalogue-api.js && node test-step2b-showroom-api.js && node test-step2c-bike-api.js && node test-step3a-user-model.js && node test-step3b-register.js && node test-step3c-login.js && node test-step3d-auth-middleware.js && node test-step3e-session.js",
+    "test": "node test-step2.js && node test-step2-models.js && node test-step2a-catalogue-api.js && node test-step2b-showroom-api.js && node test-step2c-bike-api.js && node test-step3a-user-model.js && node test-step3b-register.js && node test-step3c-login.js && node test-step3d-auth-middleware.js && node test-step3e-session.js && node test-step3h-leads-test-rides.js",
     "test:live": "node test-step3-live-db.js"
   },
   "keywords": [
