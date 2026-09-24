@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const { sendSuccess } = require('../utils/apiResponse');
 
 /**
  * Controller: Register a new customer account
@@ -67,8 +68,22 @@ const getMe = async (req, res, next) => {
   }
 };
 
+/**
+ * Controller: Logout authenticated user session
+ * POST /api/auth/logout
+ * Acknowledges client-side session termination for stateless JWT authentication.
+ */
+const logout = async (req, res, next) => {
+  try {
+    return sendSuccess(res, 'Logged out successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
-  getMe
+  getMe,
+  logout
 };

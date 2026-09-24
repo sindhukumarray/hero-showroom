@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getMe } = require('../controllers/authController');
+const { register, login, getMe, logout } = require('../controllers/authController');
 const { validateRegister, validateLogin } = require('../validators/authValidator');
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const { ROLES } = require('../constants/roles');
@@ -15,6 +15,9 @@ router.post('/login', validateLogin, login);
 
 // GET /api/auth/me - Retrieve current authenticated user profile
 router.get('/me', verifyToken, getMe);
+
+// POST /api/auth/logout - Terminate client authentication session
+router.post('/logout', verifyToken, logout);
 
 // GET /api/auth/admin-test - Dedicated RBAC verification route (Admin-only)
 router.get('/admin-test', verifyToken, requireRole(ROLES.ADMIN), (req, res) => {
