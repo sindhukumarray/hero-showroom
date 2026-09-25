@@ -17,6 +17,11 @@ const {
   FAVORITE_TYPES,
   ALLOWED_FAVORITE_TYPES
 } = require('./favorites');
+const {
+  REVIEW_STATUS,
+  ALLOWED_REVIEW_STATUS,
+  REVIEW_RATING
+} = require('./reviews');
 
 module.exports = {
   ROLES,
@@ -30,5 +35,8 @@ module.exports = {
   OFFER_TYPES,
   ALLOWED_OFFER_TYPES,
   FAVORITE_TYPES,
-  ALLOWED_FAVORITE_TYPES
+  ALLOWED_FAVORITE_TYPES,
+  REVIEW_STATUS,
+  ALLOWED_REVIEW_STATUS,
+  REVIEW_RATING
 };

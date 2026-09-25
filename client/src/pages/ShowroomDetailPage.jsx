@@ -18,7 +18,7 @@ import {
   Calendar,
   Tag
 } from 'lucide-react';
-import { Container, Card, Badge, Button, Loading, ErrorState, Modal, LeadForm, TestRideForm, FavoriteButton } from '../components';
+import { Container, Card, Badge, Button, Loading, ErrorState, Modal, LeadForm, TestRideForm, FavoriteButton, ReviewList } from '../components';
 import { showroomService, offerService } from '../services';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
@@ -496,6 +496,15 @@ const ShowroomDetailPage = () => {
           onCancel={() => setIsTestRideModalOpen(false)}
         />
       </Modal>
+
+      {/* ============================================================== */}
+      {/* Customer Reviews Section */}
+      {/* ============================================================== */}
+      {showroom._id && (
+        <div className="mt-10 pt-10 border-t border-border/40">
+          <ReviewList showroomId={showroom._id.toString()} />
+        </div>
+      )}
     </Container>
   );
 };

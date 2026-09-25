@@ -6,6 +6,7 @@ import {
   Compass,
   GitCompare,
   Heart,
+  Star,
   User as UserIcon,
   Mail,
   Phone,
@@ -19,7 +20,7 @@ import { pageTransition, getAccessibleVariant } from '../animations/variants';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useSEO } from '../hooks/useSEO';
 import { useAuth } from '../context/AuthContext';
-import { leadService, testRideService, favoriteService } from '../services';
+import { leadService, testRideService, favoriteService, reviewService } from '../services';
 import Container from '../components/Container';
 import Badge from '../components/Badge';
 import Card from '../components/Card';
@@ -29,6 +30,7 @@ import EmptyState from '../components/EmptyState';
 import LeadActivityList from '../components/dashboard/LeadActivityList';
 import TestRideActivityList from '../components/dashboard/TestRideActivityList';
 import FavoritesActivityList from '../components/dashboard/FavoritesActivityList';
+import ReviewActivityList from '../components/dashboard/ReviewActivityList';
 
 /**
  * Customer Dashboard Page
@@ -49,22 +51,25 @@ const DashboardPage = () => {
   const [leads, setLeads] = useState([]);
   const [testRides, setTestRides] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [activityLoading, setActivityLoading] = useState(true);
   const [activityError, setActivityError] = useState(null);
-  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads' | 'favorites'
+  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads' | 'favorites' | 'reviews'
 
   const fetchUserActivity = async () => {
     try {
       setActivityLoading(true);
       setActivityError(null);
-      const [leadsRes, ridesRes, favsRes] = await Promise.all([
+      const [leadsRes, ridesRes, favsRes, reviewsRes] = await Promise.all([
         leadService.getMyLeads(),
         testRideService.getMyTestRides(),
-        favoriteService.getMyFavorites()
+        favoriteService.getMyFavorites(),
+        reviewService.getMyReviews()
       ]);
       setLeads(leadsRes?.data || []);
       setTestRides(ridesRes?.data || []);
       setFavorites(favsRes?.data || []);
+      setReviews(reviewsRes?.data || []);
     } catch (err) {
       setActivityError(err?.message || 'Failed to load your recent activity. Please try again.');
     } finally {
@@ -124,7 +129,7 @@ const DashboardPage = () => {
     }
   ];
 
-  const totalActivityCount = leads.length + testRides.length + favorites.length;
+  const totalActivityCount = leads.length + testRides.length + favorites.length + reviews.length;
 
   return (
     <Container className="py-10 md:py-16">
@@ -373,6 +378,23 @@ const DashboardPage = () => {
                     {favorites.length}
                   </Badge>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('reviews')}
+                  className={`
+                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
+                    ${activeTab === 'reviews'
+                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
+                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
+                  `}
+                >
+                  <Star className="w-4 h-4" aria-hidden="true" />
+                  <span>My Reviews</span>
+                  <Badge variant={activeTab === 'reviews' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
+                    {reviews.length}
+                  </Badge>
+                </button>
               </div>
 
               {/* Active Tab Content */}
@@ -401,6 +423,17 @@ const DashboardPage = () => {
                   error={activityError}
                   onRetry={fetchUserActivity}
                   onExplore={() => navigate('/bikes')}
+                />
+              )}
+
+              {activeTab === 'reviews' && (
+                <ReviewActivityList
+                  reviews={reviews}
+                  isLoading={activityLoading}
+                  error={activityError}
+                  onRetry={fetchUserActivity}
+                  onExplore={() => navigate('/showrooms')}
+                  onRefresh={fetchUserActivity}
                 />
               )}
             </div>

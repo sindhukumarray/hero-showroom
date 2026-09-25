@@ -16,3 +16,8 @@ export { default as TestRideActivityList } from './dashboard/TestRideActivityLis
 export { default as OfferCard } from './offers/OfferCard';
 export { default as FavoriteButton } from './favorites/FavoriteButton';
 export { default as FavoritesActivityList } from './dashboard/FavoritesActivityList';
+export { default as RatingStars } from './reviews/RatingStars';
+export { default as ReviewCard } from './reviews/ReviewCard';
+export { default as ReviewForm } from './reviews/ReviewForm';
+export { default as ReviewList } from './reviews/ReviewList';
+export { default as ReviewActivityList } from './dashboard/ReviewActivityList';
