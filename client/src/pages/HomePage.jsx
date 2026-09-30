@@ -28,7 +28,8 @@ import {
   Input,
   Loading,
   ErrorState,
-  OfferCard
+  OfferCard,
+  CompareButton
 } from '../components';
 import {
   heroHeadline,
@@ -531,18 +532,21 @@ const HomePage = () => {
                 </div>
 
                 {/* Pricing & CTA */}
-                <div className="pt-4 border-t border-border/60 flex items-center justify-between">
+                <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-2">
                   <div>
                     <div className="font-display font-bold text-surface-50 text-base leading-none">
                       {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
                     </div>
                     <span className="text-[10px] text-muted-foreground">Ex-Showroom</span>
                   </div>
-                  <NavLink to={`/bikes/${bike.slug}`}>
-                    <Button variant="primary" size="sm" className="text-xs">
-                      Details
-                    </Button>
-                  </NavLink>
+                  <div className="flex items-center gap-2">
+                    <CompareButton bike={bike} size="sm" />
+                    <NavLink to={`/bikes/${bike.slug}`}>
+                      <Button variant="primary" size="sm" className="text-xs">
+                        Details
+                      </Button>
+                    </NavLink>
+                  </div>
                 </div>
               </Card>
             ))}

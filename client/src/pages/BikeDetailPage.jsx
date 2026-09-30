@@ -18,7 +18,7 @@ import {
   Send,
   Tag
 } from 'lucide-react';
-import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm, FavoriteButton } from '../components';
+import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm, FavoriteButton, CompareButton } from '../components';
 import { bikeService, offerService } from '../services';
 import { formatCurrency, formatPriceRange } from '../utils/formatters';
 import { useSEO } from '../hooks/useSEO';
@@ -213,6 +213,7 @@ const BikeDetailPage = () => {
               >
                 Enquire / Get Quote
               </Button>
+              <CompareButton bike={bike} size="sm" fullWidth />
               {bikeOffers.length > 0 && (
                 <Link to={`/offers?bike=${bike._id}`} className="block">
                   <Button

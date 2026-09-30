@@ -18,7 +18,8 @@ import {
   Input,
   Loading,
   ErrorState,
-  EmptyState
+  EmptyState,
+  CompareButton
 } from '../components';
 import { bikeService, brandService } from '../services';
 import { formatPriceRange } from '../utils/formatters';
@@ -422,18 +423,21 @@ const BikesPage = () => {
               </div>
 
               {/* Pricing & CTA */}
-              <div className="pt-4 border-t border-border/60 flex items-center justify-between">
+              <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-2">
                 <div>
                   <div className="font-display font-bold text-surface-50 text-base leading-tight">
                     {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
                   </div>
                   <span className="text-[10px] text-muted-foreground">Ex-Showroom Range</span>
                 </div>
-                <Link to={`/bikes/${bike.slug}`}>
-                  <Button variant="outline" size="sm" icon={ArrowRight} iconPosition="right" className="text-xs">
-                    View Specs
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-2">
+                  <CompareButton bike={bike} size="sm" />
+                  <Link to={`/bikes/${bike.slug}`}>
+                    <Button variant="outline" size="sm" icon={ArrowRight} iconPosition="right" className="text-xs">
+                      View Specs
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </Card>
           ))}

@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { CompareProvider } from './context/CompareContext';
 import { checkApiHealth } from './services/api';
 
 const App = () => {
@@ -33,7 +34,9 @@ const App = () => {
     <BrowserRouter>
       <AuthProvider>
         <NotificationProvider>
-          <AppRoutes />
+          <CompareProvider>
+            <AppRoutes />
+          </CompareProvider>
         </NotificationProvider>
 
         {/* Development-Only API Connectivity Status Indicator */}

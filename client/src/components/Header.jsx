@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import Container from './Container';
 import Button from './Button';
 import NotificationBell from './notifications/NotificationBell';
+import { useCompare } from '../context/CompareContext';
 
 /**
  * Refined Global Header Component
@@ -13,6 +14,7 @@ import NotificationBell from './notifications/NotificationBell';
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const { compareCount } = useCompare();
   const navigate = useNavigate();
 
   const navLinks = [
@@ -57,14 +59,19 @@ const Header = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                `px-4 py-2 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-1.5 ${
                   isActive
                     ? 'text-white bg-surface-800/90 border border-border shadow-sm'
                     : 'text-surface-200 hover:text-white hover:bg-surface-800/40'
                 }`
               }
             >
-              {item.label}
+              <span>{item.label}</span>
+              {item.to === '/compare' && compareCount > 0 && (
+                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-brand-red text-white leading-none">
+                  {compareCount}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -137,7 +144,12 @@ const Header = () => {
               }
             >
               <item.icon className="w-4 h-4 text-brand-red" aria-hidden="true" />
-              <span>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
+              {item.to === '/compare' && compareCount > 0 && (
+                <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-brand-red text-white">
+                  {compareCount}
+                </span>
+              )}
             </NavLink>
           ))}
 
