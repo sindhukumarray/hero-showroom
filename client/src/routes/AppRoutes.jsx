@@ -15,10 +15,19 @@ import NotFoundPage from '../pages/NotFoundPage';
 import OffersPage from '../pages/OffersPage';
 import OfferDetailPage from '../pages/OfferDetailPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
+import AdminLayout from '../layouts/AdminLayout';
 
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Protected Admin Routes with Dedicated Admin Chrome */}
+      <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+        <Route path="admin" element={<AdminLayout />}>
+          <Route index element={<AdminPage />} />
+        </Route>
+      </Route>
+
+      {/* Public & Customer Routes inside RootLayout */}
       <Route path="/" element={<RootLayout />}>
         {/* Public Routes */}
         <Route index element={<HomePage />} />
@@ -35,11 +44,6 @@ const AppRoutes = () => {
         {/* Protected Customer Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<DashboardPage />} />
-        </Route>
-
-        {/* Protected Admin Routes */}
-        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-          <Route path="admin" element={<AdminPage />} />
         </Route>
 
         {/* Catch-all 404 Route */}
