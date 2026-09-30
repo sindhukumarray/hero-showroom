@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Bike,
@@ -14,12 +14,14 @@ import {
   ArrowUpRight,
   Clock,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Bell
 } from 'lucide-react';
 import { pageTransition, getAccessibleVariant } from '../animations/variants';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useSEO } from '../hooks/useSEO';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import { leadService, testRideService, favoriteService, reviewService } from '../services';
 import Container from '../components/Container';
 import Badge from '../components/Badge';
@@ -31,6 +33,7 @@ import LeadActivityList from '../components/dashboard/LeadActivityList';
 import TestRideActivityList from '../components/dashboard/TestRideActivityList';
 import FavoritesActivityList from '../components/dashboard/FavoritesActivityList';
 import ReviewActivityList from '../components/dashboard/ReviewActivityList';
+import NotificationsActivityList from '../components/dashboard/NotificationsActivityList';
 
 /**
  * Customer Dashboard Page
@@ -38,7 +41,9 @@ import ReviewActivityList from '../components/dashboard/ReviewActivityList';
  */
 const DashboardPage = () => {
   const { user, isLoading } = useAuth();
+  const { notifications, unreadCount, fetchNotifications } = useNotifications();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const shouldReduceMotion = usePrefersReducedMotion();
   const accessiblePageTransition = getAccessibleVariant(pageTransition, shouldReduceMotion);
 
@@ -54,7 +59,15 @@ const DashboardPage = () => {
   const [reviews, setReviews] = useState([]);
   const [activityLoading, setActivityLoading] = useState(true);
   const [activityError, setActivityError] = useState(null);
-  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads' | 'favorites' | 'reviews'
+  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads' | 'favorites' | 'reviews' | 'notifications'
+
+  // Support direct deep link to specific tab (?tab=notifications)
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['testRides', 'leads', 'favorites', 'reviews', 'notifications'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   const fetchUserActivity = async () => {
     try {
@@ -70,6 +83,7 @@ const DashboardPage = () => {
       setTestRides(ridesRes?.data || []);
       setFavorites(favsRes?.data || []);
       setReviews(reviewsRes?.data || []);
+      fetchNotifications();
     } catch (err) {
       setActivityError(err?.message || 'Failed to load your recent activity. Please try again.');
     } finally {
@@ -129,7 +143,8 @@ const DashboardPage = () => {
     }
   ];
 
-  const totalActivityCount = leads.length + testRides.length + favorites.length + reviews.length;
+  const totalActivityCount =
+    leads.length + testRides.length + favorites.length + reviews.length + notifications.length;
 
   return (
     <Container className="py-10 md:py-16">
@@ -395,10 +410,33 @@ const DashboardPage = () => {
                     {reviews.length}
                   </Badge>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('notifications')}
+                  className={`
+                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
+                    ${activeTab === 'notifications'
+                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
+                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
+                  `}
+                >
+                  <Bell className="w-4 h-4" aria-hidden="true" />
+                  <span>Notifications</span>
+                  {unreadCount > 0 ? (
+                    <Badge variant="brand" size="sm" className="text-[10px] px-1.5 py-0 font-bold">
+                      {unreadCount}
+                    </Badge>
+                  ) : (
+                    <Badge variant={activeTab === 'notifications' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
+                      {notifications.length}
+                    </Badge>
+                  )}
+                </button>
               </div>
 
               {/* Active Tab Content */}
-              {activeTab === 'testRides' ? (
+              {activeTab === 'testRides' && (
                 <TestRideActivityList
                   testRides={testRides}
                   isLoading={activityLoading}
@@ -406,7 +444,9 @@ const DashboardPage = () => {
                   onRetry={fetchUserActivity}
                   onExplore={() => navigate('/bikes')}
                 />
-              ) : (
+              )}
+
+              {activeTab === 'leads' && (
                 <LeadActivityList
                   leads={leads}
                   isLoading={activityLoading}
@@ -434,6 +474,12 @@ const DashboardPage = () => {
                   onRetry={fetchUserActivity}
                   onExplore={() => navigate('/showrooms')}
                   onRefresh={fetchUserActivity}
+                />
+              )}
+
+              {activeTab === 'notifications' && (
+                <NotificationsActivityList
+                  onExplore={() => navigate('/bikes')}
                 />
               )}
             </div>

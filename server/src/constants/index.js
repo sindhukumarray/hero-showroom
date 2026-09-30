@@ -23,6 +23,11 @@ const {
   REVIEW_RATING
 } = require('./reviews');
 
+const {
+  NOTIFICATION_TYPES,
+  ALLOWED_NOTIFICATION_TYPES
+} = require('./notifications');
+
 module.exports = {
   ROLES,
   ALLOWED_ROLES,
@@ -38,5 +43,7 @@ module.exports = {
   ALLOWED_FAVORITE_TYPES,
   REVIEW_STATUS,
   ALLOWED_REVIEW_STATUS,
-  REVIEW_RATING
+  REVIEW_RATING,
+  NOTIFICATION_TYPES,
+  ALLOWED_NOTIFICATION_TYPES
 };

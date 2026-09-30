@@ -10,6 +10,7 @@ const testRideRoutes = require('./testRideRoutes');
 const offerRoutes = require('./offerRoutes');
 const favoriteRoutes = require('./favoriteRoutes');
 const reviewRoutes = require('./reviewRoutes');
+const notificationRoutes = require('./notificationRoutes');
 
 const router = express.Router();
 
@@ -25,5 +26,6 @@ router.use('/test-rides', testRideRoutes);
 router.use('/offers', offerRoutes);
 router.use('/favorites', favoriteRoutes);
 router.use('/reviews', reviewRoutes);
+router.use('/notifications', notificationRoutes);
 
 module.exports = router;

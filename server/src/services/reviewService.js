@@ -1,6 +1,8 @@
 const { Review, Showroom, User } = require('../models');
 const { isConnected } = require('../config/database');
 const { REVIEW_STATUS } = require('../constants/reviews');
+const notificationService = require('./notificationService');
+const { NOTIFICATION_TYPES } = require('../constants/notifications');
 
 /**
  * Asserts database availability.
@@ -86,6 +88,28 @@ const createReview = async (userId, payload) => {
   const populated = await Review.findById(review._id)
     .populate('user', USER_PUBLIC_PROJECTION)
     .populate('showroom', 'name slug address showroomType city isActive');
+
+  // 6. Safely create customer notification without interrupting review submission
+  try {
+    const showroomTitle = showroom ? showroom.name : 'Authorized Showroom';
+
+    await notificationService.createNotification({
+      userId: user._id,
+      type: NOTIFICATION_TYPES.REVIEW,
+      title: 'Showroom Review Submitted',
+      message: `Thank you for reviewing ${showroomTitle}. Your review is currently pending moderation.`,
+      relatedEntity: review._id,
+      relatedEntityType: 'Review',
+      metadata: {
+        reviewId: review._id,
+        showroomId: showroom._id,
+        showroomName: showroom.name,
+        rating
+      }
+    });
+  } catch (notifErr) {
+    // Non-blocking notification failure
+  }
 
   return populated;
 };

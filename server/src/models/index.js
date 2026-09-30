@@ -9,6 +9,7 @@ const TestRide = require('./TestRide');
 const Offer = require('./Offer');
 const Favorite = require('./Favorite');
 const Review = require('./Review');
+const Notification = require('./Notification');
 
 module.exports = {
   Brand,
@@ -21,5 +22,6 @@ module.exports = {
   TestRide,
   Offer,
   Favorite,
-  Review
+  Review,
+  Notification
 };

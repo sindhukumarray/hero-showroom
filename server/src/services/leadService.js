@@ -1,5 +1,7 @@
 const { Lead, User, Showroom, Bike, BikeVariant, Offer } = require('../models');
 const { isConnected } = require('../config/database');
+const notificationService = require('./notificationService');
+const { NOTIFICATION_TYPES } = require('../constants/notifications');
 
 /**
  * Asserts database availability.
@@ -134,6 +136,34 @@ const createLead = async ({
     .populate('bike', 'name slug category images priceRange isActive')
     .populate('variant', 'name trim exShowroomPrice isActive')
     .populate('offer', 'title slug offerType discountValue validUntil');
+
+  // 8. Safely create customer notification without interrupting lead flow
+  try {
+    const isOffer = Boolean(offer);
+    const bikeTitle = bike ? bike.name : 'Motorcycle';
+    const showroomTitle = showroom ? showroom.name : 'Authorized Showroom';
+
+    await notificationService.createNotification({
+      userId: user._id,
+      type: isOffer ? NOTIFICATION_TYPES.OFFER : NOTIFICATION_TYPES.LEAD,
+      title: isOffer ? 'Special Offer Enquiry Submitted' : 'Dealership Enquiry Submitted',
+      message: isOffer
+        ? `Your enquiry for special offer "${offer?.title || 'Offer'}" on ${bikeTitle} at ${showroomTitle} has been received.`
+        : `Your enquiry for ${bikeTitle} at ${showroomTitle} has been received.`,
+      relatedEntity: lead._id,
+      relatedEntityType: 'Lead',
+      metadata: {
+        leadId: lead._id,
+        showroomId: showroom._id,
+        showroomName: showroom.name,
+        bikeId: bike._id,
+        bikeName: bike.name,
+        offerId: offer ? offer._id : null
+      }
+    });
+  } catch (notifErr) {
+    // Non-blocking notification failure
+  }
 
   return populated;
 };

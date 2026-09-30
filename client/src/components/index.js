@@ -21,3 +21,8 @@ export { default as ReviewCard } from './reviews/ReviewCard';
 export { default as ReviewForm } from './reviews/ReviewForm';
 export { default as ReviewList } from './reviews/ReviewList';
 export { default as ReviewActivityList } from './dashboard/ReviewActivityList';
+export { default as NotificationBell } from './notifications/NotificationBell';
+export { default as NotificationPanel } from './notifications/NotificationPanel';
+export { default as NotificationList } from './notifications/NotificationList';
+export { default as NotificationItem } from './notifications/NotificationItem';
+export { default as NotificationsActivityList } from './dashboard/NotificationsActivityList';

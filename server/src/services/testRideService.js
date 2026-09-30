@@ -1,5 +1,7 @@
 const { TestRide, User, Showroom, Bike, BikeVariant } = require('../models');
 const { isConnected } = require('../config/database');
+const notificationService = require('./notificationService');
+const { NOTIFICATION_TYPES } = require('../constants/notifications');
 
 /**
  * Asserts database availability.
@@ -107,6 +109,33 @@ const createTestRide = async ({
     .populate('showroom', 'name slug address contact showroomType isActive')
     .populate('bike', 'name slug category images priceRange isActive')
     .populate('variant', 'name trim exShowroomPrice isActive');
+
+  // 7. Safely create customer notification without interrupting test ride flow
+  try {
+    const bikeTitle = bike ? bike.name : 'Motorcycle';
+    const showroomTitle = showroom ? showroom.name : 'Authorized Showroom';
+    const formattedDate = preferredDate ? new Date(preferredDate).toLocaleDateString('en-IN') : 'Requested Date';
+
+    await notificationService.createNotification({
+      userId: user._id,
+      type: NOTIFICATION_TYPES.TEST_RIDE,
+      title: 'Test Ride Booking Requested',
+      message: `Your test ride request for ${bikeTitle} at ${showroomTitle} on ${formattedDate} (${preferredTime}) has been placed.`,
+      relatedEntity: testRide._id,
+      relatedEntityType: 'TestRide',
+      metadata: {
+        testRideId: testRide._id,
+        showroomId: showroom._id,
+        showroomName: showroom.name,
+        bikeId: bike._id,
+        bikeName: bike.name,
+        preferredDate,
+        preferredTime
+      }
+    });
+  } catch (notifErr) {
+    // Non-blocking notification failure
+  }
 
   return populated;
 };

@@ -4,6 +4,7 @@ import { Menu, X, Compass, Bike, GitCompare, LogIn, UserPlus, LogOut, User as Us
 import { useAuth } from '../context/AuthContext';
 import Container from './Container';
 import Button from './Button';
+import NotificationBell from './notifications/NotificationBell';
 
 /**
  * Refined Global Header Component
@@ -72,6 +73,7 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-3">
           {isAuthenticated ? (
             <div className="flex items-center gap-2.5">
+              <NotificationBell />
               <NavLink to="/dashboard">
                 <Button variant="ghost" size="sm" icon={UserIcon} className="text-xs">
                   {user?.name?.split(' ')[0] || 'Dashboard'}
@@ -104,7 +106,8 @@ const Header = () => {
         </div>
 
         {/* Mobile Navigation Trigger */}
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center gap-2">
+          {isAuthenticated && <NotificationBell />}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
