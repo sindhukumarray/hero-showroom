@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
+  LayoutDashboard,
   Bike,
   Compass,
   GitCompare,
@@ -9,20 +10,29 @@ import {
   Star,
   User as UserIcon,
   Mail,
-  Phone,
   Calendar,
   ArrowUpRight,
   Clock,
   Sparkles,
   RefreshCw,
-  Bell
+  Bell,
+  Tag,
+  Calculator,
+  ShieldCheck,
+  AlertCircle
 } from 'lucide-react';
 import { pageTransition, getAccessibleVariant } from '../animations/variants';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useSEO } from '../hooks/useSEO';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
-import { leadService, testRideService, favoriteService, reviewService } from '../services';
+import {
+  leadService,
+  testRideService,
+  favoriteService,
+  reviewService,
+  offerService
+} from '../services';
 import Container from '../components/Container';
 import Badge from '../components/Badge';
 import Card from '../components/Card';
@@ -34,22 +44,39 @@ import TestRideActivityList from '../components/dashboard/TestRideActivityList';
 import FavoritesActivityList from '../components/dashboard/FavoritesActivityList';
 import ReviewActivityList from '../components/dashboard/ReviewActivityList';
 import NotificationsActivityList from '../components/dashboard/NotificationsActivityList';
+import DashboardSummaryCard from '../components/dashboard/DashboardSummaryCard';
+import OffersActivityList from '../components/dashboard/OffersActivityList';
+import ProfileSection from '../components/dashboard/ProfileSection';
+
+/**
+ * Valid dashboard section/tab identifiers
+ */
+const VALID_TABS = [
+  'overview',
+  'leads',
+  'testRides',
+  'offers',
+  'favorites',
+  'reviews',
+  'notifications',
+  'profile'
+];
 
 /**
  * Customer Dashboard Page
- * Provides authenticated profile summary, immediate catalogue quick actions, and active lead & test ride tracking.
+ * Central authenticated activity hub integrating Leads, Test Rides, Offers, Favorites, Reviews, Notifications, and Account Profile.
  */
 const DashboardPage = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading, logout } = useAuth();
   const { notifications, unreadCount, fetchNotifications } = useNotifications();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const shouldReduceMotion = usePrefersReducedMotion();
   const accessiblePageTransition = getAccessibleVariant(pageTransition, shouldReduceMotion);
 
   useSEO({
-    title: 'Customer Dashboard',
-    description: 'Access your profile summary, authorized dealerships, and flagship motorbike discovery tools.'
+    title: 'Customer Dashboard | Hero Showroom',
+    description: 'Manage your motorcycle discovery journey, view scheduled dealership test rides, track offers, and access authorized Hero hub services.'
   });
 
   // Recent Activity State
@@ -57,50 +84,79 @@ const DashboardPage = () => {
   const [testRides, setTestRides] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [activityLoading, setActivityLoading] = useState(true);
   const [activityError, setActivityError] = useState(null);
-  const [activeTab, setActiveTab] = useState('testRides'); // 'testRides' | 'leads' | 'favorites' | 'reviews' | 'notifications'
 
-  // Support direct deep link to specific tab (?tab=notifications)
+  // Active tab state initialized from query param if valid, defaulting to 'overview'
+  const tabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(
+    tabFromUrl && VALID_TABS.includes(tabFromUrl) ? tabFromUrl : 'overview'
+  );
+
+  // Synchronize activeTab when URL searchParams changes externally
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && ['testRides', 'leads', 'favorites', 'reviews', 'notifications'].includes(tabParam)) {
+    if (tabParam && VALID_TABS.includes(tabParam)) {
       setActiveTab(tabParam);
+    } else if (!tabParam && activeTab !== 'overview') {
+      setActiveTab('overview');
     }
   }, [searchParams]);
 
-  const fetchUserActivity = async () => {
+  /**
+   * Switch active tab and synchronize URL query parameter (?tab=...)
+   */
+  const handleTabChange = useCallback(
+    (tabId) => {
+      if (VALID_TABS.includes(tabId)) {
+        setActiveTab(tabId);
+        setSearchParams({ tab: tabId });
+      }
+    },
+    [setSearchParams]
+  );
+
+  /**
+   * Fetch customer activity across all integrated services
+   */
+  const fetchUserActivity = useCallback(async () => {
     try {
       setActivityLoading(true);
       setActivityError(null);
-      const [leadsRes, ridesRes, favsRes, reviewsRes] = await Promise.all([
+
+      const [leadsRes, ridesRes, favsRes, reviewsRes, offersRes] = await Promise.allSettled([
         leadService.getMyLeads(),
         testRideService.getMyTestRides(),
         favoriteService.getMyFavorites(),
-        reviewService.getMyReviews()
+        reviewService.getMyReviews(),
+        offerService.getOffers({ active: 'true' })
       ]);
-      setLeads(leadsRes?.data || []);
-      setTestRides(ridesRes?.data || []);
-      setFavorites(favsRes?.data || []);
-      setReviews(reviewsRes?.data || []);
+
+      if (leadsRes.status === 'fulfilled') setLeads(leadsRes.value?.data || []);
+      if (ridesRes.status === 'fulfilled') setTestRides(ridesRes.value?.data || []);
+      if (favsRes.status === 'fulfilled') setFavorites(favsRes.value?.data || []);
+      if (reviewsRes.status === 'fulfilled') setReviews(reviewsRes.value?.data || []);
+      if (offersRes.status === 'fulfilled') setOffers(offersRes.value?.data || []);
+
       fetchNotifications();
     } catch (err) {
       setActivityError(err?.message || 'Failed to load your recent activity. Please try again.');
     } finally {
       setActivityLoading(false);
     }
-  };
+  }, [fetchNotifications]);
 
   useEffect(() => {
     if (user) {
       fetchUserActivity();
     }
-  }, [user]);
+  }, [user, fetchUserActivity]);
 
-  if (isLoading) {
+  if (authLoading) {
     return (
       <Container className="py-24 flex items-center justify-center min-h-[50vh]">
-        <Loading text="Loading your dashboard..." size="lg" />
+        <Loading text="Authenticating customer session..." size="lg" />
       </Container>
     );
   }
@@ -108,16 +164,7 @@ const DashboardPage = () => {
   // Safe user presentation properties
   const displayName = user?.name || 'Rider';
   const firstName = displayName.split(' ')[0];
-  const userEmail = user?.email || 'Not provided';
-  const userPhone = user?.phone && user.phone.trim() ? user.phone.trim() : 'Not provided';
   const userRole = user?.role ? user.role.toUpperCase() : 'CUSTOMER';
-  const accountStatus = user?.isActive !== false ? 'Active' : 'Inactive';
-  const memberSince = user?.createdAt
-    ? new Date(user.createdAt).toLocaleDateString('en-IN', {
-        month: 'short',
-        year: 'numeric'
-      })
-    : 'Recent Member';
 
   const quickActions = [
     {
@@ -140,11 +187,83 @@ const DashboardPage = () => {
       href: '/compare',
       icon: GitCompare,
       badge: 'Spec Matrix'
+    },
+    {
+      title: 'Promotional Offers',
+      description: 'Review active festive discounts, exchange bonuses, and special finance rates.',
+      href: '/offers',
+      icon: Tag,
+      badge: 'Exclusive Deals'
     }
   ];
 
-  const totalActivityCount =
-    leads.length + testRides.length + favorites.length + reviews.length + notifications.length;
+  // Tab navigation configuration
+  const tabConfig = [
+    {
+      id: 'overview',
+      label: 'Overview',
+      icon: LayoutDashboard,
+      badge: null
+    },
+    {
+      id: 'leads',
+      label: 'My Leads',
+      icon: Mail,
+      badge: leads.length
+    },
+    {
+      id: 'testRides',
+      label: 'Test Rides',
+      icon: Calendar,
+      badge: testRides.length
+    },
+    {
+      id: 'offers',
+      label: 'Offers',
+      icon: Tag,
+      badge: offers.length
+    },
+    {
+      id: 'favorites',
+      label: 'Favorites',
+      icon: Heart,
+      badge: favorites.length
+    },
+    {
+      id: 'reviews',
+      label: 'My Reviews',
+      icon: Star,
+      badge: reviews.length
+    },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: Bell,
+      badge: unreadCount > 0 ? unreadCount : notifications.length,
+      badgeVariant: unreadCount > 0 ? 'brand' : 'outline'
+    },
+    {
+      id: 'profile',
+      label: 'Profile / Account',
+      icon: UserIcon,
+      badge: null
+    }
+  ];
+
+  // Most recent activity items for quick overview cards
+  const nextUpcomingRide = testRides.find(
+    (r) => r.status === 'confirmed' || r.status === 'requested'
+  ) || testRides[0];
+
+  const latestLead = leads[0];
+  const latestOffer = offers[0];
+
+  const hasAnyActivity =
+    leads.length > 0 ||
+    testRides.length > 0 ||
+    favorites.length > 0 ||
+    reviews.length > 0 ||
+    notifications.length > 0;
 
   return (
     <Container className="py-10 md:py-16">
@@ -153,338 +272,640 @@ const DashboardPage = () => {
         initial="initial"
         animate="animate"
         exit="exit"
-        className="space-y-10"
+        className="space-y-8"
       >
         {/* ============================================================== */}
-        {/* 1. Hero / Welcome Summary */}
+        {/* 1. Header / Welcome Section                                    */}
         {/* ============================================================== */}
-        <section aria-labelledby="welcome-heading" className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="brand" size="sm" className="font-semibold tracking-wider">
-              SHOWROOM ACCOUNT
-            </Badge>
-            <Badge variant="outline" size="sm" className="font-mono text-xs">
-              {userRole}
-            </Badge>
-          </div>
-
-          <h1 id="welcome-heading" className="typography-h1 text-surface-50 font-bold tracking-tight">
-            Welcome back, {firstName}
-          </h1>
-
-          <p className="typography-body text-surface-200 text-sm md:text-base max-w-2xl">
-            Manage your motorcycle discovery journey, view scheduled dealership test rides, and track price quotes across authorized hubs.
-          </p>
-        </section>
-
-        {/* ============================================================== */}
-        {/* 2. Account Profile & Summary Card */}
-        {/* ============================================================== */}
-        <section aria-labelledby="account-details-heading" className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 id="account-details-heading" className="typography-h3 text-surface-100">
-              Account Overview
-            </h2>
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium bg-emerald-950/40 border border-emerald-800/60 px-3 py-1 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>{accountStatus}</span>
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="brand" size="sm" className="font-semibold tracking-wider">
+                HERO SHOWROOM HUB
+              </Badge>
+              <Badge variant="outline" size="sm" className="font-mono text-xs">
+                {userRole}
+              </Badge>
             </div>
-          </div>
 
-          <Card variant="elevated" className="border-border/80">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Name field */}
-              <div className="space-y-1.5">
-                <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <UserIcon className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
-                  Full Name
-                </span>
-                <p className="font-sans font-semibold text-surface-100 text-sm md:text-base">
-                  {displayName}
-                </p>
-              </div>
+            <h1 className="typography-h1 text-surface-50 font-bold tracking-tight">
+              Welcome back, {firstName}
+            </h1>
 
-              {/* Email field */}
-              <div className="space-y-1.5">
-                <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
-                  Email Address
-                </span>
-                <p className="font-sans font-semibold text-surface-100 text-sm md:text-base truncate">
-                  {userEmail}
-                </p>
-              </div>
-
-              {/* Phone field */}
-              <div className="space-y-1.5">
-                <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
-                  Phone Number
-                </span>
-                <p className="font-sans font-semibold text-surface-100 text-sm md:text-base">
-                  {userPhone}
-                </p>
-              </div>
-
-              {/* Member Since field */}
-              <div className="space-y-1.5">
-                <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
-                  Member Since
-                </span>
-                <p className="font-sans font-semibold text-surface-100 text-sm md:text-base">
-                  {memberSince}
-                </p>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* ============================================================== */}
-        {/* 3. Quick Actions Grid */}
-        {/* ============================================================== */}
-        <section aria-labelledby="quick-actions-heading" className="space-y-4">
-          <div className="space-y-1">
-            <h2 id="quick-actions-heading" className="typography-h3 text-surface-100">
-              Quick Actions
-            </h2>
-            <p className="typography-small text-muted-foreground">
-              Direct access to live catalogue features and vehicle comparison.
+            <p className="typography-body text-surface-200 text-sm md:text-base max-w-2xl">
+              Your personal motorcycle discovery command center. Manage scheduled test rides, dealership enquiries, exclusive offers, and vehicle wishlists.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {quickActions.map((action) => {
-              const ActionIcon = action.icon;
-              return (
-                <Link
-                  key={action.title}
-                  to={action.href}
-                  className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red rounded-card"
-                >
-                  <Card
-                    variant="default"
-                    interactive
-                    className="h-full flex flex-col justify-between p-6 border-border/80 group-hover:border-brand-red/50 transition-colors"
-                  >
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="w-10 h-10 rounded-card bg-surface-800 border border-border flex items-center justify-center text-brand-red group-hover:bg-brand-red group-hover:text-white transition-colors">
-                          <ActionIcon className="w-5 h-5" aria-hidden="true" />
-                        </div>
-                        <Badge variant="outline" size="sm">
-                          {action.badge}
-                        </Badge>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <h3 className="typography-h3 text-surface-100 group-hover:text-brand-red transition-colors flex items-center gap-1.5">
-                          <span>{action.title}</span>
-                          <ArrowUpRight
-                            className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                            aria-hidden="true"
-                          />
-                        </h3>
-                        <p className="typography-small text-surface-200 text-xs leading-relaxed">
-                          {action.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 mt-4 border-t border-border/40 flex items-center text-xs font-semibold text-brand-red">
-                      <span>Launch</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 ml-1" aria-hidden="true" />
-                    </div>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ============================================================== */}
-        {/* 4. Real Activity Area: Test Rides & Leads */}
-        {/* ============================================================== */}
-        <section aria-labelledby="recent-activity-heading" className="space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="space-y-1">
-              <h2 id="recent-activity-heading" className="typography-h3 text-surface-100">
-                Recent Activity
-              </h2>
-              <p className="typography-small text-muted-foreground">
-                Scheduled test rides, showroom queries, and saved vehicle builds.
-              </p>
-            </div>
-
-            {/* Refresh Button */}
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
             <Button
               variant="outline"
               size="sm"
               icon={RefreshCw}
               onClick={fetchUserActivity}
               disabled={activityLoading}
-              className="self-start sm:self-auto text-xs"
+              className="text-xs"
+              aria-label="Refresh dashboard data"
             >
-              {activityLoading ? 'Updating...' : 'Refresh Activity'}
+              {activityLoading ? 'Updating...' : 'Refresh Hub'}
             </Button>
           </div>
+        </header>
 
-          {/* Activity State Container */}
-          {!activityLoading && totalActivityCount === 0 && !activityError ? (
-            <EmptyState
-              icon={Clock}
-              title="No activity yet"
-              message="You have not scheduled any test rides or saved bike models yet. Explore authorized showrooms and flagship motorcycles to start your journey."
-              actionLabel="Explore Motorcycles"
-              onAction={() => navigate('/bikes')}
-              className="border-dashed max-w-full py-12"
-            />
-          ) : (
-            <div className="space-y-4">
-              {/* Tab Navigation */}
-              <div className="flex items-center gap-2 border-b border-border/60 pb-1">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('testRides')}
-                  className={`
-                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
-                    ${activeTab === 'testRides'
-                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
-                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
-                  `}
-                >
-                  <Calendar className="w-4 h-4" aria-hidden="true" />
-                  <span>Test Rides</span>
-                  <Badge variant={activeTab === 'testRides' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
-                    {testRides.length}
+        {/* Global Activity Error Alert */}
+        {activityError && (
+          <div
+            role="alert"
+            className="p-4 rounded-xl bg-rose-950/40 border border-rose-800/80 flex items-center justify-between gap-4 text-xs text-rose-200"
+          >
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" aria-hidden="true" />
+              <span>{activityError}</span>
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={fetchUserActivity}
+              className="shrink-0 text-xs"
+            >
+              Retry
+            </Button>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* 2. Navigation Tabs (8 distinct sections)                       */}
+        {/* ============================================================== */}
+        <nav
+          role="tablist"
+          aria-label="Customer dashboard sections"
+          className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none border-b border-border/60 select-none"
+        >
+          {tabConfig.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-controls={`tabpanel-${tab.id}`}
+                aria-selected={isActive}
+                tabIndex={isActive ? 0 : -1}
+                type="button"
+                onClick={() => handleTabChange(tab.id)}
+                className={`
+                  px-3.5 py-2.5 text-xs md:text-sm font-semibold rounded-t-lg transition-all flex items-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red
+                  ${isActive
+                    ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red shadow-xs font-bold'
+                    : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900/60'}
+                `}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-brand-red' : 'text-muted-foreground'}`} aria-hidden="true" />
+                <span>{tab.label}</span>
+                {tab.badge !== null && tab.badge !== undefined && (
+                  <Badge
+                    variant={tab.badgeVariant || (isActive ? 'brand' : 'outline')}
+                    size="sm"
+                    className="text-[10px] px-1.5 py-0 min-w-[20px] text-center"
+                  >
+                    {tab.badge}
                   </Badge>
-                </button>
+                )}
+              </button>
+            );
+          })}
+        </nav>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('leads')}
-                  className={`
-                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
-                    ${activeTab === 'leads'
-                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
-                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
-                  `}
-                >
-                  <Mail className="w-4 h-4" aria-hidden="true" />
-                  <span>Dealership Enquiries</span>
-                  <Badge variant={activeTab === 'leads' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
-                    {leads.length}
-                  </Badge>
-                </button>
+        {/* ============================================================== */}
+        {/* 3. Tab Panel Contents                                          */}
+        {/* ============================================================== */}
+        <main
+          id={`tabpanel-${activeTab}`}
+          role="tabpanel"
+          aria-labelledby={`tab-${activeTab}`}
+          className="space-y-8"
+        >
+          {/* ============================================================ */}
+          {/* TAB 1: OVERVIEW                                              */}
+          {/* ============================================================ */}
+          {activeTab === 'overview' && (
+            <div className="space-y-10">
+              {/* Summary Cards Grid */}
+              <section aria-labelledby="summary-cards-heading" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 id="summary-cards-heading" className="typography-h3 text-surface-100">
+                    Activity Overview
+                  </h2>
+                  <span className="text-xs text-muted-foreground">
+                    Click any card to inspect full records
+                  </span>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('favorites')}
-                  className={`
-                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
-                    ${activeTab === 'favorites'
-                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
-                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
-                  `}
-                >
-                  <Heart className="w-4 h-4" aria-hidden="true" />
-                  <span>Saved Items</span>
-                  <Badge variant={activeTab === 'favorites' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
-                    {favorites.length}
-                  </Badge>
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                  {/* Card 1: My Leads */}
+                  <DashboardSummaryCard
+                    title="My Leads"
+                    count={leads.length}
+                    subtitle="Dealership quotes"
+                    icon={Mail}
+                    badge={leads.length > 0 ? `${leads.length} Active` : '0 Active'}
+                    badgeVariant="info"
+                    isLoading={activityLoading}
+                    onClick={() => handleTabChange('leads')}
+                  />
 
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('reviews')}
-                  className={`
-                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
-                    ${activeTab === 'reviews'
-                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
-                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
-                  `}
-                >
-                  <Star className="w-4 h-4" aria-hidden="true" />
-                  <span>My Reviews</span>
-                  <Badge variant={activeTab === 'reviews' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
-                    {reviews.length}
-                  </Badge>
-                </button>
+                  {/* Card 2: Test Rides */}
+                  <DashboardSummaryCard
+                    title="Test Rides"
+                    count={testRides.length}
+                    subtitle="Booked appointments"
+                    icon={Calendar}
+                    badge={testRides.length > 0 ? `${testRides.length} Scheduled` : '0 Booked'}
+                    badgeVariant="brand"
+                    isLoading={activityLoading}
+                    onClick={() => handleTabChange('testRides')}
+                  />
 
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('notifications')}
-                  className={`
-                    px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors flex items-center gap-2
-                    ${activeTab === 'notifications'
-                      ? 'bg-surface-800 text-brand-red border-b-2 border-brand-red'
-                      : 'text-muted-foreground hover:text-surface-100 hover:bg-surface-900'}
-                  `}
-                >
-                  <Bell className="w-4 h-4" aria-hidden="true" />
-                  <span>Notifications</span>
-                  {unreadCount > 0 ? (
-                    <Badge variant="brand" size="sm" className="text-[10px] px-1.5 py-0 font-bold">
-                      {unreadCount}
-                    </Badge>
-                  ) : (
-                    <Badge variant={activeTab === 'notifications' ? 'brand' : 'outline'} size="sm" className="text-[10px] px-1.5 py-0">
-                      {notifications.length}
-                    </Badge>
-                  )}
-                </button>
-              </div>
+                  {/* Card 3: Offers */}
+                  <DashboardSummaryCard
+                    title="Live Offers"
+                    count={offers.length}
+                    subtitle="Promotions & savings"
+                    icon={Tag}
+                    badge={offers.length > 0 ? `${offers.length} Live` : 'No Offers'}
+                    badgeVariant="warning"
+                    isLoading={activityLoading}
+                    onClick={() => handleTabChange('offers')}
+                  />
 
-              {/* Active Tab Content */}
-              {activeTab === 'testRides' && (
-                <TestRideActivityList
-                  testRides={testRides}
-                  isLoading={activityLoading}
-                  error={activityError}
-                  onRetry={fetchUserActivity}
-                  onExplore={() => navigate('/bikes')}
+                  {/* Card 4: Favorites */}
+                  <DashboardSummaryCard
+                    title="Wishlist"
+                    count={favorites.length}
+                    subtitle="Bikes & showrooms"
+                    icon={Heart}
+                    badge={favorites.length > 0 ? `${favorites.length} Saved` : '0 Saved'}
+                    badgeVariant="brand"
+                    isLoading={activityLoading}
+                    onClick={() => handleTabChange('favorites')}
+                  />
+
+                  {/* Card 5: Reviews */}
+                  <DashboardSummaryCard
+                    title="My Reviews"
+                    count={reviews.length}
+                    subtitle="Showroom feedback"
+                    icon={Star}
+                    badge={reviews.length > 0 ? `${reviews.length} Given` : '0 Given'}
+                    badgeVariant="outline"
+                    isLoading={activityLoading}
+                    onClick={() => handleTabChange('reviews')}
+                  />
+
+                  {/* Card 6: Notifications */}
+                  <DashboardSummaryCard
+                    title="Notifications"
+                    count={unreadCount > 0 ? unreadCount : notifications.length}
+                    subtitle={unreadCount > 0 ? `${unreadCount} Unread alerts` : 'All read'}
+                    icon={Bell}
+                    badge={unreadCount > 0 ? `${unreadCount} Unread` : 'Up to date'}
+                    badgeVariant={unreadCount > 0 ? 'brand' : 'outline'}
+                    isLoading={activityLoading}
+                    onClick={() => handleTabChange('notifications')}
+                  />
+                </div>
+              </section>
+
+              {/* Activity Highlights / Next Actions */}
+              <section aria-labelledby="highlights-heading" className="space-y-4">
+                <h2 id="highlights-heading" className="typography-h3 text-surface-100">
+                  Key Activity Highlights
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {/* Next Test Ride Preview */}
+                  <Card variant="elevated" className="p-5 border-border/80 flex flex-col justify-between space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
+                          Upcoming Test Ride
+                        </span>
+                        {nextUpcomingRide && (
+                          <Badge variant="brand" size="sm" className="capitalize text-[10px]">
+                            {nextUpcomingRide.status || 'Requested'}
+                          </Badge>
+                        )}
+                      </div>
+
+                      {nextUpcomingRide ? (
+                        <div className="space-y-1.5">
+                          <h4 className="typography-h3 text-surface-100 font-bold">
+                            {nextUpcomingRide.bike?.name || 'Motorcycle Model'}
+                          </h4>
+                          <p className="text-xs text-surface-200">
+                            Showroom: {nextUpcomingRide.showroom?.name || 'Authorized Dealership'}
+                          </p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1.5 pt-1">
+                            <Clock className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
+                            <span>
+                              {nextUpcomingRide.preferredDate
+                                ? new Date(nextUpcomingRide.preferredDate).toLocaleDateString('en-IN', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric'
+                                  })
+                                : 'Date pending'}
+                              {nextUpcomingRide.preferredTime && ` at ${nextUpcomingRide.preferredTime} hrs`}
+                            </span>
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="py-3 text-xs text-muted-foreground">
+                          You do not have any pending or confirmed test ride bookings.
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-border/40">
+                      {nextUpcomingRide ? (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          fullWidth
+                          onClick={() => handleTabChange('testRides')}
+                          className="text-xs"
+                        >
+                          View Test Rides &rarr;
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          fullWidth
+                          onClick={() => navigate('/bikes')}
+                          className="text-xs"
+                        >
+                          Book a Test Ride
+                        </Button>
+                      )}
+                    </div>
+                  </Card>
+
+                  {/* Latest Lead Enquiry Preview */}
+                  <Card variant="elevated" className="p-5 border-border/80 flex flex-col justify-between space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground flex items-center gap-1.5">
+                          <Mail className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
+                          Recent Enquiry
+                        </span>
+                        {latestLead && (
+                          <Badge variant="info" size="sm" className="capitalize text-[10px]">
+                            {latestLead.status || 'New'}
+                          </Badge>
+                        )}
+                      </div>
+
+                      {latestLead ? (
+                        <div className="space-y-1.5">
+                          <h4 className="typography-h3 text-surface-100 font-bold">
+                            {latestLead.bike?.name || 'Selected Motorcycle'}
+                          </h4>
+                          <p className="text-xs text-surface-200">
+                            Dealership: {latestLead.showroom?.name || 'Authorized Hub'}
+                          </p>
+                          <p className="text-xs text-muted-foreground pt-1">
+                            Submitted on{' '}
+                            {latestLead.createdAt
+                              ? new Date(latestLead.createdAt).toLocaleDateString('en-IN', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric'
+                                })
+                              : 'Recently'}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="py-3 text-xs text-muted-foreground">
+                          No dealership queries or price quotes requested yet.
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-border/40">
+                      {latestLead ? (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          fullWidth
+                          onClick={() => handleTabChange('leads')}
+                          className="text-xs"
+                        >
+                          View My Enquiries &rarr;
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          fullWidth
+                          onClick={() => navigate('/bikes')}
+                          className="text-xs"
+                        >
+                          Request Price Quote
+                        </Button>
+                      )}
+                    </div>
+                  </Card>
+
+                  {/* Promotional Offer Highlight */}
+                  <Card variant="elevated" className="p-5 border-border/80 flex flex-col justify-between space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-brand-red" aria-hidden="true" />
+                          Featured Campaign
+                        </span>
+                        <Badge variant="brand" size="sm" className="text-[10px]">
+                          Live Offer
+                        </Badge>
+                      </div>
+
+                      {latestOffer ? (
+                        <div className="space-y-1.5">
+                          <h4 className="typography-h3 text-surface-100 font-bold line-clamp-1">
+                            {latestOffer.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground line-clamp-2">
+                            {latestOffer.description}
+                          </p>
+                          {latestOffer.discountValue > 0 && (
+                            <p className="text-sm font-bold text-brand-red pt-1">
+                              Benefits up to ₹{Number(latestOffer.discountValue).toLocaleString('en-IN')}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="py-3 text-xs text-muted-foreground">
+                          Explore authorized dealer campaigns and festival benefits.
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-border/40">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        fullWidth
+                        onClick={() => handleTabChange('offers')}
+                        className="text-xs"
+                      >
+                        Explore All Offers &rarr;
+                      </Button>
+                    </div>
+                  </Card>
+                </div>
+              </section>
+
+              {/* Zero Activity Full Empty State (if completely empty) */}
+              {!activityLoading && !hasAnyActivity && !activityError && (
+                <EmptyState
+                  icon={Clock}
+                  title="Your motorcycle activity hub is ready"
+                  message="Schedule test rides at authorized Hero dealerships, save your favorite motorcycle builds to wishlist, or connect with showrooms for tailored price quotes."
+                  actionLabel="Explore Flagship Motorcycles"
+                  onAction={() => navigate('/bikes')}
+                  className="border-dashed max-w-full py-10"
                 />
               )}
 
-              {activeTab === 'leads' && (
-                <LeadActivityList
-                  leads={leads}
-                  isLoading={activityLoading}
-                  error={activityError}
-                  onRetry={fetchUserActivity}
-                  onExplore={() => navigate('/bikes')}
-                />
-              )}
+              {/* Quick Actions Grid */}
+              <section aria-labelledby="quick-actions-heading" className="space-y-4">
+                <div className="space-y-1">
+                  <h2 id="quick-actions-heading" className="typography-h3 text-surface-100">
+                    Quick Discovery Tools
+                  </h2>
+                  <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                    Direct access to catalogue exploration, dealership locator, and side-by-side vehicle comparison.
+                  </p>
+                </div>
 
-              {activeTab === 'favorites' && (
-                <FavoritesActivityList
-                  favorites={favorites}
-                  isLoading={activityLoading}
-                  error={activityError}
-                  onRetry={fetchUserActivity}
-                  onExplore={() => navigate('/bikes')}
-                />
-              )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {quickActions.map((action) => {
+                    const ActionIcon = action.icon;
+                    return (
+                      <Link
+                        key={action.title}
+                        to={action.href}
+                        className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red rounded-card"
+                      >
+                        <Card
+                          variant="default"
+                          interactive
+                          className="h-full flex flex-col justify-between p-5 border-border/80 group-hover:border-brand-red/50 transition-colors"
+                        >
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="w-9 h-9 rounded-card bg-surface-800 border border-border flex items-center justify-center text-brand-red group-hover:bg-brand-red group-hover:text-white transition-colors">
+                                <ActionIcon className="w-4 h-4" aria-hidden="true" />
+                              </div>
+                              <Badge variant="outline" size="sm" className="text-[10px]">
+                                {action.badge}
+                              </Badge>
+                            </div>
 
-              {activeTab === 'reviews' && (
-                <ReviewActivityList
-                  reviews={reviews}
-                  isLoading={activityLoading}
-                  error={activityError}
-                  onRetry={fetchUserActivity}
-                  onExplore={() => navigate('/showrooms')}
-                  onRefresh={fetchUserActivity}
-                />
-              )}
+                            <div className="space-y-1">
+                              <h3 className="typography-body font-semibold text-surface-100 group-hover:text-brand-red transition-colors flex items-center gap-1.5">
+                                <span>{action.title}</span>
+                                <ArrowUpRight
+                                  className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                  aria-hidden="true"
+                                />
+                              </h3>
+                              <p className="typography-small text-surface-200 text-xs leading-relaxed">
+                                {action.description}
+                              </p>
+                            </div>
+                          </div>
 
-              {activeTab === 'notifications' && (
-                <NotificationsActivityList
-                  onExplore={() => navigate('/bikes')}
-                />
-              )}
+                          <div className="pt-3 mt-3 border-t border-border/40 flex items-center text-xs font-semibold text-brand-red">
+                            <span>Launch Tool</span>
+                            <ArrowUpRight className="w-3 h-3 ml-1" aria-hidden="true" />
+                          </div>
+                        </Card>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
             </div>
           )}
-        </section>
+
+          {/* ============================================================ */}
+          {/* TAB 2: MY LEADS                                              */}
+          {/* ============================================================ */}
+          {activeTab === 'leads' && (
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="typography-h3 text-surface-100">
+                  Dealership Enquiries & Quotes
+                </h2>
+                <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                  Track your vehicle price enquiries, finance requests, and dealer correspondence.
+                </p>
+              </div>
+
+              <LeadActivityList
+                leads={leads}
+                isLoading={activityLoading}
+                error={activityError}
+                onRetry={fetchUserActivity}
+                onExplore={() => navigate('/bikes')}
+              />
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 3: TEST RIDES                                            */}
+          {/* ============================================================ */}
+          {activeTab === 'testRides' && (
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="typography-h3 text-surface-100">
+                  Test Ride Appointments
+                </h2>
+                <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                  Scheduled showroom visits, time slots, and motorcycle test ride bookings.
+                </p>
+              </div>
+
+              <TestRideActivityList
+                testRides={testRides}
+                isLoading={activityLoading}
+                error={activityError}
+                onRetry={fetchUserActivity}
+                onExplore={() => navigate('/bikes')}
+              />
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 4: OFFERS                                                */}
+          {/* ============================================================ */}
+          {activeTab === 'offers' && (
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="typography-h3 text-surface-100">
+                  Promotional Offers & Schemes
+                </h2>
+                <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                  Live dealer bonuses, cashback opportunities, and model-specific benefits.
+                </p>
+              </div>
+
+              <OffersActivityList
+                offers={offers}
+                isLoading={activityLoading}
+                error={activityError}
+                onRetry={fetchUserActivity}
+                onExplore={() => navigate('/bikes')}
+              />
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 5: FAVORITES                                             */}
+          {/* ============================================================ */}
+          {activeTab === 'favorites' && (
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="typography-h3 text-surface-100">
+                  Saved Wishlist
+                </h2>
+                <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                  Motorcycles and authorized dealerships you have bookmarked for quick access.
+                </p>
+              </div>
+
+              <FavoritesActivityList
+                favorites={favorites}
+                isLoading={activityLoading}
+                error={activityError}
+                onRetry={fetchUserActivity}
+                onExplore={() => navigate('/bikes')}
+                onRemoved={fetchUserActivity}
+              />
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 6: REVIEWS                                               */}
+          {/* ============================================================ */}
+          {activeTab === 'reviews' && (
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="typography-h3 text-surface-100">
+                  My Showroom Reviews
+                </h2>
+                <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                  Ratings and dealership experience feedback submitted by your account.
+                </p>
+              </div>
+
+              <ReviewActivityList
+                reviews={reviews}
+                isLoading={activityLoading}
+                error={activityError}
+                onRetry={fetchUserActivity}
+                onExplore={() => navigate('/showrooms')}
+                onRefresh={fetchUserActivity}
+              />
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 7: NOTIFICATIONS                                         */}
+          {/* ============================================================ */}
+          {activeTab === 'notifications' && (
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="typography-h3 text-surface-100">
+                  Customer Notifications & Alerts
+                </h2>
+                <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                  Real-time status updates on test ride appointments, enquiry responses, and alerts.
+                </p>
+              </div>
+
+              <NotificationsActivityList
+                onExplore={() => navigate('/bikes')}
+              />
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* TAB 8: PROFILE / ACCOUNT                                     */}
+          {/* ============================================================ */}
+          {activeTab === 'profile' && (
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="typography-h3 text-surface-100">
+                  Account Credentials & Profile
+                </h2>
+                <p className="typography-small text-muted-foreground text-xs md:text-sm">
+                  Your registered account identity, security status, and personal details.
+                </p>
+              </div>
+
+              <ProfileSection
+                user={user}
+                onLogout={logout}
+                onExplore={() => navigate('/bikes')}
+              />
+            </div>
+          )}
+        </main>
       </motion.div>
     </Container>
   );

@@ -26,6 +26,9 @@ export { default as NotificationPanel } from './notifications/NotificationPanel'
 export { default as NotificationList } from './notifications/NotificationList';
 export { default as NotificationItem } from './notifications/NotificationItem';
 export { default as NotificationsActivityList } from './dashboard/NotificationsActivityList';
+export { default as DashboardSummaryCard } from './dashboard/DashboardSummaryCard';
+export { default as OffersActivityList } from './dashboard/OffersActivityList';
+export { default as ProfileSection } from './dashboard/ProfileSection';
 export { default as CompareButton } from './compare/CompareButton';
 export { default as CompareBikeItem } from './compare/CompareBikeItem';
 export { default as CompareBar } from './compare/CompareBar';

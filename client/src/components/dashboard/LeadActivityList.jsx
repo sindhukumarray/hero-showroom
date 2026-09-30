@@ -108,6 +108,11 @@ const LeadActivityList = ({
                     {lead.variant.name}
                   </span>
                 )}
+                {lead._id && (
+                  <span className="text-[11px] font-mono text-muted-foreground ml-auto sm:ml-0 bg-surface-800/60 px-2 py-0.5 rounded">
+                    Ref: #{lead._id.slice(-6).toUpperCase()}
+                  </span>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -135,11 +140,19 @@ const LeadActivityList = ({
               )}
             </div>
 
-            <div className="sm:text-right shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-border/40 flex sm:flex-col items-center sm:items-end justify-between gap-1 text-xs text-muted-foreground">
+            <div className="sm:text-right shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-border/40 flex sm:flex-col items-center sm:items-end justify-between gap-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>{formattedDate}</span>
               </span>
+              {lead.bike?.slug && (
+                <a
+                  href={`/bikes/${lead.bike.slug}`}
+                  className="text-xs text-brand-red hover:underline font-medium inline-flex items-center gap-1"
+                >
+                  View Model &rarr;
+                </a>
+              )}
             </div>
           </Card>
         );

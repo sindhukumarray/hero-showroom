@@ -97,6 +97,11 @@ const TestRideActivityList = ({
                     {ride.variant.name}
                   </span>
                 )}
+                {ride._id && (
+                  <span className="text-[11px] font-mono text-muted-foreground ml-auto sm:ml-0 bg-surface-800/60 px-2 py-0.5 rounded">
+                    Ref: #{ride._id.slice(-6).toUpperCase()}
+                  </span>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -127,6 +132,14 @@ const TestRideActivityList = ({
                 <Clock className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>{ride.preferredTime ? `${ride.preferredTime} hrs` : 'Time slot pending'}</span>
               </div>
+              {ride.bike?.slug && (
+                <a
+                  href={`/bikes/${ride.bike.slug}`}
+                  className="text-xs text-brand-red hover:underline font-medium inline-flex items-center gap-1 pt-1"
+                >
+                  View Model &rarr;
+                </a>
+              )}
             </div>
           </Card>
         );
