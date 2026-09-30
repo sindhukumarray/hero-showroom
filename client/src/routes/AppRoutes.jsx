@@ -13,6 +13,7 @@ import DashboardPage from '../pages/DashboardPage';
 import AdminPage from '../pages/AdminPage';
 import AdminBrandsPage from '../pages/admin/AdminBrandsPage';
 import AdminCitiesPage from '../pages/admin/AdminCitiesPage';
+import AdminShowroomsPage from '../pages/admin/AdminShowroomsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import OffersPage from '../pages/OffersPage';
 import OfferDetailPage from '../pages/OfferDetailPage';
@@ -28,6 +29,7 @@ const AppRoutes = () => {
           <Route index element={<AdminPage />} />
           <Route path="brands" element={<AdminBrandsPage />} />
           <Route path="cities" element={<AdminCitiesPage />} />
+          <Route path="showrooms" element={<AdminShowroomsPage />} />
         </Route>
       </Route>
 

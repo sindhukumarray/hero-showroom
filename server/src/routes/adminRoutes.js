@@ -4,6 +4,7 @@ const { ROLES } = require('../constants/roles');
 const adminController = require('../controllers/adminController');
 const adminBrandController = require('../controllers/adminBrandController');
 const adminCityController = require('../controllers/adminCityController');
+const adminShowroomController = require('../controllers/adminShowroomController');
 const {
   validateBrandQuery,
   validateBrandId,
@@ -18,6 +19,13 @@ const {
   validateUpdateCity,
   validateCityStatus
 } = require('../validators/cityValidator');
+const {
+  validateAdminShowroomQuery,
+  validateShowroomId,
+  validateCreateShowroom,
+  validateUpdateShowroom,
+  validateShowroomStatus
+} = require('../validators/showroomValidator');
 
 const router = express.Router();
 
@@ -61,4 +69,18 @@ router.put('/cities/:id', validateCityId, validateUpdateCity, adminCityControlle
 router.patch('/cities/:id/status', validateCityId, validateCityStatus, adminCityController.updateCityStatus);
 router.delete('/cities/:id', validateCityId, adminCityController.deleteCity);
 
+/**
+ * ============================================================
+ * 4. Admin Showroom Management Endpoints
+ * Base: /api/admin/showrooms
+ * ============================================================
+ */
+router.get('/showrooms', validateAdminShowroomQuery, adminShowroomController.getShowrooms);
+router.post('/showrooms', validateCreateShowroom, adminShowroomController.createShowroom);
+router.get('/showrooms/:id', validateShowroomId, adminShowroomController.getShowroomById);
+router.put('/showrooms/:id', validateShowroomId, validateUpdateShowroom, adminShowroomController.updateShowroom);
+router.patch('/showrooms/:id/status', validateShowroomId, validateShowroomStatus, adminShowroomController.updateShowroomStatus);
+router.delete('/showrooms/:id', validateShowroomId, adminShowroomController.deleteShowroom);
+
 module.exports = router;
+

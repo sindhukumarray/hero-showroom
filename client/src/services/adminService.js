@@ -139,6 +139,68 @@ export const deleteCity = async (id) => {
   return await api.delete(`/admin/cities/${id}`);
 };
 
+/**
+ * ============================================================
+ * Admin Showrooms Management
+ * ============================================================
+ */
+
+/**
+ * Retrieve paginated showrooms for administration
+ * @param {object} [params] Query filters: { page, limit, search, brand, city, showroomType, isActive, isVerified, sort }
+ * @returns {Promise<object>} { success, data, meta }
+ */
+export const getShowrooms = async (params = {}) => {
+  return await api.get('/admin/showrooms', { params });
+};
+
+/**
+ * Retrieve single showroom by MongoDB ID
+ * @param {string} id - 24-character hex ObjectId
+ * @returns {Promise<object>} { success, data }
+ */
+export const getShowroom = async (id) => {
+  return await api.get(`/admin/showrooms/${id}`);
+};
+
+/**
+ * Create a new showroom
+ * @param {object} payload
+ * @returns {Promise<object>} { success, data }
+ */
+export const createShowroom = async (payload) => {
+  return await api.post('/admin/showrooms', payload);
+};
+
+/**
+ * Update an existing showroom
+ * @param {string} id
+ * @param {object} payload
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateShowroom = async (id, payload) => {
+  return await api.put(`/admin/showrooms/${id}`, payload);
+};
+
+/**
+ * Toggle or set showroom active status specifically
+ * @param {string} id
+ * @param {boolean} isActive
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateShowroomStatus = async (id, isActive) => {
+  return await api.patch(`/admin/showrooms/${id}/status`, { isActive });
+};
+
+/**
+ * Delete or safe-deactivate a showroom
+ * @param {string} id
+ * @returns {Promise<object>} { success, message, data: { deleted, deactivated, message, showroom } }
+ */
+export const deleteShowroom = async (id) => {
+  return await api.delete(`/admin/showrooms/${id}`);
+};
+
 export default {
   getAdminStatus,
   getBrands,
@@ -152,5 +214,12 @@ export default {
   createCity,
   updateCity,
   updateCityStatus,
-  deleteCity
+  deleteCity,
+  getShowrooms,
+  getShowroom,
+  createShowroom,
+  updateShowroom,
+  updateShowroomStatus,
+  deleteShowroom
 };
+
