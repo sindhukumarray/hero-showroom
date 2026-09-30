@@ -11,6 +11,8 @@ import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import DashboardPage from '../pages/DashboardPage';
 import AdminPage from '../pages/AdminPage';
+import AdminBrandsPage from '../pages/admin/AdminBrandsPage';
+import AdminCitiesPage from '../pages/admin/AdminCitiesPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import OffersPage from '../pages/OffersPage';
 import OfferDetailPage from '../pages/OfferDetailPage';
@@ -24,6 +26,8 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
         <Route path="admin" element={<AdminLayout />}>
           <Route index element={<AdminPage />} />
+          <Route path="brands" element={<AdminBrandsPage />} />
+          <Route path="cities" element={<AdminCitiesPage />} />
         </Route>
       </Route>
 

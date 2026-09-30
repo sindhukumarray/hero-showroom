@@ -23,12 +23,12 @@ import Button from '../components/Button';
  */
 const ADMIN_NAV_ITEMS = [
   { label: 'Overview', href: '/admin', icon: LayoutDashboard, exact: true },
-  { label: 'Brands', href: '/admin?section=brands', icon: Layers, step: 'Phase 4' },
-  { label: 'Cities', href: '/admin?section=cities', icon: MapPin, step: 'Phase 4' },
-  { label: 'Showrooms', href: '/admin?section=showrooms', icon: Building2, step: 'Phase 4' },
-  { label: 'Bikes', href: '/admin?section=bikes', icon: Bike, step: 'Phase 4' },
-  { label: 'Leads', href: '/admin?section=leads', icon: Mail, step: 'Phase 4' },
-  { label: 'Reviews', href: '/admin?section=reviews', icon: Star, step: 'Phase 4' }
+  { label: 'Brands', href: '/admin/brands', icon: Layers, exact: true },
+  { label: 'Cities', href: '/admin/cities', icon: MapPin, exact: true },
+  { label: 'Showrooms', href: '/admin/showrooms', icon: Building2, step: 'Step 3' },
+  { label: 'Bikes', href: '/admin/bikes', icon: Bike, step: 'Step 4' },
+  { label: 'Leads', href: '/admin/leads', icon: Mail, step: 'Step 5' },
+  { label: 'Reviews', href: '/admin/reviews', icon: Star, step: 'Step 6' }
 ];
 
 /**
@@ -106,8 +106,8 @@ const AdminLayout = () => {
             {ADMIN_NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = item.exact
-                ? location.pathname === item.href && !location.search
-                : location.pathname + location.search === item.href;
+                ? location.pathname === item.href
+                : location.pathname.startsWith(item.href);
 
               return (
                 <Link
