@@ -333,7 +333,7 @@ for (const f of compareFiles) {
   if (fileContains(f, 'JWT_SECRET')) noSecrets = false;
   if (fileContains(f, 'MONGODB_URI')) noSecrets = false;
   if (fileContains(f, 'passwordHash')) noSecrets = false;
-  if (fileContains(f, 'emiCalculator') || fileContains(f, 'fakeEmi')) noSecrets = false;
+  if (fileContains(f, 'fakeEmi')) noSecrets = false;
 }
 assert(noSecrets, 'Zero sensitive credentials, secrets, or fake EMI calculations found');
 

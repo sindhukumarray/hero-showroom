@@ -16,11 +16,13 @@ import {
   Info,
   Calendar,
   Send,
-  Tag
+  Tag,
+  Calculator
 } from 'lucide-react';
-import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm, FavoriteButton, CompareButton } from '../components';
+import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal, LeadForm, TestRideForm, FavoriteButton, CompareButton, EmiCalculator } from '../components';
 import { bikeService, offerService } from '../services';
 import { formatCurrency, formatPriceRange } from '../utils/formatters';
+import { calculateEmi } from '../utils/emiCalculator';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { fadeIn, getAccessibleVariant } from '../animations/variants';
@@ -181,7 +183,7 @@ const BikeDetailPage = () => {
             )}
           </div>
 
-          {/* Pricing Highlight Box */}
+            {/* Pricing Highlight Box */}
           <div className="shrink-0 bg-surface-900/90 border border-border p-6 rounded-card text-center min-w-[220px] space-y-3">
             <span className="text-xs uppercase font-bold tracking-widest text-muted-foreground">
               Ex-Showroom Price Range
@@ -189,6 +191,26 @@ const BikeDetailPage = () => {
             <div className="font-display font-black text-2xl sm:text-3xl text-surface-50">
               {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
             </div>
+            {(() => {
+              const currentPrice = selectedVariant?.exShowroomPrice || bike.priceRange?.minPrice || 100000;
+              const quickEmi = calculateEmi({
+                vehiclePrice: currentPrice,
+                downPayment: currentPrice * 0.2,
+                annualInterestRate: 8.5,
+                tenureMonths: 36
+              });
+              return (
+                <div className="pt-1 flex items-center justify-center gap-1.5 text-xs text-brand-red font-semibold">
+                  <span>EMI from {formatCurrency(quickEmi.monthlyEmi)}/mo*</span>
+                  <a
+                    href="#emi-calculator"
+                    className="underline text-[11px] text-muted-foreground hover:text-white transition-colors"
+                  >
+                    Calculate
+                  </a>
+                </div>
+              );
+            })()}
             <span className="inline-block text-[11px] text-muted-foreground">
               Indicative base pricing excluding RTO & Insurance
             </span>
@@ -214,6 +236,17 @@ const BikeDetailPage = () => {
                 Enquire / Get Quote
               </Button>
               <CompareButton bike={bike} size="sm" fullWidth />
+              <a href="#emi-calculator" className="block">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  fullWidth
+                  icon={Calculator}
+                  className="text-xs text-muted-foreground hover:text-white"
+                >
+                  Estimate EMI
+                </Button>
+              </a>
               {bikeOffers.length > 0 && (
                 <Link to={`/offers?bike=${bike._id}`} className="block">
                   <Button
@@ -552,6 +585,26 @@ const BikeDetailPage = () => {
           </div>
         )}
       </div>
+
+      {/* Finance & EMI Calculator Section */}
+      <section id="emi-calculator" className="space-y-6 pt-4 scroll-mt-24">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="typography-h2 text-surface-50 font-bold">Finance & EMI Estimator</h2>
+            <p className="typography-small text-muted-foreground text-sm">
+              Calculate customized monthly installments, down payment, and tenure options for {bike.name}
+            </p>
+          </div>
+          <Badge variant="brand" size="md">
+            Flexible Financing
+          </Badge>
+        </div>
+
+        <EmiCalculator
+          initialPrice={selectedVariant?.exShowroomPrice || bike.priceRange?.minPrice || 100000}
+          bikeName={`${bike.name}${selectedVariant?.name ? ` (${selectedVariant.name})` : ''}`}
+        />
+      </section>
 
       {/* Action Strip */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-card glass-surface border border-border">

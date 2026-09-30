@@ -13,20 +13,24 @@ import {
   AlertCircle,
   Sparkles,
   SlidersHorizontal,
-  RotateCcw
+  RotateCcw,
+  Calculator
 } from 'lucide-react';
 import { pageTransition, getAccessibleVariant } from '../animations/variants';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { useSEO } from '../hooks/useSEO';
 import { useCompare } from '../context/CompareContext';
 import { formatPriceRange, formatCurrency } from '../utils/formatters';
+import { calculateEmi } from '../utils/emiCalculator';
 import Container from '../components/Container';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Loading from '../components/Loading';
 import ErrorState from '../components/ErrorState';
+import Modal from '../components/Modal';
 import CompareEmptyState from '../components/compare/CompareEmptyState';
+import EmiCalculator from '../components/finance/EmiCalculator';
 
 /**
  * Specification Matrix Rows Definition
@@ -47,6 +51,20 @@ const SPEC_SECTIONS = [
         label: 'Ex-Showroom Price Range',
         getValue: (bike) =>
           formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)
+      },
+      {
+        label: 'Estimated EMI (36m @ 8.5%)',
+        getValue: (bike) => {
+          const price = bike.priceRange?.minPrice;
+          if (!price) return '—';
+          const res = calculateEmi({
+            vehiclePrice: price,
+            downPayment: price * 0.2,
+            annualInterestRate: 8.5,
+            tenureMonths: 36
+          });
+          return `${formatCurrency(res.monthlyEmi)}/mo*`;
+        }
       },
       {
         label: 'Fuel Type',
@@ -144,6 +162,7 @@ const ComparePage = () => {
   const accessiblePageTransition = getAccessibleVariant(pageTransition, shouldReduceMotion);
 
   const [highlightDiffs, setHighlightDiffs] = useState(false);
+  const [emiModalBike, setEmiModalBike] = useState(null);
 
   useSEO({
     title: 'Motorcycle Comparison Matrix | Hero Showroom',
@@ -313,6 +332,17 @@ const ComparePage = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    fullWidth
+                    icon={Calculator}
+                    onClick={() => setEmiModalBike(compareBikes[0])}
+                    className="text-xs"
+                  >
+                    Estimate EMI
+                  </Button>
                   <Link to={`/bikes/${compareBikes[0].slug}`} className="flex-1">
                     <Button variant="outline" size="sm" fullWidth className="text-xs">
                       View Details
@@ -431,6 +461,17 @@ const ComparePage = () => {
 
                     {/* Quick CTAs */}
                     <div className="pt-2 flex flex-col sm:flex-row items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        fullWidth
+                        icon={Calculator}
+                        onClick={() => setEmiModalBike(bike)}
+                        className="text-xs"
+                      >
+                        Calculate EMI
+                      </Button>
                       <Link to={`/bikes/${bike.slug}`} className="w-full">
                         <Button variant="outline" size="sm" fullWidth className="text-xs">
                           View Details
@@ -541,6 +582,23 @@ const ComparePage = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Interactive EMI Calculation Modal */}
+        {emiModalBike && (
+          <Modal
+            isOpen={Boolean(emiModalBike)}
+            onClose={() => setEmiModalBike(null)}
+            title={`Finance & EMI Estimator — ${emiModalBike.name}`}
+            subtitle="Customize down payment, interest rate, and tenure options"
+            maxWidth="max-w-4xl"
+          >
+            <EmiCalculator
+              initialPrice={emiModalBike.priceRange?.minPrice || 100000}
+              bikeName={emiModalBike.name}
+              compact
+            />
+          </Modal>
         )}
       </motion.div>
     </Container>
