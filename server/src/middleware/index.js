@@ -3,6 +3,7 @@ const notFoundHandler = require('./notFoundHandler');
 const { verifyToken, requireRole } = require('./authMiddleware');
 const securityHeaders = require('./securityHeaders');
 const sanitizeInput = require('./sanitizeInput');
+const requestTimeout = require('./requestTimeout');
 const {
   createRateLimiter,
   authLimiter,
@@ -17,6 +18,7 @@ module.exports = {
   requireRole,
   securityHeaders,
   sanitizeInput,
+  requestTimeout,
   createRateLimiter,
   authLimiter,
   publicWriteLimiter,

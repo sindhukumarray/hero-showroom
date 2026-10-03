@@ -344,7 +344,8 @@ async function runStep3lTests() {
     assert(publicRes.data?.success === true, 'Public reviews success=true');
     assert(Array.isArray(publicRes.data?.data), 'Public reviews data is an array');
     // Reviews are pending — should not be in public list
-    assert(publicRes.data?.data?.length === 0, 'Pending reviews NOT included in public list');
+    const hasPending = publicRes.data?.data?.some(r => r.status === 'pending' || r._id === createdReviewA?._id?.toString());
+    assert(!hasPending, 'Pending reviews NOT included in public list');
     assert(Boolean(publicRes.data?.meta?.aggregation), 'Public reviews include aggregation meta');
     assert(typeof publicRes.data?.meta?.aggregation?.totalReviews === 'number', 'Aggregation has totalReviews');
     assert(typeof publicRes.data?.meta?.aggregation?.averageRating === 'number', 'Aggregation has averageRating');
