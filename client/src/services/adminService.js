@@ -365,6 +365,46 @@ export const updateLeadStatus = async (id, status) => {
   return await api.patch(`/admin/leads/${id}/status`, { status });
 };
 
+/**
+ * ============================================================
+ * Admin Review Moderation & Workflow Management
+ * ============================================================
+ */
+
+/**
+ * Retrieve paginated reviews with administrative filters and search
+ * @param {object} [params] Query filters: { page, limit, status, rating, showroom, user, search, sort }
+ * @returns {Promise<object>} { success, data, meta }
+ */
+export const getReviews = async (params = {}) => {
+  return await api.get('/admin/reviews', { params });
+};
+
+/**
+ * Retrieve single review by ID with populated customer and showroom details
+ * @param {string} id - 24-character hex ObjectId
+ * @returns {Promise<object>} { success, data }
+ */
+export const getReview = async (id) => {
+  return await api.get(`/admin/reviews/${id}`);
+};
+
+/**
+ * Moderate review status and attach optional note
+ * @param {string} id
+ * @param {string|object} statusOrPayload - Either status string ('pending'|'approved'|'rejected') or { status, moderationNote }
+ * @param {string} [moderationNote]
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateReviewStatus = async (id, statusOrPayload, moderationNote) => {
+  const payload = typeof statusOrPayload === 'object'
+    ? statusOrPayload
+    : { status: statusOrPayload, ...(moderationNote !== undefined ? { moderationNote } : {}) };
+  return await api.patch(`/admin/reviews/${id}/status`, payload);
+};
+
+export const moderateReview = updateReviewStatus;
+
 export default {
   getAdminStatus,
   getBrands,
@@ -399,7 +439,11 @@ export default {
   deleteBikeVariant,
   getLeads,
   getLead,
-  updateLeadStatus
+  updateLeadStatus,
+  getReviews,
+  getReview,
+  updateReviewStatus,
+  moderateReview
 };
 
 

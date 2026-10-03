@@ -8,6 +8,7 @@ const adminShowroomController = require('../controllers/adminShowroomController'
 const adminBikeController = require('../controllers/adminBikeController');
 const adminBikeVariantController = require('../controllers/adminBikeVariantController');
 const adminLeadController = require('../controllers/adminLeadController');
+const adminReviewController = require('../controllers/adminReviewController');
 const {
   validateBrandQuery,
   validateBrandId,
@@ -20,6 +21,11 @@ const {
   validateLeadId,
   validateLeadStatus
 } = require('../validators/leadValidator');
+const {
+  validateAdminReviewQuery,
+  validateReviewId,
+  validateReviewStatus
+} = require('../validators/reviewValidator');
 const {
   validateCityQuery,
   validateCityId,
@@ -140,5 +146,15 @@ router.delete('/bikes/:id', validateBikeId, adminBikeController.deleteBike);
 router.get('/leads', validateAdminLeadQuery, adminLeadController.getLeads);
 router.get('/leads/:id', validateLeadId, adminLeadController.getLeadById);
 router.patch('/leads/:id/status', validateLeadId, validateLeadStatus, adminLeadController.updateLeadStatus);
+
+/**
+ * ============================================================
+ * 8. Admin Review Moderation & Workflow Endpoints
+ * Base: /api/admin/reviews
+ * ============================================================
+ */
+router.get('/reviews', validateAdminReviewQuery, adminReviewController.getReviews);
+router.get('/reviews/:id', validateReviewId, adminReviewController.getReviewById);
+router.patch('/reviews/:id/status', validateReviewId, validateReviewStatus, adminReviewController.updateReviewStatus);
 
 module.exports = router;

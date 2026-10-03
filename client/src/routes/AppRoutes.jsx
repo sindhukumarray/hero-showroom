@@ -16,6 +16,7 @@ import AdminCitiesPage from '../pages/admin/AdminCitiesPage';
 import AdminShowroomsPage from '../pages/admin/AdminShowroomsPage';
 import AdminBikesPage from '../pages/admin/AdminBikesPage';
 import AdminLeadsPage from '../pages/admin/AdminLeadsPage';
+import AdminReviewsPage from '../pages/admin/AdminReviewsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import OffersPage from '../pages/OffersPage';
 import OfferDetailPage from '../pages/OfferDetailPage';
@@ -34,6 +35,7 @@ const AppRoutes = () => {
           <Route path="showrooms" element={<AdminShowroomsPage />} />
           <Route path="bikes" element={<AdminBikesPage />} />
           <Route path="leads" element={<AdminLeadsPage />} />
+          <Route path="reviews" element={<AdminReviewsPage />} />
         </Route>
       </Route>
 

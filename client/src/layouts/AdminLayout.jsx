@@ -28,7 +28,7 @@ const ADMIN_NAV_ITEMS = [
   { label: 'Showrooms', href: '/admin/showrooms', icon: Building2, exact: true },
   { label: 'Bikes', href: '/admin/bikes', icon: Bike, exact: true },
   { label: 'Leads', href: '/admin/leads', icon: Mail, exact: true },
-  { label: 'Reviews', href: '/admin/reviews', icon: Star, step: 'Step 6' }
+  { label: 'Reviews', href: '/admin/reviews', icon: Star, exact: true }
 ];
 
 /**
