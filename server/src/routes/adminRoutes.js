@@ -67,10 +67,11 @@ router.use(verifyToken, requireRole(ROLES.ADMIN));
 
 /**
  * ============================================================
- * 1. Admin System & Status Verification
+ * 1. Admin System & Dashboard Metrics Endpoints
  * ============================================================
  */
 router.get('/status', adminController.getAdminStatus);
+router.get('/dashboard', adminController.getDashboardMetrics);
 
 /**
  * ============================================================

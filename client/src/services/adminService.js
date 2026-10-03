@@ -16,6 +16,15 @@ export const getAdminStatus = async () => {
 };
 
 /**
+ * Retrieve aggregate dashboard metrics across all platform domains
+ * GET /api/admin/dashboard
+ * @returns {Promise<object>} API response { success, message, data }
+ */
+export const getDashboardMetrics = async () => {
+  return await api.get('/admin/dashboard');
+};
+
+/**
  * ============================================================
  * Admin Brands Management
  * ============================================================
@@ -407,6 +416,7 @@ export const moderateReview = updateReviewStatus;
 
 export default {
   getAdminStatus,
+  getDashboardMetrics,
   getBrands,
   getBrand,
   createBrand,

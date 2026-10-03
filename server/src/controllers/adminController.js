@@ -20,6 +20,20 @@ const getAdminStatus = async (req, res, next) => {
   }
 };
 
+/**
+ * Retrieve comprehensive aggregate metrics across all platform domains
+ * GET /api/admin/dashboard
+ */
+const getDashboardMetrics = async (req, res, next) => {
+  try {
+    const dashboardData = await adminService.getDashboardMetrics();
+    return sendSuccess(res, 'Admin dashboard metrics retrieved successfully', dashboardData, 200);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
-  getAdminStatus
+  getAdminStatus,
+  getDashboardMetrics
 };
