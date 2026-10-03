@@ -203,7 +203,176 @@ const getUserLeads = async ({ userId, page = 1, limit = 20 }) => {
   };
 };
 
+/**
+ * Escapes regex special characters to prevent ReDoS and injection.
+ * @param {string} string
+ * @returns {string}
+ */
+const escapeRegex = (string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+const LEAD_SORT_MAP = {
+  newest: { createdAt: -1, _id: 1 },
+  oldest: { createdAt: 1, _id: 1 },
+  status: { status: 1, createdAt: -1, _id: 1 },
+  name: { name: 1, _id: 1 }
+};
+
+/**
+ * Service: Retrieve paginated leads for admin console with administrative filters.
+ * @param {object} params
+ * @returns {Promise<{ data: Array, meta: object }>}
+ */
+const getAdminLeads = async ({
+  page = 1,
+  limit = 20,
+  status,
+  source,
+  showroom,
+  bike,
+  user,
+  search,
+  sort = 'newest',
+  startDate,
+  endDate
+} = {}) => {
+  assertDatabaseConnected();
+
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
+  const skip = (pageNum - 1) * limitNum;
+
+  const filter = {};
+
+  if (status && status !== 'all') {
+    filter.status = status;
+  }
+
+  if (source && source !== 'all') {
+    filter.source = source;
+  }
+
+  if (showroom && showroom !== 'all') {
+    filter.showroom = showroom;
+  }
+
+  if (bike && bike !== 'all') {
+    filter.bike = bike;
+  }
+
+  if (user && user !== 'all') {
+    filter.user = user;
+  }
+
+  if (startDate || endDate) {
+    filter.createdAt = {};
+    if (startDate) {
+      filter.createdAt.$gte = new Date(startDate);
+    }
+    if (endDate) {
+      const endD = new Date(endDate);
+      endD.setHours(23, 59, 59, 999);
+      filter.createdAt.$lte = endD;
+    }
+  }
+
+  if (search && typeof search === 'string' && search.trim() !== '') {
+    const sanitized = escapeRegex(search.trim());
+    filter.$or = [
+      { name: { $regex: new RegExp(sanitized, 'i') } },
+      { email: { $regex: new RegExp(sanitized, 'i') } },
+      { phone: { $regex: new RegExp(sanitized, 'i') } },
+      { message: { $regex: new RegExp(sanitized, 'i') } }
+    ];
+  }
+
+  const sortCriteria = LEAD_SORT_MAP[sort] || LEAD_SORT_MAP.newest;
+
+  const [data, total] = await Promise.all([
+    Lead.find(filter)
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limitNum)
+      .populate('user', 'name email phone role isActive')
+      .populate('showroom', 'name slug address contact showroomType city')
+      .populate('bike', 'name slug category images priceRange brand')
+      .populate('variant', 'name slug exShowroomPrice colors')
+      .populate('offer', 'title slug discountValue validUntil')
+      .select('-__v')
+      .lean(),
+    Lead.countDocuments(filter)
+  ]);
+
+  const pages = Math.ceil(total / limitNum);
+
+  return {
+    data,
+    meta: {
+      page: pageNum,
+      limit: limitNum,
+      total,
+      pages
+    }
+  };
+};
+
+/**
+ * Service: Retrieve single lead by ID with populated details.
+ * @param {string} id
+ * @returns {Promise<object|null>}
+ */
+const getLeadById = async (id) => {
+  assertDatabaseConnected();
+
+  if (!id) return null;
+
+  return Lead.findById(id)
+    .populate('user', 'name email phone role isActive createdAt')
+    .populate('showroom', 'name slug address contact showroomType city location openingHours')
+    .populate('bike', 'name slug category images priceRange brand fuelType engine transmission')
+    .populate('variant', 'name slug exShowroomPrice colors keySpecifications keyFeatures')
+    .populate('offer', 'title slug discountValue validUntil description')
+    .select('-__v')
+    .lean();
+};
+
+/**
+ * Service: Update lead status.
+ * @param {string} id
+ * @param {string} status
+ * @returns {Promise<object>}
+ */
+const updateLeadStatus = async (id, status) => {
+  assertDatabaseConnected();
+
+  const lead = await Lead.findById(id);
+  if (!lead) {
+    const error = new Error('Lead not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  lead.status = status;
+  await lead.save();
+
+  return Lead.findById(id)
+    .populate('user', 'name email phone role isActive')
+    .populate('showroom', 'name slug address contact showroomType city')
+    .populate('bike', 'name slug category images priceRange brand')
+    .populate('variant', 'name slug exShowroomPrice colors')
+    .populate('offer', 'title slug discountValue validUntil')
+    .select('-__v')
+    .lean();
+};
+
 module.exports = {
   createLead,
-  getUserLeads
+  getUserLeads,
+  getAdminLeads,
+  getLeadById,
+  updateLeadStatus,
+  escapeRegex,
+  LEAD_SORT_MAP
 };
+

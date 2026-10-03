@@ -331,6 +331,40 @@ export const deleteBikeVariant = async (bikeId, variantId) => {
   return await api.delete(`/admin/bikes/${bikeId}/variants/${variantId}`);
 };
 
+/**
+ * ============================================================
+ * Admin Lead Enquiries & Workflow Management
+ * ============================================================
+ */
+
+/**
+ * Retrieve paginated leads with administrative filters and search
+ * @param {object} [params] Query filters: { page, limit, status, source, showroom, bike, user, search, sort, startDate, endDate }
+ * @returns {Promise<object>} { success, data, meta }
+ */
+export const getLeads = async (params = {}) => {
+  return await api.get('/admin/leads', { params });
+};
+
+/**
+ * Retrieve single lead by ID with populated customer, bike, and showroom details
+ * @param {string} id - 24-character hex ObjectId
+ * @returns {Promise<object>} { success, data }
+ */
+export const getLead = async (id) => {
+  return await api.get(`/admin/leads/${id}`);
+};
+
+/**
+ * Update lead lifecycle status
+ * @param {string} id
+ * @param {string} status - One of: 'new', 'contacted', 'qualified', 'converted', 'closed'
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateLeadStatus = async (id, status) => {
+  return await api.patch(`/admin/leads/${id}/status`, { status });
+};
+
 export default {
   getAdminStatus,
   getBrands,
@@ -362,7 +396,10 @@ export default {
   createBikeVariant,
   updateBikeVariant,
   updateBikeVariantStatus,
-  deleteBikeVariant
+  deleteBikeVariant,
+  getLeads,
+  getLead,
+  updateLeadStatus
 };
 
 

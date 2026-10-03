@@ -7,6 +7,7 @@ const adminCityController = require('../controllers/adminCityController');
 const adminShowroomController = require('../controllers/adminShowroomController');
 const adminBikeController = require('../controllers/adminBikeController');
 const adminBikeVariantController = require('../controllers/adminBikeVariantController');
+const adminLeadController = require('../controllers/adminLeadController');
 const {
   validateBrandQuery,
   validateBrandId,
@@ -14,6 +15,11 @@ const {
   validateUpdateBrand,
   validateBrandStatus
 } = require('../validators/brandValidator');
+const {
+  validateAdminLeadQuery,
+  validateLeadId,
+  validateLeadStatus
+} = require('../validators/leadValidator');
 const {
   validateCityQuery,
   validateCityId,
@@ -124,5 +130,15 @@ router.get('/bikes/:id', validateBikeId, adminBikeController.getBikeById);
 router.put('/bikes/:id', validateBikeId, validateUpdateBike, adminBikeController.updateBike);
 router.patch('/bikes/:id/status', validateBikeId, validateBikeStatus, adminBikeController.updateBikeStatus);
 router.delete('/bikes/:id', validateBikeId, adminBikeController.deleteBike);
+
+/**
+ * ============================================================
+ * 7. Admin Lead Management & Status Workflow Endpoints
+ * Base: /api/admin/leads
+ * ============================================================
+ */
+router.get('/leads', validateAdminLeadQuery, adminLeadController.getLeads);
+router.get('/leads/:id', validateLeadId, adminLeadController.getLeadById);
+router.patch('/leads/:id/status', validateLeadId, validateLeadStatus, adminLeadController.updateLeadStatus);
 
 module.exports = router;

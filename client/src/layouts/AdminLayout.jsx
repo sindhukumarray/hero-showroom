@@ -27,7 +27,7 @@ const ADMIN_NAV_ITEMS = [
   { label: 'Cities', href: '/admin/cities', icon: MapPin, exact: true },
   { label: 'Showrooms', href: '/admin/showrooms', icon: Building2, exact: true },
   { label: 'Bikes', href: '/admin/bikes', icon: Bike, exact: true },
-  { label: 'Leads', href: '/admin/leads', icon: Mail, step: 'Step 5' },
+  { label: 'Leads', href: '/admin/leads', icon: Mail, exact: true },
   { label: 'Reviews', href: '/admin/reviews', icon: Star, step: 'Step 6' }
 ];
 

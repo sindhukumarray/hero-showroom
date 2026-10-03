@@ -177,7 +177,173 @@ const validateCreateLead = (req, res, next) => {
   next();
 };
 
+const ALLOWED_ADMIN_LEAD_SORTS = ['newest', 'oldest', 'status', 'name'];
+
+/**
+ * Middleware: Validate Admin Lead Query Parameters
+ * GET /api/admin/leads
+ */
+const validateAdminLeadQuery = (req, res, next) => {
+  const errors = [];
+  const { page, limit, status, source, showroom, bike, user, search, sort, startDate, endDate } = req.query;
+
+  // Prevent MongoDB operator injection
+  for (const key of Object.keys(req.query)) {
+    if (key.startsWith('$') || key.includes('.')) {
+      errors.push(`Invalid query parameter '${key}': operators and path injection are forbidden.`);
+    }
+  }
+
+  // Validate page
+  if (page !== undefined) {
+    const pageNum = Number(page);
+    if (!Number.isInteger(pageNum) || pageNum < 1) {
+      errors.push("Query parameter 'page' must be a positive integer greater than or equal to 1.");
+    }
+  }
+
+  // Validate limit
+  if (limit !== undefined) {
+    const limitNum = Number(limit);
+    if (!Number.isInteger(limitNum) || limitNum < 1 || limitNum > 100) {
+      errors.push("Query parameter 'limit' must be a positive integer between 1 and 100.");
+    }
+  }
+
+  // Validate status enum
+  if (status !== undefined && status !== '' && status !== 'all') {
+    if (!ALLOWED_LEAD_STATUS.includes(status)) {
+      errors.push(`Query parameter 'status' must be one of: ${ALLOWED_LEAD_STATUS.join(', ')} or 'all'.`);
+    }
+  }
+
+  // Validate source enum
+  if (source !== undefined && source !== '' && source !== 'all') {
+    if (!ALLOWED_LEAD_SOURCES.includes(source)) {
+      errors.push(`Query parameter 'source' must be one of: ${ALLOWED_LEAD_SOURCES.join(', ')} or 'all'.`);
+    }
+  }
+
+  // Validate showroom ObjectId
+  if (showroom !== undefined && showroom !== '' && showroom !== 'all') {
+    if (!isValidObjectId(showroom)) {
+      errors.push("Query parameter 'showroom' must be a valid 24-character hexadecimal MongoDB ObjectId.");
+    }
+  }
+
+  // Validate bike ObjectId
+  if (bike !== undefined && bike !== '' && bike !== 'all') {
+    if (!isValidObjectId(bike)) {
+      errors.push("Query parameter 'bike' must be a valid 24-character hexadecimal MongoDB ObjectId.");
+    }
+  }
+
+  // Validate user ObjectId
+  if (user !== undefined && user !== '' && user !== 'all') {
+    if (!isValidObjectId(user)) {
+      errors.push("Query parameter 'user' must be a valid 24-character hexadecimal MongoDB ObjectId.");
+    }
+  }
+
+  // Validate sort
+  if (sort !== undefined && sort !== '') {
+    if (!ALLOWED_ADMIN_LEAD_SORTS.includes(sort)) {
+      errors.push(`Query parameter 'sort' must be one of: ${ALLOWED_ADMIN_LEAD_SORTS.join(', ')}.`);
+    }
+  }
+
+  // Validate date range
+  if (startDate !== undefined && startDate !== '') {
+    const d = new Date(startDate);
+    if (isNaN(d.getTime())) {
+      errors.push("Query parameter 'startDate' must be a valid ISO date string.");
+    }
+  }
+  if (endDate !== undefined && endDate !== '') {
+    const d = new Date(endDate);
+    if (isNaN(d.getTime())) {
+      errors.push("Query parameter 'endDate' must be a valid ISO date string.");
+    }
+  }
+
+  // Validate search
+  if (search !== undefined && search !== '') {
+    if (typeof search !== 'string') {
+      errors.push("Query parameter 'search' must be a string.");
+    } else if (search.trim().length > 100) {
+      errors.push("Query parameter 'search' cannot exceed 100 characters.");
+    } else {
+      req.query.search = search.trim();
+    }
+  }
+
+  if (errors.length > 0) {
+    return sendError(res, 'Validation failed for request parameters', errors, 400);
+  }
+
+  next();
+};
+
+/**
+ * Middleware: Validate Lead ID Parameter
+ * /api/admin/leads/:id
+ */
+const validateLeadId = (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id || !isValidObjectId(id)) {
+    return sendError(
+      res,
+      'Invalid lead ID format',
+      ['Parameter :id must be a 24-character hexadecimal MongoDB ObjectId.'],
+      400
+    );
+  }
+
+  next();
+};
+
+/**
+ * Middleware: Validate Lead Status Update Payload
+ * PATCH /api/admin/leads/:id/status
+ */
+const validateLeadStatus = (req, res, next) => {
+  if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+    return sendError(res, 'Validation failed for lead status', ['Request body must be a JSON object.'], 400);
+  }
+
+  // Prevent MongoDB operator injection
+  for (const key of Object.keys(req.body)) {
+    if (key.startsWith('$') || key.includes('.')) {
+      return sendError(res, 'Invalid field: operators and path injection are forbidden.', [], 400);
+    }
+  }
+
+  const { status } = req.body;
+  if (!status || typeof status !== 'string') {
+    return sendError(res, 'Validation failed for lead status', ["Field 'status' is required and must be a string."], 400);
+  }
+
+  const normalizedStatus = status.trim().toLowerCase();
+  if (!ALLOWED_LEAD_STATUS.includes(normalizedStatus)) {
+    return sendError(
+      res,
+      'Invalid lead status value',
+      [`Status must be one of: ${ALLOWED_LEAD_STATUS.join(', ')}.`],
+      400
+    );
+  }
+
+  req.body.status = normalizedStatus;
+  next();
+};
+
 module.exports = {
   validateCreateLead,
-  isValidObjectId
+  validateAdminLeadQuery,
+  validateLeadId,
+  validateLeadStatus,
+  isValidObjectId,
+  ALLOWED_ADMIN_LEAD_SORTS
 };
+
