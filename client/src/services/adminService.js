@@ -201,6 +201,136 @@ export const deleteShowroom = async (id) => {
   return await api.delete(`/admin/showrooms/${id}`);
 };
 
+/**
+ * ============================================================
+ * Admin Bikes Management
+ * ============================================================
+ */
+
+/**
+ * Retrieve paginated bikes for administration
+ * @param {object} [params] Query filters: { page, limit, search, brand, category, fuelType, transmission, minPrice, maxPrice, isActive, isFeatured, sort }
+ * @returns {Promise<object>} { success, data, meta }
+ */
+export const getBikes = async (params = {}) => {
+  return await api.get('/admin/bikes', { params });
+};
+
+/**
+ * Retrieve single bike by MongoDB ID
+ * @param {string} id - 24-character hex ObjectId
+ * @returns {Promise<object>} { success, data }
+ */
+export const getBike = async (id) => {
+  return await api.get(`/admin/bikes/${id}`);
+};
+
+/**
+ * Create a new bike
+ * @param {object} payload
+ * @returns {Promise<object>} { success, data }
+ */
+export const createBike = async (payload) => {
+  return await api.post('/admin/bikes', payload);
+};
+
+/**
+ * Update an existing bike
+ * @param {string} id
+ * @param {object} payload
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateBike = async (id, payload) => {
+  return await api.put(`/admin/bikes/${id}`, payload);
+};
+
+/**
+ * Toggle or set bike active status specifically
+ * @param {string} id
+ * @param {boolean} isActive
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateBikeStatus = async (id, isActive) => {
+  return await api.patch(`/admin/bikes/${id}/status`, { isActive });
+};
+
+/**
+ * Delete or safe-deactivate a bike
+ * @param {string} id
+ * @returns {Promise<object>} { success, message, data: { deleted, deactivated, message, bike } }
+ */
+export const deleteBike = async (id) => {
+  return await api.delete(`/admin/bikes/${id}`);
+};
+
+/**
+ * ============================================================
+ * Admin Bike Variants Management
+ * ============================================================
+ */
+
+/**
+ * Retrieve paginated variants belonging to a specific bike
+ * @param {string} bikeId - 24-character hex ObjectId
+ * @param {object} [params] Query filters: { page, limit, search, minPrice, maxPrice, isActive, sort }
+ * @returns {Promise<object>} { success, data, meta }
+ */
+export const getBikeVariants = async (bikeId, params = {}) => {
+  return await api.get(`/admin/bikes/${bikeId}/variants`, { params });
+};
+
+/**
+ * Retrieve single variant by ID belonging to parent bike
+ * @param {string} bikeId
+ * @param {string} variantId
+ * @returns {Promise<object>} { success, data }
+ */
+export const getBikeVariant = async (bikeId, variantId) => {
+  return await api.get(`/admin/bikes/${bikeId}/variants/${variantId}`);
+};
+
+/**
+ * Create a new variant for a bike
+ * @param {string} bikeId
+ * @param {object} payload
+ * @returns {Promise<object>} { success, data }
+ */
+export const createBikeVariant = async (bikeId, payload) => {
+  return await api.post(`/admin/bikes/${bikeId}/variants`, payload);
+};
+
+/**
+ * Update an existing bike variant
+ * @param {string} bikeId
+ * @param {string} variantId
+ * @param {object} payload
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateBikeVariant = async (bikeId, variantId, payload) => {
+  return await api.put(`/admin/bikes/${bikeId}/variants/${variantId}`, payload);
+};
+
+/**
+ * Toggle or set variant active status specifically
+ * @param {string} bikeId
+ * @param {string} variantId
+ * @param {boolean} isActive
+ * @returns {Promise<object>} { success, data }
+ */
+export const updateBikeVariantStatus = async (bikeId, variantId, isActive) => {
+  return await api.patch(`/admin/bikes/${bikeId}/variants/${variantId}/status`, { isActive });
+};
+
+/**
+ * Delete or safe-deactivate a bike variant
+ * @param {string} bikeId
+ * @param {string} variantId
+ * @returns {Promise<object>} { success, message, data: { deleted, deactivated, message, variant } }
+ */
+export const deleteBikeVariant = async (bikeId, variantId) => {
+  return await api.delete(`/admin/bikes/${bikeId}/variants/${variantId}`);
+};
+
 export default {
   getAdminStatus,
   getBrands,
@@ -220,6 +350,19 @@ export default {
   createShowroom,
   updateShowroom,
   updateShowroomStatus,
-  deleteShowroom
+  deleteShowroom,
+  getBikes,
+  getBike,
+  createBike,
+  updateBike,
+  updateBikeStatus,
+  deleteBike,
+  getBikeVariants,
+  getBikeVariant,
+  createBikeVariant,
+  updateBikeVariant,
+  updateBikeVariantStatus,
+  deleteBikeVariant
 };
+
 

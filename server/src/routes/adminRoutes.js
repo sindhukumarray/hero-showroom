@@ -5,6 +5,8 @@ const adminController = require('../controllers/adminController');
 const adminBrandController = require('../controllers/adminBrandController');
 const adminCityController = require('../controllers/adminCityController');
 const adminShowroomController = require('../controllers/adminShowroomController');
+const adminBikeController = require('../controllers/adminBikeController');
+const adminBikeVariantController = require('../controllers/adminBikeVariantController');
 const {
   validateBrandQuery,
   validateBrandId,
@@ -26,6 +28,21 @@ const {
   validateUpdateShowroom,
   validateShowroomStatus
 } = require('../validators/showroomValidator');
+const {
+  validateAdminBikeQuery,
+  validateBikeId,
+  validateCreateBike,
+  validateUpdateBike,
+  validateBikeStatus
+} = require('../validators/bikeValidator');
+const {
+  validateAdminBikeVariantQuery,
+  validateBikeVariantParentId,
+  validateVariantId,
+  validateCreateBikeVariant,
+  validateUpdateBikeVariant,
+  validateBikeVariantStatus
+} = require('../validators/bikeVariantValidator');
 
 const router = express.Router();
 
@@ -82,5 +99,30 @@ router.put('/showrooms/:id', validateShowroomId, validateUpdateShowroom, adminSh
 router.patch('/showrooms/:id/status', validateShowroomId, validateShowroomStatus, adminShowroomController.updateShowroomStatus);
 router.delete('/showrooms/:id', validateShowroomId, adminShowroomController.deleteShowroom);
 
-module.exports = router;
+/**
+ * ============================================================
+ * 5. Admin Bike Variant Sub-Resource Endpoints
+ * Base: /api/admin/bikes/:bikeId/variants
+ * ============================================================
+ */
+router.get('/bikes/:bikeId/variants', validateBikeVariantParentId, validateAdminBikeVariantQuery, adminBikeVariantController.getVariants);
+router.post('/bikes/:bikeId/variants', validateBikeVariantParentId, validateCreateBikeVariant, adminBikeVariantController.createVariant);
+router.get('/bikes/:bikeId/variants/:variantId', validateBikeVariantParentId, validateVariantId, adminBikeVariantController.getVariantById);
+router.put('/bikes/:bikeId/variants/:variantId', validateBikeVariantParentId, validateVariantId, validateUpdateBikeVariant, adminBikeVariantController.updateVariant);
+router.patch('/bikes/:bikeId/variants/:variantId/status', validateBikeVariantParentId, validateVariantId, validateBikeVariantStatus, adminBikeVariantController.updateVariantStatus);
+router.delete('/bikes/:bikeId/variants/:variantId', validateBikeVariantParentId, validateVariantId, adminBikeVariantController.deleteVariant);
 
+/**
+ * ============================================================
+ * 6. Admin Bike Catalogue Endpoints
+ * Base: /api/admin/bikes
+ * ============================================================
+ */
+router.get('/bikes', validateAdminBikeQuery, adminBikeController.getBikes);
+router.post('/bikes', validateCreateBike, adminBikeController.createBike);
+router.get('/bikes/:id', validateBikeId, adminBikeController.getBikeById);
+router.put('/bikes/:id', validateBikeId, validateUpdateBike, adminBikeController.updateBike);
+router.patch('/bikes/:id/status', validateBikeId, validateBikeStatus, adminBikeController.updateBikeStatus);
+router.delete('/bikes/:id', validateBikeId, adminBikeController.deleteBike);
+
+module.exports = router;
