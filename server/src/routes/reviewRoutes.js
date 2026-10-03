@@ -1,5 +1,6 @@
 const express = require('express');
 const { verifyToken } = require('../middleware/authMiddleware');
+const { publicWriteLimiter } = require('../middleware/rateLimiter');
 const reviewController = require('../controllers/reviewController');
 const { validateCreateReview, validateUpdateReview } = require('../validators/reviewValidator');
 
@@ -16,8 +17,8 @@ router.get('/showroom/:showroomId', reviewController.getShowroomReviews);
 // PROTECTED: Get authenticated customer's own reviews
 router.get('/my', verifyToken, reviewController.getMyReviews);
 
-// PROTECTED: Submit a new review
-router.post('/', verifyToken, validateCreateReview, reviewController.createReview);
+// PROTECTED: Submit a new review (rate-limited)
+router.post('/', publicWriteLimiter, verifyToken, validateCreateReview, reviewController.createReview);
 
 // PROTECTED: Get a single review by ID (owner or approved)
 router.get('/:id', verifyToken, reviewController.getReviewById);

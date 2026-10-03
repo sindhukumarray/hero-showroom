@@ -2,16 +2,17 @@ const express = require('express');
 const { register, login, getMe, logout } = require('../controllers/authController');
 const { validateRegister, validateLogin } = require('../validators/authValidator');
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
+const { authLimiter } = require('../middleware/rateLimiter');
 const { ROLES } = require('../constants/roles');
 const { sendSuccess } = require('../utils/apiResponse');
 
 const router = express.Router();
 
-// POST /api/auth/register - Register a new customer user
-router.post('/register', validateRegister, register);
+// POST /api/auth/register - Register a new customer user (rate-limited)
+router.post('/register', authLimiter, validateRegister, register);
 
-// POST /api/auth/login - Authenticate user and issue JWT access token
-router.post('/login', validateLogin, login);
+// POST /api/auth/login - Authenticate user and issue JWT access token (rate-limited)
+router.post('/login', authLimiter, validateLogin, login);
 
 // GET /api/auth/me - Retrieve current authenticated user profile
 router.get('/me', verifyToken, getMe);

@@ -1,23 +1,32 @@
 const express = require('express');
 const cors = require('cors');
+const { getCorsOptions } = require('./config/corsConfig');
+const {
+  securityHeaders,
+  sanitizeInput,
+  generalApiLimiter,
+  notFoundHandler,
+  errorHandler
+} = require('./middleware');
 const apiRoutes = require('./routes');
-const notFoundHandler = require('./middleware/notFoundHandler');
-const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-// Middleware setup
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
-app.use(
-  cors({
-    origin: allowedOrigin,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
-  })
-);
+// Disable Express fingerprinting header
+app.disable('x-powered-by');
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// 1. HTTP Security Headers (OWASP baseline)
+app.use(securityHeaders);
+
+// 2. Hardened CORS Configuration
+app.use(cors(getCorsOptions()));
+
+// 3. Request Body Size Limits (Mitigate payload flooding & memory exhaustion)
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// 4. Universal Input Sanitization (Defense-in-depth against MongoDB operator injections)
+app.use(sanitizeInput);
 
 // Root welcome check
 app.get('/', (req, res) => {
@@ -27,8 +36,8 @@ app.get('/', (req, res) => {
   });
 });
 
-// Mount Central API Routes under /api
-app.use('/api', apiRoutes);
+// 5. Mount Rate Limiting and Central API Routes under /api
+app.use('/api', generalApiLimiter, apiRoutes);
 
 // Catch-all 404 handler for undefined routes
 app.use(notFoundHandler);
