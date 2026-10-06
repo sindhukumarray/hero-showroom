@@ -109,8 +109,11 @@ const showroomSchema = new mongoose.Schema(
 // Geospatial index for radius searches (sparse to allow default [0,0])
 showroomSchema.index({ location: '2dsphere' }, { sparse: true });
 
-// Compound index for querying by brand within a city
+// Compound indexes for querying by brand, city, rating, and creation date
 showroomSchema.index({ city: 1, brand: 1, isActive: 1 });
+showroomSchema.index({ city: 1, isActive: 1 });
+showroomSchema.index({ isActive: 1, createdAt: -1 });
+showroomSchema.index({ isActive: 1, 'rating.average': -1 });
 
 const Showroom = mongoose.models.Showroom || mongoose.model('Showroom', showroomSchema);
 

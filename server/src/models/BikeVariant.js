@@ -71,6 +71,7 @@ const bikeVariantSchema = new mongoose.Schema(
 // Unique variant slug scoped to each bike model
 bikeVariantSchema.index({ bike: 1, slug: 1 }, { unique: true });
 bikeVariantSchema.index({ bike: 1, exShowroomPrice: 1 });
+bikeVariantSchema.index({ bike: 1, isActive: 1, exShowroomPrice: 1 });
 
 const BikeVariant = mongoose.models.BikeVariant || mongoose.model('BikeVariant', bikeVariantSchema);
 

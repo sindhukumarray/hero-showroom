@@ -52,6 +52,9 @@ const brandSchema = new mongoose.Schema(
   }
 );
 
+// Compound index for active brand alphabetical listing
+brandSchema.index({ isActive: 1, name: 1 });
+
 // Helpful compound/text indexes for discovery
 brandSchema.index({ name: 'text', description: 'text' });
 

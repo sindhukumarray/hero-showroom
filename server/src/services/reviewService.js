@@ -136,31 +136,31 @@ const getShowroomReviews = async (showroomId, { page = 1, limit = 20 } = {}) => 
     status: REVIEW_STATUS.APPROVED
   };
 
-  // Execute count and list in parallel for efficiency
-  const [total, reviews] = await Promise.all([
+  // Execute count, list, and aggregation concurrently for maximum throughput
+  const [total, reviews, aggregationPipeline] = await Promise.all([
     Review.countDocuments(filter),
     Review.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limitNum)
       .populate('user', USER_PUBLIC_PROJECTION)
-  ]);
-
-  // Compute aggregation from ALL approved reviews (not just current page)
-  const aggregationPipeline = await Review.aggregate([
-    { $match: { showroom: require('mongoose').Types.ObjectId.createFromHexString(showroomId.toString()), status: REVIEW_STATUS.APPROVED } },
-    {
-      $group: {
-        _id: null,
-        averageRating: { $avg: '$rating' },
-        totalReviews: { $sum: 1 },
-        count1: { $sum: { $cond: [{ $eq: ['$rating', 1] }, 1, 0] } },
-        count2: { $sum: { $cond: [{ $eq: ['$rating', 2] }, 1, 0] } },
-        count3: { $sum: { $cond: [{ $eq: ['$rating', 3] }, 1, 0] } },
-        count4: { $sum: { $cond: [{ $eq: ['$rating', 4] }, 1, 0] } },
-        count5: { $sum: { $cond: [{ $eq: ['$rating', 5] }, 1, 0] } }
+      .select('-__v')
+      .lean(),
+    Review.aggregate([
+      { $match: { showroom: require('mongoose').Types.ObjectId.createFromHexString(showroomId.toString()), status: REVIEW_STATUS.APPROVED } },
+      {
+        $group: {
+          _id: null,
+          averageRating: { $avg: '$rating' },
+          totalReviews: { $sum: 1 },
+          count1: { $sum: { $cond: [{ $eq: ['$rating', 1] }, 1, 0] } },
+          count2: { $sum: { $cond: [{ $eq: ['$rating', 2] }, 1, 0] } },
+          count3: { $sum: { $cond: [{ $eq: ['$rating', 3] }, 1, 0] } },
+          count4: { $sum: { $cond: [{ $eq: ['$rating', 4] }, 1, 0] } },
+          count5: { $sum: { $cond: [{ $eq: ['$rating', 5] }, 1, 0] } }
+        }
       }
-    }
+    ])
   ]);
 
   const agg = aggregationPipeline[0] || null;
@@ -208,13 +208,17 @@ const getUserReviews = async (userId, { page = 1, limit = 20 } = {}) => {
   const skip = (pageNum - 1) * limitNum;
 
   const filter = { user: userId };
-  const total = await Review.countDocuments(filter);
 
-  const reviews = await Review.find(filter)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limitNum)
-    .populate('showroom', 'name slug address showroomType city isActive');
+  const [reviews, total] = await Promise.all([
+    Review.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .populate('showroom', 'name slug address showroomType city isActive')
+      .select('-__v')
+      .lean(),
+    Review.countDocuments(filter)
+  ]);
 
   return {
     data: reviews,
@@ -240,7 +244,9 @@ const getReviewById = async (reviewId, requestingUserId = null) => {
 
   const review = await Review.findById(reviewId)
     .populate('user', USER_PUBLIC_PROJECTION)
-    .populate('showroom', 'name slug address showroomType city isActive');
+    .populate('showroom', 'name slug address showroomType city isActive')
+    .select('-__v')
+    .lean();
 
   if (!review) {
     const error = new Error('Review not found');

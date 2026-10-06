@@ -109,9 +109,12 @@ const bikeSchema = new mongoose.Schema(
   }
 );
 
-// Compound index for catalogue sorting and category filtering
+// Compound indexes for catalogue sorting, filtering, and featured queries
 bikeSchema.index({ category: 1, 'priceRange.minPrice': 1, isActive: 1 });
 bikeSchema.index({ brand: 1, isActive: 1 });
+bikeSchema.index({ isActive: 1, createdAt: -1 });
+bikeSchema.index({ isFeatured: 1, isActive: 1 });
+bikeSchema.index({ isActive: 1, 'priceRange.minPrice': 1 });
 
 const Bike = mongoose.models.Bike || mongoose.model('Bike', bikeSchema);
 

@@ -88,6 +88,7 @@ const leadSchema = new mongoose.Schema(
 leadSchema.index({ user: 1, createdAt: -1 });
 leadSchema.index({ showroom: 1, status: 1 });
 leadSchema.index({ bike: 1, status: 1 });
+leadSchema.index({ status: 1, createdAt: -1 });
 
 // Ensure internal versioning is omitted from JSON transformations
 leadSchema.set('toJSON', {

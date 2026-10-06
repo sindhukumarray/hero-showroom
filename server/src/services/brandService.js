@@ -98,7 +98,7 @@ const getBrandBySlug = async (slug) => {
 const getBrandById = async (id) => {
   assertDatabaseConnected();
 
-  const brand = await Brand.findById(id).select('-__v');
+  const brand = await Brand.findById(id).select('-__v').lean();
   if (!brand) {
     const error = new Error('Brand not found');
     error.statusCode = 404;

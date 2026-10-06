@@ -26,7 +26,7 @@ const { TEST_RIDE_STATUS } = require('../constants/testRides');
  * @returns {Promise<object>} Admin session status confirmation
  */
 const getAdminStatus = async (adminUserId) => {
-  const adminUser = await User.findById(adminUserId).select('name email role isActive createdAt');
+  const adminUser = await User.findById(adminUserId).select('name email role isActive createdAt').lean();
 
   return {
     verified: true,

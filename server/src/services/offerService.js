@@ -84,23 +84,26 @@ const getOffers = async ({
     sortOption = { createdAt: 1 };
   }
 
-  const total = await Offer.countDocuments(filter);
-
-  const offers = await Offer.find(filter)
-    .sort(sortOption)
-    .skip(skip)
-    .limit(limitNum)
-    .populate({
-      path: 'bike',
-      select: 'name slug category images priceRange brand isActive',
-      populate: { path: 'brand', select: 'name slug logo' }
-    })
-    .populate('variant', 'name trim exShowroomPrice isActive')
-    .populate({
-      path: 'showroom',
-      select: 'name slug address city contact showroomType isActive',
-      populate: { path: 'city', select: 'name state' }
-    });
+  const [offers, total] = await Promise.all([
+    Offer.find(filter)
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limitNum)
+      .populate({
+        path: 'bike',
+        select: 'name slug category images priceRange brand isActive',
+        populate: { path: 'brand', select: 'name slug logo' }
+      })
+      .populate('variant', 'name trim exShowroomPrice isActive')
+      .populate({
+        path: 'showroom',
+        select: 'name slug address city contact showroomType isActive',
+        populate: { path: 'city', select: 'name state' }
+      })
+      .select('-__v')
+      .lean(),
+    Offer.countDocuments(filter)
+  ]);
 
   return {
     data: offers,
@@ -128,38 +131,35 @@ const getOfferByIdOrSlug = async (idOrSlug) => {
   }
 
   const trimmed = idOrSlug.trim();
-  let offer = null;
+  const query = isValidObjectId(trimmed)
+    ? { _id: trimmed }
+    : { slug: trimmed.toLowerCase() };
 
-  if (isValidObjectId(trimmed)) {
-    offer = await Offer.findById(trimmed);
-  }
-
-  if (!offer) {
-    offer = await Offer.findOne({ slug: trimmed.toLowerCase() });
-  }
+  const offer = await Offer.findOne(query)
+    .populate([
+      {
+        path: 'bike',
+        select: 'name slug category images priceRange brand engine specifications isActive',
+        populate: { path: 'brand', select: 'name slug logo' }
+      },
+      {
+        path: 'variant',
+        select: 'name trim exShowroomPrice specifications isActive'
+      },
+      {
+        path: 'showroom',
+        select: 'name slug address city contact showroomType isActive',
+        populate: { path: 'city', select: 'name state' }
+      }
+    ])
+    .select('-__v')
+    .lean();
 
   if (!offer) {
     const error = new Error('Offer not found');
     error.statusCode = 404;
     throw error;
   }
-
-  await offer.populate([
-    {
-      path: 'bike',
-      select: 'name slug category images priceRange brand engine specifications isActive',
-      populate: { path: 'brand', select: 'name slug logo' }
-    },
-    {
-      path: 'variant',
-      select: 'name trim exShowroomPrice specifications isActive'
-    },
-    {
-      path: 'showroom',
-      select: 'name slug address city contact showroomType isActive',
-      populate: { path: 'city', select: 'name state' }
-    }
-  ]);
 
   return offer;
 };

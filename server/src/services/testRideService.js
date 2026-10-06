@@ -153,15 +153,19 @@ const getUserTestRides = async ({ userId, page = 1, limit = 20 }) => {
   const skip = (pageNum - 1) * limitNum;
 
   const filter = { user: userId };
-  const total = await TestRide.countDocuments(filter);
 
-  const testRides = await TestRide.find(filter)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limitNum)
-    .populate('showroom', 'name slug address contact showroomType')
-    .populate('bike', 'name slug category images priceRange')
-    .populate('variant', 'name trim exShowroomPrice');
+  const [testRides, total] = await Promise.all([
+    TestRide.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .populate('showroom', 'name slug address contact showroomType')
+      .populate('bike', 'name slug category images priceRange')
+      .populate('variant', 'name trim exShowroomPrice')
+      .select('-__v')
+      .lean(),
+    TestRide.countDocuments(filter)
+  ]);
 
   return {
     data: testRides,

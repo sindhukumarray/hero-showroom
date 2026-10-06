@@ -119,6 +119,8 @@ const getUserNotifications = async (
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limitNum)
+      .select('-__v')
+      .lean()
   ]);
 
   const totalPages = total === 0 ? 0 : Math.ceil(total / limitNum);

@@ -181,16 +181,20 @@ const getUserLeads = async ({ userId, page = 1, limit = 20 }) => {
   const skip = (pageNum - 1) * limitNum;
 
   const filter = { user: userId };
-  const total = await Lead.countDocuments(filter);
 
-  const leads = await Lead.find(filter)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limitNum)
-    .populate('showroom', 'name slug address contact showroomType')
-    .populate('bike', 'name slug category images priceRange')
-    .populate('variant', 'name trim exShowroomPrice')
-    .populate('offer', 'title slug offerType discountValue validUntil');
+  const [leads, total] = await Promise.all([
+    Lead.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .populate('showroom', 'name slug address contact showroomType')
+      .populate('bike', 'name slug category images priceRange')
+      .populate('variant', 'name trim exShowroomPrice')
+      .populate('offer', 'title slug offerType discountValue validUntil')
+      .select('-__v')
+      .lean(),
+    Lead.countDocuments(filter)
+  ]);
 
   return {
     data: leads,

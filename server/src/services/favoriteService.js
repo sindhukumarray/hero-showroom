@@ -160,14 +160,17 @@ const getUserFavorites = async ({ userId, entityType, page = 1, limit = 20 }) =>
     filter.entityType = entityType;
   }
 
-  const total = await Favorite.countDocuments(filter);
-
-  const favorites = await Favorite.find(filter)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limitNum)
-    .populate('bike', 'name slug category images priceRange brand isActive')
-    .populate('showroom', 'name slug address contact showroomType city isActive');
+  const [favorites, total] = await Promise.all([
+    Favorite.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .populate('bike', 'name slug category images priceRange brand isActive')
+      .populate('showroom', 'name slug address contact showroomType city isActive')
+      .select('-__v')
+      .lean(),
+    Favorite.countDocuments(filter)
+  ]);
 
   return {
     data: favorites,

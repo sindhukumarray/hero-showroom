@@ -104,7 +104,7 @@ const getCityBySlug = async (slug) => {
 const getCityById = async (id) => {
   assertDatabaseConnected();
 
-  const city = await City.findById(id).select('-__v');
+  const city = await City.findById(id).select('-__v').lean();
   if (!city) {
     const error = new Error('City not found');
     error.statusCode = 404;

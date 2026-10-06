@@ -93,6 +93,7 @@ const offerSchema = new mongoose.Schema(
 
 // Compound indexes for high-performance catalogue queries
 offerSchema.index({ isActive: 1, validFrom: 1, validUntil: 1 });
+offerSchema.index({ isActive: 1, createdAt: -1 });
 offerSchema.index({ bike: 1, isActive: 1 });
 offerSchema.index({ showroom: 1, isActive: 1 });
 offerSchema.index({ offerType: 1, isActive: 1 });

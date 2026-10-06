@@ -72,6 +72,9 @@ reviewSchema.index({ showroom: 1, status: 1, createdAt: -1 });
 // User's own review history
 reviewSchema.index({ user: 1, createdAt: -1 });
 
+// Admin moderation queue
+reviewSchema.index({ status: 1, createdAt: -1 });
+
 // Omit internal versioning from JSON API responses
 reviewSchema.set('toJSON', {
   transform: (doc, ret) => {
