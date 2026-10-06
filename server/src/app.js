@@ -1,3 +1,8 @@
+const { validateConfig } = require('./config/env');
+
+// Fail fast on invalid environment configuration before accepting traffic
+const { config: validatedConfig } = validateConfig();
+
 const express = require('express');
 const cors = require('cors');
 const { getCorsOptions } = require('./config/corsConfig');
@@ -23,7 +28,7 @@ app.use(requestTimeout(30000));
 app.use(securityHeaders);
 
 // 3. Hardened CORS Configuration
-app.use(cors(getCorsOptions()));
+app.use(cors(getCorsOptions(validatedConfig)));
 
 // 4. Request Body Size Limits (Mitigate payload flooding & memory exhaustion)
 app.use(express.json({ limit: '1mb' }));

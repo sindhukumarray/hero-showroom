@@ -1,36 +1,20 @@
+const { getConfig } = require('./env');
+
 /**
  * Cross-Origin Resource Sharing (CORS) Configuration
  * Enforces an explicit, configurable allowed-origin strategy to prevent unauthorized
  * cross-origin credential leaks while supporting legitimate local development and production frontends.
  */
 
-const getDefaultAllowedOrigins = () => {
-  const origins = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
-  ];
-
-  const configuredClientUrl = process.env.CLIENT_URL;
-  if (configuredClientUrl && typeof configuredClientUrl === 'string') {
-    const customUrls = configuredClientUrl
-      .split(',')
-      .map((url) => url.trim())
-      .filter(Boolean);
-
-    customUrls.forEach((url) => {
-      if (!origins.includes(url)) {
-        origins.push(url);
-      }
-    });
+const getDefaultAllowedOrigins = (config) => {
+  if (config && Array.isArray(config.allowedOrigins)) {
+    return config.allowedOrigins;
   }
-
-  return origins;
+  return getConfig().allowedOrigins;
 };
 
-const getCorsOptions = () => {
-  const allowedOrigins = getDefaultAllowedOrigins();
+const getCorsOptions = (config) => {
+  const allowedOrigins = getDefaultAllowedOrigins(config);
 
   return {
     origin: (origin, callback) => {
@@ -39,8 +23,11 @@ const getCorsOptions = () => {
         return callback(null, true);
       }
 
+      // Normalize origin by stripping any accidental trailing slash
+      const normalizedOrigin = typeof origin === 'string' ? origin.replace(/\/+$/, '') : origin;
+
       // 2. Validate against explicit allowed origins
-      if (allowedOrigins.includes(origin)) {
+      if (allowedOrigins.includes(normalizedOrigin)) {
         return callback(null, true);
       }
 
@@ -57,7 +44,8 @@ const getCorsOptions = () => {
       'X-Requested-With',
       'Accept',
       'Origin',
-      'x-test-bypass'
+      'x-test-bypass',
+      'x-force-rate-limit'
     ],
     exposedHeaders: [
       'RateLimit-Limit',
