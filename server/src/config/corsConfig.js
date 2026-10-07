@@ -44,10 +44,13 @@ const getCorsOptions = (config) => {
       'X-Requested-With',
       'Accept',
       'Origin',
+      'X-Request-ID',
+      'x-request-id',
       'x-test-bypass',
       'x-force-rate-limit'
     ],
     exposedHeaders: [
+      'X-Request-ID',
       'RateLimit-Limit',
       'RateLimit-Remaining',
       'RateLimit-Reset',

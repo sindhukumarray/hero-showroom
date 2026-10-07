@@ -59,7 +59,8 @@ api.interceptors.response.use(
       success: false,
       message: error.response?.data?.message || error.message || 'An unexpected network error occurred',
       statusCode,
-      errors: error.response?.data?.errors || []
+      errors: error.response?.data?.errors || [],
+      requestId: error.response?.headers?.['x-request-id'] || null
     };
     return Promise.reject(formattedError);
   }

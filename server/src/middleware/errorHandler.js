@@ -1,16 +1,16 @@
 const { sendError } = require('../utils/apiResponse');
+const logger = require('../utils/logger');
+const { redact, redactString } = require('../utils/redact');
 
 /**
- * Strips sensitive credentials or MongoDB connection strings from error messages.
+ * Strips sensitive credentials, tokens, or MongoDB connection strings from error messages.
  * Prevents accidental disclosure in server console logs.
  * @param {string} message
  * @returns {string}
  */
 const sanitizeLogMessage = (message) => {
   if (!message || typeof message !== 'string') return 'Unknown error';
-  return message
-    .replace(/mongodb(\+srv)?:\/\/[^\s]+/gi, 'mongodb://<sanitized-uri>')
-    .replace(/:([^\s:@/]+)@/g, ':<hidden>@');
+  return redactString(message);
 };
 
 /**
@@ -122,6 +122,16 @@ const errorHandler = (err, req, res, next) => {
   // 10. Safe console logging without leaking credentials or tokens
   const safeMsg = sanitizeLogMessage(message || err.message || 'Internal Server Error');
   console.error(`[Error] ${req.method} ${req.originalUrl}:`, safeMsg);
+
+  // 11. Structured diagnostic logging with correlation ID
+  logger.error(safeMsg, {
+    requestId: req.id || req.requestId,
+    method: req.method,
+    path: req.originalUrl || req.url,
+    statusCode,
+    errorName: err.name || 'Error',
+    stack: !isProduction && err.stack ? err.stack : undefined
+  });
 
   return sendError(res, message, errors, statusCode);
 };

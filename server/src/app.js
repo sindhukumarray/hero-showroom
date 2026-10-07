@@ -12,7 +12,9 @@ const {
   generalApiLimiter,
   notFoundHandler,
   errorHandler,
-  requestTimeout
+  requestTimeout,
+  requestId,
+  requestLogger
 } = require('./middleware');
 const apiRoutes = require('./routes');
 
@@ -21,20 +23,26 @@ const app = express();
 // Disable Express fingerprinting header
 app.disable('x-powered-by');
 
-// 1. Request Timeout Protection (30s threshold prevents hanging sockets and connection leaks)
+// 1. Request Correlation ID (Assign or preserve traceable X-Request-ID)
+app.use(requestId);
+
+// 2. Request Lifecycle Structured Logging (Observability without leaking sensitive bodies)
+app.use(requestLogger);
+
+// 3. Request Timeout Protection (30s threshold prevents hanging sockets and connection leaks)
 app.use(requestTimeout(30000));
 
-// 2. HTTP Security Headers (OWASP baseline)
+// 4. HTTP Security Headers (OWASP baseline)
 app.use(securityHeaders);
 
-// 3. Hardened CORS Configuration
+// 5. Hardened CORS Configuration
 app.use(cors(getCorsOptions(validatedConfig)));
 
-// 4. Request Body Size Limits (Mitigate payload flooding & memory exhaustion)
+// 6. Request Body Size Limits (Mitigate payload flooding & memory exhaustion)
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-// 5. Universal Input Sanitization (Defense-in-depth against MongoDB operator injections)
+// 7. Universal Input Sanitization (Defense-in-depth against MongoDB operator injections)
 app.use(sanitizeInput);
 
 // Root welcome check
