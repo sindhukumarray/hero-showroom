@@ -2361,10 +2361,945 @@ const offersData = [
   }
 ];
 
+const bcrypt = require('bcryptjs');
+const { ROLES } = require('../constants/roles');
+const { LEAD_STATUS, LEAD_SOURCES } = require('../constants/leads');
+const { TEST_RIDE_STATUS } = require('../constants/testRides');
+const { REVIEW_STATUS } = require('../constants/reviews');
+
+// Generate safe bcrypt password hash (cost factor 10) for demo credentials
+const DEMO_PASSWORD_HASH = bcrypt.hashSync('HeroShowroom@2026', 10);
+
+const usersData = [
+  {
+    name: 'Er Sindhu Kumar',
+    email: 'er_sindhu@heroshowroom.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.ADMIN,
+    phone: '+91 98765 43210',
+    isActive: true
+  },
+  {
+    name: 'Er Sindhu Dealership Admin',
+    email: 'er_sindhu.admin@heroshowroom.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.ADMIN,
+    phone: '+91 98765 43211',
+    isActive: true
+  },
+  {
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98111 22334',
+    isActive: true
+  },
+  {
+    name: 'Priya Patel',
+    email: 'priya.patel@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98222 33445',
+    isActive: true
+  },
+  {
+    name: 'Rohan Verma',
+    email: 'rohan.verma@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98333 44556',
+    isActive: true
+  },
+  {
+    name: 'Ananya Iyer',
+    email: 'ananya.iyer@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98444 55667',
+    isActive: true
+  },
+  {
+    name: 'Vikram Malhotra',
+    email: 'vikram.malhotra@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98555 66778',
+    isActive: true
+  },
+  {
+    name: 'Neha Gupta',
+    email: 'neha.gupta@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98666 77889',
+    isActive: true
+  },
+  {
+    name: 'Karan Deshmukh',
+    email: 'karan.deshmukh@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98777 88990',
+    isActive: true
+  },
+  {
+    name: 'Pooja Reddy',
+    email: 'pooja.reddy@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98888 99001',
+    isActive: true
+  },
+  {
+    name: 'Rahul Joshi',
+    email: 'rahul.joshi@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98999 00112',
+    isActive: true
+  },
+  {
+    name: 'Kavita Nair',
+    email: 'kavita.nair@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98101 11223',
+    isActive: true
+  },
+  {
+    name: 'Siddharth Rao',
+    email: 'siddharth.rao@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98212 22334',
+    isActive: true
+  },
+  {
+    name: 'Meera Chawla',
+    email: 'meera.chawla@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98323 33445',
+    isActive: true
+  },
+  {
+    name: 'Aditya Kulkarni',
+    email: 'aditya.kulkarni@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98434 44556',
+    isActive: true
+  },
+  {
+    name: 'Ritu Sen',
+    email: 'ritu.sen@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98545 55667',
+    isActive: true
+  },
+  {
+    name: 'Manish Pandey',
+    email: 'manish.pandey@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98656 66778',
+    isActive: true
+  },
+  {
+    name: 'Divya Menon',
+    email: 'divya.menon@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98767 77889',
+    isActive: true
+  },
+  {
+    name: 'Varun Bhatia',
+    email: 'varun.bhatia@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98878 88990',
+    isActive: true
+  },
+  {
+    name: 'Swati Agarwal',
+    email: 'swati.agarwal@example.com',
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: ROLES.CUSTOMER,
+    phone: '+91 98989 99001',
+    isActive: true
+  }
+];
+
+const leadsData = [
+  {
+    userEmail: 'aarav.sharma@example.com',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@example.com',
+    phone: '+91 98111 22334',
+    showroomSlug: 'hero-premia-worli-mumbai',
+    bikeSlug: 'hero-mavrick-440',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.NEW,
+    message: 'Interested in on-road price and delivery timeline.'
+  },
+  {
+    userEmail: 'priya.patel@example.com',
+    name: 'Priya Patel',
+    email: 'priya.patel@example.com',
+    phone: '+91 98222 33445',
+    showroomSlug: 'vida-experience-center-delhi',
+    bikeSlug: 'vida-v1-pro',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.CONTACTED,
+    message: 'Looking for subsidy details and home charger installation options.'
+  },
+  {
+    userEmail: 'rohan.verma@example.com',
+    name: 'Rohan Verma',
+    email: 'rohan.verma@example.com',
+    phone: '+91 98333 44556',
+    showroomSlug: 'hero-premia-koramangala-bengaluru',
+    bikeSlug: 'harley-davidson-x440',
+    source: LEAD_SOURCES.TEST_RIDE,
+    status: LEAD_STATUS.QUALIFIED,
+    message: 'Booked test ride, keen on exchange offer for old bike.'
+  },
+  {
+    userEmail: 'ananya.iyer@example.com',
+    name: 'Ananya Iyer',
+    email: 'ananya.iyer@example.com',
+    phone: '+91 98444 55667',
+    showroomSlug: 'prakruthi-hero-indiranagar-bengaluru',
+    bikeSlug: 'hero-destini-125-xtec',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.CONVERTED,
+    message: 'Finalized quotation with corporate discount.'
+  },
+  {
+    userEmail: 'vikram.malhotra@example.com',
+    name: 'Vikram Malhotra',
+    email: 'vikram.malhotra@example.com',
+    phone: '+91 98555 66778',
+    showroomSlug: 'hero-premia-connaught-delhi',
+    bikeSlug: 'hero-karizma-xmr-210',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.NEW,
+    message: 'Requesting brochure and booking amount requirements.'
+  },
+  {
+    userEmail: 'neha.gupta@example.com',
+    name: 'Neha Gupta',
+    email: 'neha.gupta@example.com',
+    phone: '+91 98666 77889',
+    showroomSlug: 'fortune-hero-andheri-mumbai',
+    bikeSlug: 'hero-pleasure-plus-xtec',
+    source: LEAD_SOURCES.OFFER,
+    status: LEAD_STATUS.CLOSED,
+    message: 'Inquired about festive bonus; purchased another model.'
+  },
+  {
+    userEmail: 'karan.deshmukh@example.com',
+    name: 'Karan Deshmukh',
+    email: 'karan.deshmukh@example.com',
+    phone: '+91 98777 88990',
+    showroomSlug: 'hero-premia-baner-pune',
+    bikeSlug: 'hero-xtreme-160r-4v',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.NEW,
+    message: 'Interested in dual-channel ABS variant availability.'
+  },
+  {
+    userEmail: 'pooja.reddy@example.com',
+    name: 'Pooja Reddy',
+    email: 'pooja.reddy@example.com',
+    phone: '+91 98888 99001',
+    showroomSlug: 'vida-hub-banjara-hyderabad',
+    bikeSlug: 'vida-v1-plus',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.CONTACTED,
+    message: 'Inquiring about battery warranty and EMI schemes.'
+  },
+  {
+    userEmail: 'rahul.joshi@example.com',
+    name: 'Rahul Joshi',
+    email: 'rahul.joshi@example.com',
+    phone: '+91 98999 00112',
+    showroomSlug: 'metro-hero-secunderabad',
+    bikeSlug: 'hero-splendor-plus-xtec',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.QUALIFIED,
+    message: 'Looking for finance options with zero down payment.'
+  },
+  {
+    userEmail: 'kavita.nair@example.com',
+    name: 'Kavita Nair',
+    email: 'kavita.nair@example.com',
+    phone: '+91 98101 11223',
+    showroomSlug: 'hero-premia-alwarpet-chennai',
+    bikeSlug: 'hero-xpulse-200-4v',
+    source: LEAD_SOURCES.TEST_RIDE,
+    status: LEAD_STATUS.CONVERTED,
+    message: 'Test ride completed, booked Pearl White edition.'
+  },
+  {
+    userEmail: 'siddharth.rao@example.com',
+    name: 'Siddharth Rao',
+    email: 'siddharth.rao@example.com',
+    phone: '+91 98212 22334',
+    showroomSlug: 'khivraj-hero-anna-nagar-chennai',
+    bikeSlug: 'hero-glamour-xtec',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.CONTACTED,
+    message: 'Inquired about mileage and service intervals.'
+  },
+  {
+    userEmail: 'meera.chawla@example.com',
+    name: 'Meera Chawla',
+    email: 'meera.chawla@example.com',
+    phone: '+91 98323 33445',
+    showroomSlug: 'saini-hero-park-street-kolkata',
+    bikeSlug: 'hero-xoom-110',
+    source: LEAD_SOURCES.OFFER,
+    status: LEAD_STATUS.NEW,
+    message: 'Checking exchange bonus eligibility for 2018 scooter.'
+  },
+  {
+    userEmail: 'aditya.kulkarni@example.com',
+    name: 'Aditya Kulkarni',
+    email: 'aditya.kulkarni@example.com',
+    phone: '+91 98434 44556',
+    showroomSlug: 'sai-hero-kothrud-pune',
+    bikeSlug: 'hero-xtreme-125r',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.QUALIFIED,
+    message: 'Ready for down payment, awaiting color allotment.'
+  },
+  {
+    userEmail: 'ritu.sen@example.com',
+    name: 'Ritu Sen',
+    email: 'ritu.sen@example.com',
+    phone: '+91 98545 55667',
+    showroomSlug: 'bengal-hero-salt-lake-kolkata',
+    bikeSlug: 'hero-super-splendor-xtec',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.NEW,
+    message: 'Enquiring about family commuter options.'
+  },
+  {
+    userEmail: 'manish.pandey@example.com',
+    name: 'Manish Pandey',
+    email: 'manish.pandey@example.com',
+    phone: '+91 98656 66778',
+    showroomSlug: 'ritu-hero-sg-highway-ahmedabad',
+    bikeSlug: 'hero-passion-xtec',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.CONTACTED,
+    message: 'Looking for on-road quote with extended warranty.'
+  },
+  {
+    userEmail: 'divya.menon@example.com',
+    name: 'Divya Menon',
+    email: 'divya.menon@example.com',
+    phone: '+91 98767 77889',
+    showroomSlug: 'vida-hub-bodakdev-ahmedabad',
+    bikeSlug: 'vida-v1-lite',
+    source: LEAD_SOURCES.TEST_RIDE,
+    status: LEAD_STATUS.CONVERTED,
+    message: 'Commercial registration enquiry, booking confirmed.'
+  },
+  {
+    userEmail: 'varun.bhatia@example.com',
+    name: 'Varun Bhatia',
+    email: 'varun.bhatia@example.com',
+    phone: '+91 98878 88990',
+    showroomSlug: 'rajasthan-hero-tonk-road-jaipur',
+    bikeSlug: 'hero-hf-deluxe',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.CLOSED,
+    message: 'Evaluated options, postponed purchase to next month.'
+  },
+  {
+    userEmail: 'swati.agarwal@example.com',
+    name: 'Swati Agarwal',
+    email: 'swati.agarwal@example.com',
+    phone: '+91 98989 99001',
+    showroomSlug: 'hero-premia-vaishali-jaipur',
+    bikeSlug: 'hero-mavrick-440',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.NEW,
+    message: 'Checking demo vehicle availability for weekend review.'
+  },
+  {
+    userEmail: 'aarav.sharma@example.com',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@example.com',
+    phone: '+91 98111 22334',
+    showroomSlug: 'capital-hero-hazratganj-lucknow',
+    bikeSlug: 'hero-karizma-xmr-210',
+    source: LEAD_SOURCES.OFFER,
+    status: LEAD_STATUS.CONTACTED,
+    message: 'Availing festival discount voucher.'
+  },
+  {
+    userEmail: 'priya.patel@example.com',
+    name: 'Priya Patel',
+    email: 'priya.patel@example.com',
+    phone: '+91 98222 33445',
+    showroomSlug: 'awadh-hero-gomti-nagar-lucknow',
+    bikeSlug: 'hero-xpulse-200t-4v',
+    source: LEAD_SOURCES.TEST_RIDE,
+    status: LEAD_STATUS.QUALIFIED,
+    message: 'Discussed touring accessories package.'
+  },
+  {
+    userEmail: 'rohan.verma@example.com',
+    name: 'Rohan Verma',
+    email: 'rohan.verma@example.com',
+    phone: '+91 98333 44556',
+    showroomSlug: 'tricity-hero-sector-17-chandigarh',
+    bikeSlug: 'harley-davidson-x440',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.CONVERTED,
+    message: 'Payment initiated via online banking.'
+  },
+  {
+    userEmail: 'ananya.iyer@example.com',
+    name: 'Ananya Iyer',
+    email: 'ananya.iyer@example.com',
+    phone: '+91 98444 55667',
+    showroomSlug: 'hero-premia-chandigarh',
+    bikeSlug: 'hero-xtreme-200s-4v',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.NEW,
+    message: 'Inquired about yellow sport edition lead time.'
+  },
+  {
+    userEmail: 'vikram.malhotra@example.com',
+    name: 'Vikram Malhotra',
+    email: 'vikram.malhotra@example.com',
+    phone: '+91 98555 66778',
+    showroomSlug: 'cochin-hero-mg-road-kochi',
+    bikeSlug: 'hero-maestro-edge-125',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.CONTACTED,
+    message: 'Requesting on-road pricing with insurance.'
+  },
+  {
+    userEmail: 'neha.gupta@example.com',
+    name: 'Neha Gupta',
+    email: 'neha.gupta@example.com',
+    phone: '+91 98666 77889',
+    showroomSlug: 'vida-experience-center-kochi',
+    bikeSlug: 'vida-v1-pro',
+    source: LEAD_SOURCES.TEST_RIDE,
+    status: LEAD_STATUS.QUALIFIED,
+    message: 'Test ride scheduled for doorstep delivery.'
+  },
+  {
+    userEmail: 'karan.deshmukh@example.com',
+    name: 'Karan Deshmukh',
+    email: 'karan.deshmukh@example.com',
+    phone: '+91 98777 88990',
+    showroomSlug: 'malwa-hero-ab-road-indore',
+    bikeSlug: 'hero-splendor-plus',
+    source: LEAD_SOURCES.OFFER,
+    status: LEAD_STATUS.CONVERTED,
+    message: 'Purchased with zero processing fee scheme.'
+  },
+  {
+    userEmail: 'pooja.reddy@example.com',
+    name: 'Pooja Reddy',
+    email: 'pooja.reddy@example.com',
+    phone: '+91 98888 99001',
+    showroomSlug: 'hero-premia-vijay-nagar-indore',
+    bikeSlug: 'hero-xoom-125r',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.CLOSED,
+    message: 'Customer opted for alternative brand.'
+  },
+  {
+    userEmail: 'rahul.joshi@example.com',
+    name: 'Rahul Joshi',
+    email: 'rahul.joshi@example.com',
+    phone: '+91 98999 00112',
+    showroomSlug: 'doon-hero-rajpur-road-dehradun',
+    bikeSlug: 'hero-xpulse-200-4v',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.NEW,
+    message: 'Hill terrain performance inquiry.'
+  },
+  {
+    userEmail: 'kavita.nair@example.com',
+    name: 'Kavita Nair',
+    email: 'kavita.nair@example.com',
+    phone: '+91 98101 11223',
+    showroomSlug: 'shivalik-hero-service-dehradun',
+    bikeSlug: 'hero-passion-plus',
+    source: LEAD_SOURCES.BIKE,
+    status: LEAD_STATUS.CONTACTED,
+    message: 'Inquiring about immediate stock delivery.'
+  },
+  {
+    userEmail: 'siddharth.rao@example.com',
+    name: 'Siddharth Rao',
+    email: 'siddharth.rao@example.com',
+    phone: '+91 98212 22334',
+    showroomSlug: 'bhopal-hero-mp-nagar',
+    bikeSlug: 'hero-glamour',
+    source: LEAD_SOURCES.OFFER,
+    status: LEAD_STATUS.QUALIFIED,
+    message: 'Corporate referral discount validation.'
+  },
+  {
+    userEmail: 'meera.chawla@example.com',
+    name: 'Meera Chawla',
+    email: 'meera.chawla@example.com',
+    phone: '+91 98323 33445',
+    showroomSlug: 'hero-premia-bhopal',
+    bikeSlug: 'vida-v1-pro',
+    source: LEAD_SOURCES.SHOWROOM,
+    status: LEAD_STATUS.NEW,
+    message: 'Exploring eco-friendly EV upgrade options.'
+  }
+];
+
+const testRidesData = [
+  {
+    userEmail: 'aarav.sharma@example.com',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@example.com',
+    phone: '+91 98111 22334',
+    showroomSlug: 'hero-premia-worli-mumbai',
+    bikeSlug: 'hero-mavrick-440',
+    preferredDate: new Date('2026-10-15'),
+    preferredTime: '10:00 AM',
+    status: TEST_RIDE_STATUS.REQUESTED,
+    notes: 'Prefers morning slot before 11 AM.'
+  },
+  {
+    userEmail: 'priya.patel@example.com',
+    name: 'Priya Patel',
+    email: 'priya.patel@example.com',
+    phone: '+91 98222 33445',
+    showroomSlug: 'vida-experience-center-delhi',
+    bikeSlug: 'vida-v1-pro',
+    preferredDate: new Date('2026-10-16'),
+    preferredTime: '11:30 AM',
+    status: TEST_RIDE_STATUS.CONFIRMED,
+    notes: 'Interested in exploring highway acceleration.'
+  },
+  {
+    userEmail: 'rohan.verma@example.com',
+    name: 'Rohan Verma',
+    email: 'rohan.verma@example.com',
+    phone: '+91 98333 44556',
+    showroomSlug: 'hero-premia-koramangala-bengaluru',
+    bikeSlug: 'harley-davidson-x440',
+    preferredDate: new Date('2026-10-14'),
+    preferredTime: '02:00 PM',
+    status: TEST_RIDE_STATUS.COMPLETED,
+    notes: 'Completed 5km city track test ride. Highly satisfied.'
+  },
+  {
+    userEmail: 'ananya.iyer@example.com',
+    name: 'Ananya Iyer',
+    email: 'ananya.iyer@example.com',
+    phone: '+91 98444 55667',
+    showroomSlug: 'prakruthi-hero-indiranagar-bengaluru',
+    bikeSlug: 'hero-destini-125-xtec',
+    preferredDate: new Date('2026-10-12'),
+    preferredTime: '04:00 PM',
+    status: TEST_RIDE_STATUS.COMPLETED,
+    notes: 'Smooth handling confirmed for urban commute.'
+  },
+  {
+    userEmail: 'vikram.malhotra@example.com',
+    name: 'Vikram Malhotra',
+    email: 'vikram.malhotra@example.com',
+    phone: '+91 98555 66778',
+    showroomSlug: 'hero-premia-connaught-delhi',
+    bikeSlug: 'hero-karizma-xmr-210',
+    preferredDate: new Date('2026-10-18'),
+    preferredTime: '10:30 AM',
+    status: TEST_RIDE_STATUS.REQUESTED,
+    notes: 'Wants to test pillion comfort and riding ergonomics.'
+  },
+  {
+    userEmail: 'neha.gupta@example.com',
+    name: 'Neha Gupta',
+    email: 'neha.gupta@example.com',
+    phone: '+91 98666 77889',
+    showroomSlug: 'fortune-hero-andheri-mumbai',
+    bikeSlug: 'hero-pleasure-plus-xtec',
+    preferredDate: new Date('2026-10-13'),
+    preferredTime: '03:30 PM',
+    status: TEST_RIDE_STATUS.CANCELLED,
+    notes: 'Customer rescheduled due to work emergency.'
+  },
+  {
+    userEmail: 'karan.deshmukh@example.com',
+    name: 'Karan Deshmukh',
+    email: 'karan.deshmukh@example.com',
+    phone: '+91 98777 88990',
+    showroomSlug: 'hero-premia-baner-pune',
+    bikeSlug: 'hero-xtreme-160r-4v',
+    preferredDate: new Date('2026-10-19'),
+    preferredTime: '11:00 AM',
+    status: TEST_RIDE_STATUS.CONFIRMED,
+    notes: 'Showroom staff assigned dedicated advisor.'
+  },
+  {
+    userEmail: 'pooja.reddy@example.com',
+    name: 'Pooja Reddy',
+    email: 'pooja.reddy@example.com',
+    phone: '+91 98888 99001',
+    showroomSlug: 'vida-hub-banjara-hyderabad',
+    bikeSlug: 'vida-v1-plus',
+    preferredDate: new Date('2026-10-11'),
+    preferredTime: '01:30 PM',
+    status: TEST_RIDE_STATUS.COMPLETED,
+    notes: 'Tested regenerative braking and eco modes.'
+  },
+  {
+    userEmail: 'rahul.joshi@example.com',
+    name: 'Rahul Joshi',
+    email: 'rahul.joshi@example.com',
+    phone: '+91 98999 00112',
+    showroomSlug: 'metro-hero-secunderabad',
+    bikeSlug: 'hero-splendor-plus-xtec',
+    preferredDate: new Date('2026-10-20'),
+    preferredTime: '05:00 PM',
+    status: TEST_RIDE_STATUS.REQUESTED,
+    notes: 'Evening slot requested after office hours.'
+  },
+  {
+    userEmail: 'kavita.nair@example.com',
+    name: 'Kavita Nair',
+    email: 'kavita.nair@example.com',
+    phone: '+91 98101 11223',
+    showroomSlug: 'hero-premia-alwarpet-chennai',
+    bikeSlug: 'hero-xpulse-200-4v',
+    preferredDate: new Date('2026-10-17'),
+    preferredTime: '09:30 AM',
+    status: TEST_RIDE_STATUS.CONFIRMED,
+    notes: 'Requested rough-road test route around dealership.'
+  },
+  {
+    userEmail: 'siddharth.rao@example.com',
+    name: 'Siddharth Rao',
+    email: 'siddharth.rao@example.com',
+    phone: '+91 98212 22334',
+    showroomSlug: 'khivraj-hero-anna-nagar-chennai',
+    bikeSlug: 'hero-glamour-xtec',
+    preferredDate: new Date('2026-10-10'),
+    preferredTime: '11:00 AM',
+    status: TEST_RIDE_STATUS.COMPLETED,
+    notes: 'Completed successfully; discussed financing.'
+  },
+  {
+    userEmail: 'meera.chawla@example.com',
+    name: 'Meera Chawla',
+    email: 'meera.chawla@example.com',
+    phone: '+91 98323 33445',
+    showroomSlug: 'saini-hero-park-street-kolkata',
+    bikeSlug: 'hero-xoom-110',
+    preferredDate: new Date('2026-10-21'),
+    preferredTime: '03:00 PM',
+    status: TEST_RIDE_STATUS.REQUESTED,
+    notes: 'Requested helmet for test ride session.'
+  },
+  {
+    userEmail: 'aditya.kulkarni@example.com',
+    name: 'Aditya Kulkarni',
+    email: 'aditya.kulkarni@example.com',
+    phone: '+91 98434 44556',
+    showroomSlug: 'sai-hero-kothrud-pune',
+    bikeSlug: 'hero-xtreme-125r',
+    preferredDate: new Date('2026-10-22'),
+    preferredTime: '12:00 PM',
+    status: TEST_RIDE_STATUS.CONFIRMED,
+    notes: 'Confirmed by dealership manager.'
+  },
+  {
+    userEmail: 'ritu.sen@example.com',
+    name: 'Ritu Sen',
+    email: 'ritu.sen@example.com',
+    phone: '+91 98545 55667',
+    showroomSlug: 'bengal-hero-salt-lake-kolkata',
+    bikeSlug: 'hero-super-splendor-xtec',
+    preferredDate: new Date('2026-10-09'),
+    preferredTime: '02:30 PM',
+    status: TEST_RIDE_STATUS.CANCELLED,
+    notes: 'Cancelled due to heavy rainfall warning.'
+  },
+  {
+    userEmail: 'manish.pandey@example.com',
+    name: 'Manish Pandey',
+    email: 'manish.pandey@example.com',
+    phone: '+91 98656 66778',
+    showroomSlug: 'ritu-hero-sg-highway-ahmedabad',
+    bikeSlug: 'hero-passion-xtec',
+    preferredDate: new Date('2026-10-23'),
+    preferredTime: '04:30 PM',
+    status: TEST_RIDE_STATUS.REQUESTED,
+    notes: 'Weekend test ride requested.'
+  },
+  {
+    userEmail: 'divya.menon@example.com',
+    name: 'Divya Menon',
+    email: 'divya.menon@example.com',
+    phone: '+91 98767 77889',
+    showroomSlug: 'vida-hub-bodakdev-ahmedabad',
+    bikeSlug: 'vida-v1-lite',
+    preferredDate: new Date('2026-10-16'),
+    preferredTime: '10:00 AM',
+    status: TEST_RIDE_STATUS.CONFIRMED,
+    notes: 'Valid driving license verified.'
+  },
+  {
+    userEmail: 'varun.bhatia@example.com',
+    name: 'Varun Bhatia',
+    email: 'varun.bhatia@example.com',
+    phone: '+91 98878 88990',
+    showroomSlug: 'rajasthan-hero-tonk-road-jaipur',
+    bikeSlug: 'hero-hf-deluxe',
+    preferredDate: new Date('2026-10-08'),
+    preferredTime: '11:30 AM',
+    status: TEST_RIDE_STATUS.COMPLETED,
+    notes: 'Mileage check validated on test loop.'
+  },
+  {
+    userEmail: 'swati.agarwal@example.com',
+    name: 'Swati Agarwal',
+    email: 'swati.agarwal@example.com',
+    phone: '+91 98989 99001',
+    showroomSlug: 'hero-premia-vaishali-jaipur',
+    bikeSlug: 'hero-mavrick-440',
+    preferredDate: new Date('2026-10-24'),
+    preferredTime: '02:00 PM',
+    status: TEST_RIDE_STATUS.REQUESTED,
+    notes: 'Requesting Highway stretch trial.'
+  },
+  {
+    userEmail: 'aarav.sharma@example.com',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@example.com',
+    phone: '+91 98111 22334',
+    showroomSlug: 'capital-hero-hazratganj-lucknow',
+    bikeSlug: 'hero-karizma-xmr-210',
+    preferredDate: new Date('2026-10-25'),
+    preferredTime: '03:30 PM',
+    status: TEST_RIDE_STATUS.CONFIRMED,
+    notes: 'Appointment reminder sent via SMS.'
+  },
+  {
+    userEmail: 'priya.patel@example.com',
+    name: 'Priya Patel',
+    email: 'priya.patel@example.com',
+    phone: '+91 98222 33445',
+    showroomSlug: 'awadh-hero-gomti-nagar-lucknow',
+    bikeSlug: 'hero-xpulse-200t-4v',
+    preferredDate: new Date('2026-10-07'),
+    preferredTime: '05:00 PM',
+    status: TEST_RIDE_STATUS.CANCELLED,
+    notes: 'Client requested rescheduling to next week.'
+  }
+];
+
+const reviewsData = [
+  {
+    userEmail: 'aarav.sharma@example.com',
+    showroomSlug: 'hero-premia-worli-mumbai',
+    rating: 5,
+    title: 'Outstanding Premium Experience',
+    comment: 'The Premia showroom at Worli offers top-notch service and hospitality. The Mavrick 440 delivery was seamless.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Verified customer review.'
+  },
+  {
+    userEmail: 'priya.patel@example.com',
+    showroomSlug: 'vida-experience-center-delhi',
+    rating: 5,
+    title: 'Futuristic EV Showroom',
+    comment: 'Knowledgeable staff, interactive touchscreen displays, and transparent pricing. Very impressed with the Vida experience.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Verified authentic experience.'
+  },
+  {
+    userEmail: 'rohan.verma@example.com',
+    showroomSlug: 'hero-premia-koramangala-bengaluru',
+    rating: 5,
+    title: 'Best Dealership for Harley-Davidson in Bengaluru',
+    comment: 'Courteous staff and very organized test-ride booking process for the Harley X440.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Customer confirmed purchase.'
+  },
+  {
+    userEmail: 'ananya.iyer@example.com',
+    showroomSlug: 'prakruthi-hero-indiranagar-bengaluru',
+    rating: 4,
+    title: 'Quick Delivery & Helpful Staff',
+    comment: 'Got my Destini 125 within 3 days. Staff helped patiently with all RTO paperwork.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Approved.'
+  },
+  {
+    userEmail: 'vikram.malhotra@example.com',
+    showroomSlug: 'hero-premia-connaught-delhi',
+    rating: 4,
+    title: 'Centrally Located with Great Display',
+    comment: 'Spacious showroom right in CP. Wide selection of Karizma colors available on display.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Standard approval.'
+  },
+  {
+    userEmail: 'neha.gupta@example.com',
+    showroomSlug: 'fortune-hero-andheri-mumbai',
+    rating: 3,
+    title: 'Good Service but Busy on Weekends',
+    comment: 'Overall helpful team, though waiting time for executive was around 20 minutes on Sunday.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Constructive feedback approved.'
+  },
+  {
+    userEmail: 'karan.deshmukh@example.com',
+    showroomSlug: 'hero-premia-baner-pune',
+    rating: 5,
+    title: 'Seamless Test Ride & Booking',
+    comment: 'Excellent technical demonstration of the 4-valve engine by the test ride executive.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Verified customer feedback.'
+  },
+  {
+    userEmail: 'pooja.reddy@example.com',
+    showroomSlug: 'vida-hub-banjara-hyderabad',
+    rating: 4,
+    title: 'Modern EV Hub with Fast Charging',
+    comment: 'Great location and fast charger available right outside. Staff explained battery warranty thoroughly.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Approved.'
+  },
+  {
+    userEmail: 'rahul.joshi@example.com',
+    showroomSlug: 'metro-hero-secunderabad',
+    rating: 5,
+    title: 'Prompt Assistance & Honest Finance Advice',
+    comment: 'Finance partner NBFC rep gave very clear breakdown of loan interest and EMI schedule.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Approved.'
+  },
+  {
+    userEmail: 'kavita.nair@example.com',
+    showroomSlug: 'hero-premia-alwarpet-chennai',
+    rating: 5,
+    title: 'Top-tier Ambience & Premium Feel',
+    comment: 'Premia lounge in Alwarpet is classy. The staff took time to customize touring accessories.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Verified review.'
+  },
+  {
+    userEmail: 'siddharth.rao@example.com',
+    showroomSlug: 'khivraj-hero-anna-nagar-chennai',
+    rating: 4,
+    title: 'Reliable Hero Dealership',
+    comment: 'Been buying two-wheelers here for 8 years. Consistently good customer care.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Approved.'
+  },
+  {
+    userEmail: 'meera.chawla@example.com',
+    showroomSlug: 'saini-hero-park-street-kolkata',
+    rating: 4,
+    title: 'Smooth Exchange Process',
+    comment: 'Got fair valuation for my old two-wheeler within 30 minutes. Recommended.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Approved.'
+  },
+  {
+    userEmail: 'aditya.kulkarni@example.com',
+    showroomSlug: 'sai-hero-kothrud-pune',
+    rating: 5,
+    title: 'Fast Registration & Kind Staff',
+    comment: 'Hassle-free paperwork and friendly delivery celebration. Very pleased.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Approved.'
+  },
+  {
+    userEmail: 'ritu.sen@example.com',
+    showroomSlug: 'bengal-hero-salt-lake-kolkata',
+    rating: 4,
+    title: 'Good Location & Well Kept',
+    comment: 'Plenty of parking space outside and polite sales executives.',
+    status: REVIEW_STATUS.APPROVED,
+    moderationNote: 'Approved.'
+  },
+  {
+    userEmail: 'manish.pandey@example.com',
+    showroomSlug: 'ritu-hero-sg-highway-ahmedabad',
+    rating: 3,
+    title: 'Satisfactory Buying Experience',
+    comment: 'Vehicle handover took longer than expected but vehicle condition was flawless.',
+    status: REVIEW_STATUS.PENDING,
+    moderationNote: 'Awaiting moderation team review.'
+  },
+  {
+    userEmail: 'divya.menon@example.com',
+    showroomSlug: 'vida-hub-bodakdev-ahmedabad',
+    rating: 4,
+    title: 'Excellent EV Test Experience',
+    comment: 'Took the Vida V1 for a 20-minute city run. Smooth acceleration and intuitive dash.',
+    status: REVIEW_STATUS.PENDING,
+    moderationNote: 'Pending verification.'
+  },
+  {
+    userEmail: 'varun.bhatia@example.com',
+    showroomSlug: 'rajasthan-hero-tonk-road-jaipur',
+    rating: 2,
+    title: 'Delays in Documentation',
+    comment: 'Waiting for RC book update was prolonged. Hope service center improves turnaround.',
+    status: REVIEW_STATUS.PENDING,
+    moderationNote: 'Pending customer follow-up.'
+  },
+  {
+    userEmail: 'swati.agarwal@example.com',
+    showroomSlug: 'hero-premia-vaishali-jaipur',
+    rating: 5,
+    title: 'Luxurious Premia Experience',
+    comment: 'Splendid reception, clean lounge, and enthusiastic test-ride team.',
+    status: REVIEW_STATUS.PENDING,
+    moderationNote: 'Pending queue.'
+  },
+  {
+    userEmail: 'er_sindhu@heroshowroom.com',
+    showroomSlug: 'awadh-hero-gomti-nagar-lucknow',
+    rating: 1,
+    title: 'Irrelevant review content rejected',
+    comment: 'Spam test review with random promotional text.',
+    status: REVIEW_STATUS.REJECTED,
+    moderationNote: 'Rejected due to promotional spam content.'
+  },
+  {
+    userEmail: 'er_sindhu.admin@heroshowroom.com',
+    showroomSlug: 'capital-hero-hazratganj-lucknow',
+    rating: 2,
+    title: 'Duplicate submission rejected',
+    comment: 'Test submission from admin verification team.',
+    status: REVIEW_STATUS.REJECTED,
+    moderationNote: 'Rejected internal testing entry.'
+  }
+];
+
 module.exports = {
   brandsData,
   citiesData,
   showroomsData,
   bikesData,
-  offersData
+  offersData,
+  usersData,
+  leadsData,
+  testRidesData,
+  reviewsData
 };
