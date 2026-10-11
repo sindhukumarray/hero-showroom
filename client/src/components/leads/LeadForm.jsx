@@ -393,7 +393,7 @@ const LeadForm = ({
           id="lead-name"
           label="Full Name"
           required
-          placeholder="e.g. Rahul Sharma"
+          placeholder="e.g. er_sindhu"
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
           error={formErrors.name}
@@ -405,7 +405,7 @@ const LeadForm = ({
           label="Email Address"
           type="email"
           required
-          placeholder="e.g. rahul@example.com"
+          placeholder="e.g. er_sindhu@heroshowroom.com"
           value={formData.email}
           onChange={(e) => handleChange('email', e.target.value)}
           error={formErrors.email}
@@ -417,7 +417,7 @@ const LeadForm = ({
         id="lead-phone"
         label="Phone Number"
         type="tel"
-        placeholder="e.g. 9876543210 (Optional)"
+        placeholder="e.g. 7479524973 (Optional)"
         value={formData.phone}
         onChange={(e) => handleChange('phone', e.target.value)}
         error={formErrors.phone}

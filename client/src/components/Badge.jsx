@@ -18,13 +18,13 @@ const Badge = ({
     brand:
       'bg-brand-red-subtle text-brand-red border-brand-red/30 shadow-sm',
     success:
-      'bg-emerald-950/60 text-emerald-400 border-emerald-800/40',
+      'bg-emerald-50 text-emerald-700 border-emerald-200',
     warning:
-      'bg-amber-950/60 text-amber-400 border-amber-800/40',
+      'bg-amber-50 text-amber-700 border-amber-200',
     danger:
-      'bg-rose-950/60 text-rose-400 border-rose-800/40',
+      'bg-rose-50 text-rose-700 border-rose-200',
     info:
-      'bg-sky-950/60 text-sky-400 border-sky-800/40'
+      'bg-sky-50 text-sky-700 border-sky-200'
   };
 
   const dotColors = {

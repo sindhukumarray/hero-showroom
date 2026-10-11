@@ -142,8 +142,8 @@ const AdminPage = () => {
       value: overview.totalUsers,
       subtext: 'Platform customer accounts',
       icon: Users,
-      color: 'text-sky-400',
-      bgColor: 'bg-sky-950/40 border-sky-800/50'
+      color: 'text-sky-700',
+      bgColor: 'bg-sky-50 border-sky-200'
     },
     {
       id: 'kpi-leads',
@@ -151,8 +151,8 @@ const AdminPage = () => {
       value: overview.totalLeads,
       subtext: `${leads.new} awaiting response`,
       icon: Mail,
-      color: 'text-amber-400',
-      bgColor: 'bg-amber-950/40 border-amber-800/50'
+      color: 'text-amber-700',
+      bgColor: 'bg-amber-50 border-amber-200'
     },
     {
       id: 'kpi-test-rides',
@@ -160,8 +160,8 @@ const AdminPage = () => {
       value: overview.totalTestRides,
       subtext: `${testRides.confirmed} bookings confirmed`,
       icon: Calendar,
-      color: 'text-emerald-400',
-      bgColor: 'bg-emerald-950/40 border-emerald-800/50'
+      color: 'text-emerald-700',
+      bgColor: 'bg-emerald-50 border-emerald-200'
     },
     {
       id: 'kpi-reviews',
@@ -169,8 +169,8 @@ const AdminPage = () => {
       value: overview.totalReviews,
       subtext: `${reviews.pending} pending audit`,
       icon: Star,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-950/40 border-purple-800/50'
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-50 border-purple-200'
     },
     {
       id: 'kpi-showrooms',
@@ -178,8 +178,8 @@ const AdminPage = () => {
       value: overview.totalShowrooms,
       subtext: `${catalogue.activeShowrooms} active dealerships`,
       icon: Building2,
-      color: 'text-indigo-400',
-      bgColor: 'bg-indigo-950/40 border-indigo-800/50'
+      color: 'text-indigo-700',
+      bgColor: 'bg-indigo-50 border-indigo-200'
     },
     {
       id: 'kpi-bikes',
@@ -188,7 +188,7 @@ const AdminPage = () => {
       subtext: `${catalogue.featuredBikes} featured models`,
       icon: Bike,
       color: 'text-brand-red',
-      bgColor: 'bg-rose-950/40 border-brand-red/40'
+      bgColor: 'bg-rose-50 border-rose-200'
     },
     {
       id: 'kpi-offers',
@@ -196,8 +196,8 @@ const AdminPage = () => {
       value: offers.active,
       subtext: `${offers.total} total campaigns`,
       icon: Tag,
-      color: 'text-emerald-300',
-      bgColor: 'bg-emerald-950/30 border-emerald-700/50'
+      color: 'text-emerald-700',
+      bgColor: 'bg-emerald-50 border-emerald-200'
     }
   ];
 

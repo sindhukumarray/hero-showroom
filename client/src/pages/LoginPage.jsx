@@ -140,7 +140,7 @@ const LoginPage = () => {
               type="email"
               label="Email Address"
               required
-              placeholder="rider@example.com"
+              placeholder="er_sindhu@heroshowroom.com"
               autoComplete="email"
               value={formData.email}
               onChange={handleChange}

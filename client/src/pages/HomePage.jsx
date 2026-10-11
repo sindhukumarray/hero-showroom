@@ -29,8 +29,11 @@ import {
   Loading,
   ErrorState,
   OfferCard,
-  CompareButton
+  CompareButton,
+  FavoriteButton,
+  CinematicHero
 } from '../components';
+import { getBikeImageUrl, handleImageError } from '../utils/bikeImages';
 import {
   heroHeadline,
   heroContainer,
@@ -175,113 +178,18 @@ const HomePage = () => {
   return (
     <div className="space-y-6 md:space-y-12">
       {/* ================================================== */}
-      {/* 1. CINEMATIC HERO SECTION                          */}
+      {/* 1. CINEMATIC HERO SECTION: The Definitive Showroom */}
       {/* ================================================== */}
-      <section className="relative overflow-hidden pt-6 pb-16 md:py-24">
-        {/* Layered Cinematic Backdrop Elements */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] md:w-[900px] md:h-[500px] bg-brand-red/15 rounded-full blur-[130px] pointer-events-none" />
-        <div className="absolute top-0 right-10 w-72 h-72 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(#1F2430_1px,transparent_1px)] [background-size:28px_28px] opacity-25 pointer-events-none" />
-
-        <Container className="relative z-10">
-          <motion.div
-            variants={accessibleHeroContainer}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6 md:space-y-8"
-          >
-            {/* Eyebrow Pill */}
-            <motion.div variants={accessibleHeadline}>
-              <Badge variant="brand" size="md" dot>
-                Commercial Automotive Discovery Platform
-              </Badge>
-            </motion.div>
-
-            {/* Staggered Cinematic Headline */}
-            <motion.h1
-              variants={accessibleHeadline}
-              className="typography-display text-surface-50 font-black tracking-tight"
-            >
-              The Definitive{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-surface-50 via-white to-surface-200">
-                Automotive Showroom
-              </span>{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-rose-500 to-orange-400">
-                Experience
-              </span>
-            </motion.h1>
-
-            {/* Supporting Subtitle */}
-            <motion.p
-              variants={accessibleHeadline}
-              className="typography-body text-surface-200 text-lg md:text-xl max-w-2xl leading-relaxed"
-            >
-              Connect with verified dealership showrooms, explore official motorcycle catalogues, compare technical specifications, and discover your next ride.
-            </motion.p>
-
-            {/* Hero Action CTAs */}
-            <motion.div
-              variants={accessibleHeadline}
-              className="flex flex-col sm:flex-row items-center gap-4 pt-2 w-full sm:w-auto"
-            >
-              <NavLink to="/showrooms" className="w-full sm:w-auto">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  icon={Compass}
-                  fullWidth
-                  className="sm:w-auto"
-                >
-                  Explore Showrooms
-                </Button>
-              </NavLink>
-              <NavLink to="/bikes" className="w-full sm:w-auto">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  icon={BikeIcon}
-                  fullWidth
-                  className="sm:w-auto"
-                >
-                  Browse Catalogue
-                </Button>
-              </NavLink>
-            </motion.div>
-
-            {/* Highlight Telemetry Stats */}
-            <motion.div
-              variants={accessibleFadeIn}
-              className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 w-full border-t border-border/60"
-            >
-              <div className="text-center space-y-1">
-                <div className="font-display font-black text-2xl md:text-3xl text-surface-50">30+</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Dealerships</div>
-              </div>
-              <div className="text-center space-y-1">
-                <div className="font-display font-black text-2xl md:text-3xl text-brand-red">30+</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Live Models</div>
-              </div>
-              <div className="text-center space-y-1">
-                <div className="font-display font-black text-2xl md:text-3xl text-surface-50">15+</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Major Cities</div>
-              </div>
-              <div className="text-center space-y-1">
-                <div className="font-display font-black text-2xl md:text-3xl text-emerald-400">100%</div>
-                <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Verified Data</div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </Container>
-      </section>
+      <CinematicHero />
 
       {/* ================================================== */}
       {/* 2. SMART SEARCH FOUNDATION                         */}
       {/* ================================================== */}
-      <section className="relative z-20 -mt-6 md:-mt-10">
+      <section id="search-directory" className="relative z-20 pt-2 md:pt-4">
         <Container>
-          <div className="glass-surface p-4 sm:p-6 md:p-8 rounded-card-lg border border-border/80 shadow-card-hover max-w-4xl mx-auto space-y-5">
+          <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl border border-border shadow-card max-w-4xl mx-auto space-y-5">
             {/* Filter Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-border/60">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-border/80">
               {[
                 { id: 'all', label: 'All Categories' },
                 { id: 'bikes', label: 'Bikes' },
@@ -297,8 +205,8 @@ const HomePage = () => {
                     px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer
                     ${
                       activeSearchTab === tab.id
-                        ? 'bg-brand-red text-white shadow-glow-red'
-                        : 'text-surface-200 hover:text-white hover:bg-surface-800'
+                        ? 'bg-brand-red text-white shadow-button'
+                        : 'text-surface-200 hover:text-surface-50 hover:bg-surface-800'
                     }
                   `}
                 >
@@ -319,7 +227,7 @@ const HomePage = () => {
                   }`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-background-deep border-border/80 text-base"
+                  className="bg-white border-border text-surface-100 text-sm md:text-base focus:border-brand-red"
                 />
               </div>
               <Button
@@ -327,21 +235,21 @@ const HomePage = () => {
                 variant="primary"
                 size="md"
                 icon={Search}
-                className="w-full sm:w-auto shrink-0"
+                className="w-full sm:w-auto shrink-0 bg-brand-red hover:bg-brand-red-hover text-white shadow-button font-semibold rounded-xl px-6 py-3"
               >
                 Search Directory
               </Button>
             </form>
 
             {/* Quick Filter Tag Chips */}
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground pt-1">
+            <div className="flex flex-wrap items-center gap-2 text-xs pt-1">
               <span className="font-semibold text-surface-200">Popular Searches:</span>
               {['Splendor', 'Premia', 'Vida', 'Harley', 'Mumbai', 'Delhi'].map((chip) => (
                 <button
                   key={chip}
                   type="button"
                   onClick={() => handleChipClick(chip)}
-                  className="px-2.5 py-1 rounded-md bg-surface-800/80 hover:bg-surface-700 text-surface-200 hover:text-white border border-border/60 transition-colors"
+                  className="px-2.5 py-1 rounded-md bg-surface-900 hover:bg-surface-800 text-surface-200 hover:text-surface-50 border border-border text-xs transition-colors cursor-pointer"
                 >
                   {chip}
                 </button>
@@ -485,71 +393,97 @@ const HomePage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bikes.map((bike) => (
-              <Card
-                key={bike._id || bike.slug}
-                interactive
-                variant="elevated"
-                className="flex flex-col justify-between space-y-5"
-              >
-                <div className="space-y-4">
-                  {/* Header & Badges */}
-                  <div className="flex items-center justify-between">
-                    <Badge variant="brand" size="sm">
-                      {bike.brand?.name || 'Brand'}
-                    </Badge>
-                    <span className="typography-label text-[10px] text-muted-foreground font-semibold">
-                      {bike.category}
-                    </span>
+            {bikes.map((bike) => {
+              const imageUrl = getBikeImageUrl(bike);
+              return (
+                <Card
+                  key={bike._id || bike.slug}
+                  interactive
+                  variant="elevated"
+                  className="bg-white rounded-2xl border border-border/80 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between space-y-4 p-5 group"
+                >
+                  <div className="space-y-3">
+                    {/* Header & Badges */}
+                    <div className="flex items-center justify-between">
+                      <Badge variant="brand" size="sm">
+                        {bike.brand?.name || 'Hero'}
+                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px] text-surface-200 font-bold uppercase tracking-wider">
+                          {bike.category}
+                        </span>
+                        <FavoriteButton itemType="bike" itemId={bike._id || bike.id} size="sm" />
+                      </div>
+                    </div>
+
+                    {/* Real Bike Image */}
+                    <div className="w-full h-40 rounded-xl bg-surface-900 border border-border/80 flex items-center justify-center p-2 relative overflow-hidden group-hover:border-brand-red/30 transition-all">
+                      <img
+                        src={imageUrl}
+                        alt={bike.name}
+                        className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                        onError={handleImageError}
+                        loading="lazy"
+                      />
+                    </div>
+
+                    {/* Model Name */}
+                    <div>
+                      <h3 className="font-display font-bold text-surface-50 text-base line-clamp-1 group-hover:text-brand-red transition-colors">
+                        {bike.name}
+                      </h3>
+                      {bike.tagline && (
+                        <p className="text-xs text-surface-200 truncate mt-0.5">
+                          {bike.tagline}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Technical Specs Indicators */}
+                    <div className="space-y-1.5 pt-2 border-t border-border/60 text-xs">
+                      <div className="flex items-center justify-between text-surface-200">
+                        <span className="flex items-center gap-1.5 text-surface-200">
+                          <Gauge className="w-3.5 h-3.5 text-brand-red" /> Power & Engine
+                        </span>
+                        <span className="font-semibold text-surface-50">
+                          {bike.engine?.displacementCc ? `${bike.engine.displacementCc} cc` : bike.fuelType}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-surface-200">
+                        <span className="flex items-center gap-1.5 text-surface-200">
+                          <Fuel className="w-3.5 h-3.5 text-brand-red" /> Fuel
+                        </span>
+                        <span className="font-semibold text-surface-50">{bike.fuelType}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Bike Representation Shell */}
-                  <div className="w-full h-36 rounded-card bg-surface-900 border border-border/70 flex flex-col items-center justify-center p-4 text-center relative overflow-hidden group-hover:border-brand-red/30 transition-colors">
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-red/5 to-transparent pointer-events-none" />
-                    <BikeIcon className="w-12 h-12 text-surface-200 group-hover:text-brand-red transition-colors mb-2" />
-                    <span className="font-display font-bold text-surface-50 text-sm line-clamp-1">
-                      {bike.name}
-                    </span>
-                  </div>
-
-                  {/* Technical Specs Indicators */}
-                  <div className="space-y-2 pt-1 text-xs">
-                    <div className="flex items-center justify-between text-surface-200">
-                      <span className="flex items-center gap-1.5 text-muted-foreground">
-                        <Gauge className="w-3.5 h-3.5 text-brand-red" /> Power & Engine
-                      </span>
-                      <span className="font-medium text-surface-100">
-                        {bike.engine?.displacementCc ? `${bike.engine.displacementCc} cc` : bike.fuelType}
-                      </span>
+                  {/* Pricing & CTA */}
+                  <div className="pt-3 border-t border-border/80 flex items-center justify-between gap-2">
+                    <div>
+                      <div className="font-display font-black text-surface-50 text-base leading-tight">
+                        {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
+                      </div>
+                      <span className="text-[10px] text-surface-200">Ex-Showroom</span>
                     </div>
-                    <div className="flex items-center justify-between text-surface-200">
-                      <span className="flex items-center gap-1.5 text-muted-foreground">
-                        <Fuel className="w-3.5 h-3.5 text-brand-red" /> Fuel
-                      </span>
-                      <span className="font-medium text-surface-100">{bike.fuelType}</span>
+                    <div className="flex items-center gap-2">
+                      <CompareButton bike={bike} size="sm" />
+                      <NavLink to={`/bikes/${bike.slug}`}>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          icon={ArrowRight}
+                          iconPosition="right"
+                          className="text-xs bg-brand-red hover:bg-brand-red-hover text-white shadow-button px-3.5 py-1.5 rounded-lg font-semibold"
+                        >
+                          Details
+                        </Button>
+                      </NavLink>
                     </div>
                   </div>
-                </div>
-
-                {/* Pricing & CTA */}
-                <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-2">
-                  <div>
-                    <div className="font-display font-bold text-surface-50 text-base leading-none">
-                      {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
-                    </div>
-                    <span className="text-[10px] text-muted-foreground">Ex-Showroom</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CompareButton bike={bike} size="sm" />
-                    <NavLink to={`/bikes/${bike.slug}`}>
-                      <Button variant="primary" size="sm" className="text-xs">
-                        Details
-                      </Button>
-                    </NavLink>
-                  </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         )}
       </Section>

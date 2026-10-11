@@ -28,6 +28,12 @@ const RootLayout = () => {
 
       {/* Persistent Compare Bar */}
       <CompareBar />
+
+      {/* Reference Status Signal */}
+      <div className="fixed bottom-3 right-3 z-40 hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-border shadow-md text-[11px] font-mono text-surface-200 pointer-events-none">
+        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <span>DEV API: CONNECTED</span>
+      </div>
     </div>
   );
 };

@@ -34,3 +34,4 @@ export { default as CompareBikeItem } from './compare/CompareBikeItem';
 export { default as CompareBar } from './compare/CompareBar';
 export { default as CompareEmptyState } from './compare/CompareEmptyState';
 export { default as EmiCalculator } from './finance/EmiCalculator';
+export { default as CinematicHero } from './CinematicHero';

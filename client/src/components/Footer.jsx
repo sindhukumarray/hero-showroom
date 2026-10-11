@@ -26,9 +26,9 @@ const Footer = () => {
   };
 
   return (
-    <footer className="w-full border-t border-border/80 bg-background-deep text-surface-200 mt-auto">
+    <footer className="w-full border-t border-border bg-white text-surface-200 mt-auto">
       <Container className="py-14 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 pb-12 border-b border-border/60">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 pb-12 border-b border-border">
           {/* Brand Info */}
           <div className="md:col-span-1 space-y-4">
             <div className="flex items-center gap-3">
@@ -43,20 +43,20 @@ const Footer = () => {
               Premium automotive showroom discovery platform connecting riders with authorized dealerships and specifications.
             </p>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-800 border border-border text-[11px] text-muted-foreground">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              Phase 1 Monorepo Active
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Verified Dealership Platform
             </div>
           </div>
 
           {/* Navigation Columns */}
           <div>
-            <h4 className="typography-label text-surface-100 mb-4">Discovery</h4>
+            <h4 className="typography-label text-surface-50 mb-4 font-bold">Discovery</h4>
             <ul className="space-y-2.5 text-sm">
               {footerNavigation.platform.map((item) => (
                 <li key={item.to}>
                   <NavLink
                     to={item.to}
-                    className="text-surface-200 hover:text-white transition-colors"
+                    className="text-surface-200 hover:text-brand-red transition-colors"
                   >
                     {item.label}
                   </NavLink>

@@ -332,9 +332,9 @@ const AdminCitiesPage = () => {
             <span className="p-2 rounded-lg bg-red-600/10 border border-red-500/20 text-red-500">
               <MapPin className="w-5 h-5" />
             </span>
-            <h1 className="text-2xl font-bold text-white tracking-tight">City & Region Management</h1>
+            <h1 className="text-2xl font-bold text-surface-50 tracking-tight">City & Region Management</h1>
           </div>
-          <p className="text-sm text-neutral-400 mt-1">
+          <p className="text-sm text-surface-200 mt-1">
             Configure geographic zones, metropolitan hubs, operational tiers, and showroom locations.
           </p>
         </div>
@@ -345,7 +345,7 @@ const AdminCitiesPage = () => {
             size="sm"
             onClick={fetchCities}
             disabled={isLoading}
-            className="border-neutral-800 hover:bg-neutral-800/60 text-neutral-300"
+            className="border-border hover:bg-surface-800 text-surface-200"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
@@ -354,7 +354,7 @@ const AdminCitiesPage = () => {
             variant="primary"
             size="sm"
             onClick={handleOpenCreateModal}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium shadow-lg shadow-red-900/30"
+            className="bg-brand-red hover:bg-brand-red-hover text-white font-medium shadow-md shadow-brand-red/20"
           >
             <Plus className="w-4 h-4 mr-1.5" />
             Add City
@@ -364,21 +364,21 @@ const AdminCitiesPage = () => {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Total Cities</p>
-          <p className="text-2xl font-bold text-white mt-1">{totalCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Cities</p>
+          <p className="text-2xl font-bold text-surface-50 mt-1">{totalCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Active Coverage</p>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">{activeCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Active Coverage</p>
+          <p className="text-2xl font-bold text-emerald-700 mt-1">{activeCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Metro Hubs</p>
-          <p className="text-2xl font-bold text-cyan-400 mt-1">{metroCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">Metro Hubs</p>
+          <p className="text-2xl font-bold text-sky-700 mt-1">{metroCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Inactive / Staged</p>
-          <p className="text-2xl font-bold text-amber-400 mt-1">{inactiveCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Inactive / Staged</p>
+          <p className="text-2xl font-bold text-amber-700 mt-1">{inactiveCount}</p>
         </Card>
       </div>
 
@@ -392,7 +392,7 @@ const AdminCitiesPage = () => {
               placeholder="Search by city name, state, or slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/50"
+              className="w-full pl-9 pr-4 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             />
           </div>
 
@@ -401,7 +401,7 @@ const AdminCitiesPage = () => {
               aria-label="Filter by Tier"
               value={tierFilter}
               onChange={(e) => setTierFilter(e.target.value)}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="all">All Tiers</option>
               {TIERS.map((t) => (
@@ -485,8 +485,8 @@ const AdminCitiesPage = () => {
               key={city._id}
               className={`p-5 transition-all relative border flex flex-col justify-between ${
                 city.isActive
-                  ? 'bg-neutral-900/50 border-neutral-800/80 hover:border-neutral-700'
-                  : 'bg-neutral-950/70 border-neutral-900 opacity-75'
+                  ? 'bg-white border-border hover:shadow-card-hover'
+                  : 'bg-surface-500/80 border-border/60 opacity-80'
               }`}
             >
               <div>
@@ -495,15 +495,15 @@ const AdminCitiesPage = () => {
                     <span
                       className={`p-2 rounded-lg border ${
                         city.isActive
-                          ? 'bg-red-950/30 border-red-500/30 text-red-400'
-                          : 'bg-neutral-800/50 border-neutral-700 text-neutral-500'
+                          ? 'bg-brand-red-subtle border-brand-red/20 text-brand-red'
+                          : 'bg-surface-600 border-border text-muted-foreground'
                       }`}
                     >
                       <MapPin className="w-4 h-4" />
                     </span>
                     <div>
-                      <h3 className="font-semibold text-white text-base leading-snug">{city.name}</h3>
-                      <p className="text-xs text-neutral-400 flex items-center space-x-1">
+                      <h3 className="font-semibold text-surface-50 text-base leading-snug">{city.name}</h3>
+                      <p className="text-xs text-muted-foreground flex items-center space-x-1">
                         <span>{city.state}</span>
                         <span>•</span>
                         <span>{city.country || 'India'}</span>
@@ -518,10 +518,10 @@ const AdminCitiesPage = () => {
                     <span
                       className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border ${
                         city.tier === 'Metro'
-                          ? 'bg-purple-950/40 border-purple-500/30 text-purple-300'
+                          ? 'bg-purple-500/10 border-purple-500/30 text-purple-700'
                           : city.tier === 'Tier 1'
-                          ? 'bg-blue-950/40 border-blue-500/30 text-blue-300'
-                          : 'bg-neutral-800 border-neutral-700 text-neutral-300'
+                          ? 'bg-blue-500/10 border-blue-500/30 text-blue-700'
+                          : 'bg-surface-600 border-border text-surface-200'
                       }`}
                     >
                       {city.tier}
@@ -529,10 +529,10 @@ const AdminCitiesPage = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-neutral-800/60 space-y-1.5 text-xs text-neutral-400">
+                <div className="mt-4 pt-3 border-t border-border/60 space-y-1.5 text-xs text-muted-foreground">
                   <div className="flex items-center justify-between">
-                    <span className="text-neutral-500">Slug:</span>
-                    <span className="font-mono text-neutral-300 bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800/80">
+                    <span className="text-muted-foreground">Slug:</span>
+                    <span className="font-mono text-surface-200 bg-surface-500 px-1.5 py-0.5 rounded border border-border">
                       {city.slug}
                     </span>
                   </div>
@@ -614,7 +614,7 @@ const AdminCitiesPage = () => {
           )}
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
               City Name *
             </label>
             <input
@@ -623,14 +623,14 @@ const AdminCitiesPage = () => {
               value={formData.name}
               onChange={handleNameChange}
               placeholder="e.g. Mumbai, New Delhi, Bengaluru"
-              className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+              className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             />
-            {formErrors.name && <p className="text-xs text-rose-400 mt-1">{formErrors.name}</p>}
+            {formErrors.name && <p className="text-xs text-rose-500 mt-1">{formErrors.name}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 URL Slug *
               </label>
               <input
@@ -639,13 +639,13 @@ const AdminCitiesPage = () => {
                 value={formData.slug}
                 onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value.toLowerCase() }))}
                 placeholder="e.g. mumbai"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm font-mono text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm font-mono text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
-              {formErrors.slug && <p className="text-xs text-rose-400 mt-1">{formErrors.slug}</p>}
+              {formErrors.slug && <p className="text-xs text-rose-500 mt-1">{formErrors.slug}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 State / Province *
               </label>
               <input
@@ -654,21 +654,21 @@ const AdminCitiesPage = () => {
                 value={formData.state}
                 onChange={(e) => setFormData((prev) => ({ ...prev, state: e.target.value }))}
                 placeholder="e.g. Maharashtra, Karnataka"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
-              {formErrors.state && <p className="text-xs text-rose-400 mt-1">{formErrors.state}</p>}
+              {formErrors.state && <p className="text-xs text-rose-500 mt-1">{formErrors.state}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Operational Tier
               </label>
               <select
                 value={formData.tier}
                 onChange={(e) => setFormData((prev) => ({ ...prev, tier: e.target.value }))}
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               >
                 {TIERS.map((tier) => (
                   <option key={tier} value={tier}>
@@ -679,7 +679,7 @@ const AdminCitiesPage = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Country
               </label>
               <input
@@ -687,41 +687,41 @@ const AdminCitiesPage = () => {
                 value={formData.country}
                 onChange={(e) => setFormData((prev) => ({ ...prev, country: e.target.value }))}
                 placeholder="India"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
             </div>
           </div>
 
           {/* Coordinates */}
-          <div className="p-3 bg-neutral-950/60 border border-neutral-800/80 rounded-lg space-y-2">
-            <span className="text-xs font-semibold text-neutral-300 flex items-center space-x-1.5">
-              <Navigation className="w-3.5 h-3.5 text-neutral-400" />
+          <div className="p-3 bg-surface-500 border border-border rounded-lg space-y-2">
+            <span className="text-xs font-semibold text-surface-100 flex items-center space-x-1.5">
+              <Navigation className="w-3.5 h-3.5 text-muted-foreground" />
               <span>Geographic Coordinates (Optional)</span>
             </span>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-neutral-500 mb-1">Latitude (-90 to 90)</label>
+                <label className="block text-[11px] text-muted-foreground mb-1">Latitude (-90 to 90)</label>
                 <input
                   type="number"
                   step="any"
                   value={formData.latitude}
                   onChange={(e) => setFormData((prev) => ({ ...prev, latitude: e.target.value }))}
                   placeholder="e.g. 19.0760"
-                  className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                  className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                 />
-                {formErrors.latitude && <p className="text-[11px] text-rose-400 mt-1">{formErrors.latitude}</p>}
+                {formErrors.latitude && <p className="text-[11px] text-rose-500 mt-1">{formErrors.latitude}</p>}
               </div>
               <div>
-                <label className="block text-[11px] text-neutral-500 mb-1">Longitude (-180 to 180)</label>
+                <label className="block text-[11px] text-muted-foreground mb-1">Longitude (-180 to 180)</label>
                 <input
                   type="number"
                   step="any"
                   value={formData.longitude}
                   onChange={(e) => setFormData((prev) => ({ ...prev, longitude: e.target.value }))}
                   placeholder="e.g. 72.8777"
-                  className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                  className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                 />
-                {formErrors.longitude && <p className="text-[11px] text-rose-400 mt-1">{formErrors.longitude}</p>}
+                {formErrors.longitude && <p className="text-[11px] text-rose-500 mt-1">{formErrors.longitude}</p>}
               </div>
             </div>
           </div>
@@ -732,21 +732,21 @@ const AdminCitiesPage = () => {
               id="cityIsActive"
               checked={formData.isActive}
               onChange={(e) => setFormData((prev) => ({ ...prev, isActive: e.target.checked }))}
-              className="w-4 h-4 rounded bg-neutral-900 border-neutral-700 text-red-600 focus:ring-red-500 focus:ring-offset-neutral-900"
+              className="w-4 h-4 rounded border-border text-brand-red focus:ring-brand-red focus:ring-offset-white"
             />
-            <label htmlFor="cityIsActive" className="text-sm font-medium text-neutral-300 cursor-pointer">
+            <label htmlFor="cityIsActive" className="text-sm font-medium text-surface-100 cursor-pointer">
               Active in Public Showroom Directory & Booking Search
             </label>
           </div>
 
-          <div className="pt-3 border-t border-neutral-800 flex justify-end space-x-2">
+          <div className="pt-3 border-t border-border flex justify-end space-x-2">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => setIsFormModalOpen(false)}
               disabled={isSubmitting}
-              className="border-neutral-800 text-neutral-300"
+              className="border-border text-surface-200"
             >
               Cancel
             </Button>

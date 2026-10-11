@@ -22,6 +22,7 @@ import { useSEO } from '../hooks/useSEO';
 import { useCompare } from '../context/CompareContext';
 import { formatPriceRange, formatCurrency } from '../utils/formatters';
 import { calculateEmi } from '../utils/emiCalculator';
+import { getBikeImageUrl, handleImageError } from '../utils/bikeImages';
 import Container from '../components/Container';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
@@ -307,16 +308,14 @@ const ComparePage = () => {
                   </button>
                 </div>
 
-                <div className="w-full h-44 rounded-card bg-surface-900 border border-border/70 flex items-center justify-center p-4 overflow-hidden relative">
-                  {compareBikes[0].images?.heroImage ? (
-                    <img
-                      src={compareBikes[0].images.heroImage}
-                      alt={compareBikes[0].name}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  ) : (
-                    <BikeIcon className="w-16 h-16 text-surface-200" />
-                  )}
+                <div className="w-full h-44 rounded-xl bg-surface-900 border border-border/80 flex items-center justify-center p-2 overflow-hidden relative group">
+                  <img
+                    src={getBikeImageUrl(compareBikes[0])}
+                    alt={compareBikes[0].name}
+                    className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                    onError={handleImageError}
+                    loading="lazy"
+                  />
                 </div>
 
                 <div className="pt-2 border-t border-border/60">
@@ -436,16 +435,14 @@ const ComparePage = () => {
                       </h3>
 
                       {/* Vehicle Image Representation */}
-                      <div className="w-full h-36 rounded-card bg-surface-900 border border-border/70 flex items-center justify-center p-2 overflow-hidden relative">
-                        {bike.images?.heroImage ? (
-                          <img
-                            src={bike.images.heroImage}
-                            alt={bike.name}
-                            className="w-full h-full object-cover rounded-lg"
-                          />
-                        ) : (
-                          <BikeIcon className="w-12 h-12 text-surface-200 group-hover:text-brand-red transition-colors" />
-                        )}
+                      <div className="w-full h-36 rounded-xl bg-surface-900 border border-border/80 flex items-center justify-center p-2 overflow-hidden relative group">
+                        <img
+                          src={getBikeImageUrl(bike)}
+                          alt={bike.name}
+                          className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                          onError={handleImageError}
+                          loading="lazy"
+                        />
                       </div>
 
                       {/* Ex-Showroom Pricing */}

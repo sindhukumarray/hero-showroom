@@ -23,6 +23,7 @@ import { Container, Card, Badge, Button, Loading, ErrorState, EmptyState, Modal,
 import { bikeService, offerService } from '../services';
 import { formatCurrency, formatPriceRange } from '../utils/formatters';
 import { calculateEmi } from '../utils/emiCalculator';
+import { getBikeImageUrl, getBikeGalleryImages, handleImageError } from '../utils/bikeImages';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { fadeIn, getAccessibleVariant } from '../animations/variants';
@@ -37,6 +38,7 @@ const BikeDetailPage = () => {
   const [variants, setVariants] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [bikeOffers, setBikeOffers] = useState([]);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isTestRideModalOpen, setIsTestRideModalOpen] = useState(false);
@@ -147,13 +149,14 @@ const BikeDetailPage = () => {
         variants={accessibleFadeIn}
         initial="hidden"
         animate="visible"
-        className="glass-surface p-6 sm:p-8 md:p-10 rounded-card-lg border border-border/80 shadow-card-hover relative overflow-hidden"
+        className="bg-white p-6 sm:p-8 rounded-2xl border border-border shadow-card relative overflow-hidden"
       >
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
-          <div className="space-y-4 max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2.5">
+        {/* Header row with badges and title */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 pb-6 border-b border-border/80">
+          <div className="space-y-3 max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="brand" size="md">
-                {bike.brand?.name || 'Manufacturer'}
+                {bike.brand?.name || 'Hero'}
               </Badge>
               <Badge variant="default" size="md">
                 {bike.category}
@@ -163,7 +166,7 @@ const BikeDetailPage = () => {
               </Badge>
               {bike.isFeatured && (
                 <Badge variant="warning" size="md" dot>
-                  Featured Model
+                  Featured Flagship
                 </Badge>
               )}
             </div>
@@ -177,108 +180,167 @@ const BikeDetailPage = () => {
             )}
 
             {bike.description && (
-              <p className="typography-small text-surface-200 text-sm leading-relaxed max-w-xl">
+              <p className="typography-small text-surface-200 text-sm leading-relaxed max-w-2xl">
                 {bike.description}
               </p>
             )}
           </div>
 
-            {/* Pricing Highlight Box */}
-          <div className="shrink-0 bg-surface-900/90 border border-border p-6 rounded-card text-center min-w-[220px] space-y-3">
-            <span className="text-xs uppercase font-bold tracking-widest text-muted-foreground">
-              Ex-Showroom Price Range
-            </span>
-            <div className="font-display font-black text-2xl sm:text-3xl text-surface-50">
-              {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
-            </div>
-            {(() => {
-              const currentPrice = selectedVariant?.exShowroomPrice || bike.priceRange?.minPrice || 100000;
-              const quickEmi = calculateEmi({
-                vehiclePrice: currentPrice,
-                downPayment: currentPrice * 0.2,
-                annualInterestRate: 8.5,
-                tenureMonths: 36
-              });
-              return (
-                <div className="pt-1 flex items-center justify-center gap-1.5 text-xs text-brand-red font-semibold">
-                  <span>EMI from {formatCurrency(quickEmi.monthlyEmi)}/mo*</span>
-                  <a
-                    href="#emi-calculator"
-                    className="underline text-[11px] text-muted-foreground hover:text-white transition-colors"
-                  >
-                    Calculate
-                  </a>
-                </div>
-              );
-            })()}
-            <span className="inline-block text-[11px] text-muted-foreground">
-              Indicative base pricing excluding RTO & Insurance
-            </span>
-            <div className="pt-2 border-t border-border/60 space-y-2">
-              <Button
-                variant="primary"
-                size="sm"
-                fullWidth
-                icon={Calendar}
-                onClick={() => setIsTestRideModalOpen(true)}
-                className="text-xs"
-              >
-                Book Test Ride
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                fullWidth
-                icon={Send}
-                onClick={() => setIsLeadModalOpen(true)}
-                className="text-xs"
-              >
-                Enquire / Get Quote
-              </Button>
-              <CompareButton bike={bike} size="sm" fullWidth />
-              <a href="#emi-calculator" className="block">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  fullWidth
-                  icon={Calculator}
-                  className="text-xs text-muted-foreground hover:text-white"
-                >
-                  Estimate EMI
-                </Button>
-              </a>
-              {bikeOffers.length > 0 && (
-                <Link to={`/offers?bike=${bike._id}`} className="block">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    fullWidth
-                    icon={Tag}
-                    className="text-xs text-brand-red border-brand-red/30 hover:bg-brand-red/10"
-                  >
-                    View {bikeOffers.length} {bikeOffers.length === 1 ? 'Offer' : 'Offers'}
-                  </Button>
-                </Link>
-              )}
-              {bike.brand?._id && (
-                <Link to={`/showrooms?brand=${bike.brand._id}`} className="block">
-                  <Button variant="ghost" size="sm" fullWidth icon={Compass} className="text-xs text-muted-foreground hover:text-surface-100">
-                    Find Dealerships
-                  </Button>
-                </Link>
-              )}
-              <div className="pt-1">
-                <FavoriteButton
-                  entityType="bike"
-                  entityId={bike._id}
-                  size="md"
-                  showLabel
-                  className="w-full justify-center"
-                />
-              </div>
-            </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <FavoriteButton
+              entityType="bike"
+              entityId={bike._id}
+              size="md"
+              showLabel
+              className="bg-white border border-border"
+            />
+            <CompareButton bike={bike} size="md" />
           </div>
         </div>
+
+        {/* Gallery Showcase & Pricing Action Column */}
+        {(() => {
+          const gallery = getBikeGalleryImages(bike);
+          const activeSrc = gallery[activeImageIndex] || getBikeImageUrl(bike);
+          const currentPrice = selectedVariant?.exShowroomPrice || bike.priceRange?.minPrice || 100000;
+          const quickEmi = calculateEmi({
+            vehiclePrice: currentPrice,
+            downPayment: currentPrice * 0.2,
+            annualInterestRate: 8.5,
+            tenureMonths: 36
+          });
+
+          return (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6">
+              {/* Left/Center: Large Motorcycle Showcase & Thumbnail Strip */}
+              <div className="lg:col-span-8 space-y-4">
+                <div className="w-full h-72 sm:h-96 md:h-[420px] rounded-2xl bg-surface-900 border border-border/90 flex items-center justify-center p-4 relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/10 pointer-events-none" />
+                  <img
+                    src={activeSrc}
+                    alt={`${bike.name} showcase`}
+                    className="w-full h-full object-cover rounded-xl transition-all duration-500 group-hover:scale-102"
+                    onError={handleImageError}
+                  />
+                  <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-md text-[11px] font-semibold text-white">
+                    Photo {activeImageIndex + 1} of {gallery.length}
+                  </div>
+                </div>
+
+                {/* Thumbnails row */}
+                {gallery.length > 1 && (
+                  <div className="flex items-center gap-3 overflow-x-auto pb-1">
+                    {gallery.map((imgSrc, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveImageIndex(idx)}
+                        className={`w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${
+                          activeImageIndex === idx
+                            ? 'border-brand-red ring-2 ring-brand-red/20 scale-102'
+                            : 'border-border/80 hover:border-brand-red/50 opacity-70 hover:opacity-100'
+                        }`}
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`${bike.name} angle ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                          onError={handleImageError}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Pricing Card & High-Impact Action Column */}
+              <div className="lg:col-span-4 flex flex-col justify-between bg-surface-900 rounded-2xl border border-border p-6 space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-[11px] uppercase font-bold tracking-widest text-surface-200">
+                      Ex-Showroom Price Range
+                    </span>
+                    <div className="font-display font-black text-2xl sm:text-3xl text-surface-50 mt-1">
+                      {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
+                    </div>
+                  </div>
+
+                  {/* Calculated Quick EMI */}
+                  <div className="p-3.5 rounded-xl bg-white border border-border space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-surface-200 font-medium">Estimated EMI:</span>
+                      <span className="font-bold text-brand-red">
+                        {formatCurrency(quickEmi.monthlyEmi)}/mo*
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/60">
+                      <span>Based on 20% down</span>
+                      <a
+                        href="#emi-calculator"
+                        className="text-brand-red hover:underline font-semibold"
+                      >
+                        Customize EMI →
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Quick specs pill summary */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-white p-2.5 rounded-lg border border-border">
+                      <div className="text-[10px] text-surface-200 font-bold uppercase">Displacement</div>
+                      <div className="font-bold text-surface-50 mt-0.5">
+                        {bike.engine?.displacementCc ? `${bike.engine.displacementCc} cc` : 'N/A'}
+                      </div>
+                    </div>
+                    <div className="bg-white p-2.5 rounded-lg border border-border">
+                      <div className="text-[10px] text-surface-200 font-bold uppercase">Fuel / Range</div>
+                      <div className="font-bold text-surface-50 mt-0.5 truncate">
+                        {bike.mileage?.estimatedKmpl ? `${bike.mileage.estimatedKmpl} kmpl` : bike.fuelType}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="space-y-2.5 pt-4 border-t border-border">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                    icon={Calendar}
+                    onClick={() => setIsTestRideModalOpen(true)}
+                    className="bg-brand-red hover:bg-brand-red-hover text-white shadow-button font-bold py-3 rounded-xl"
+                  >
+                    Book Free Test Ride
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    fullWidth
+                    icon={Send}
+                    onClick={() => setIsLeadModalOpen(true)}
+                    className="border-border hover:bg-white text-surface-50 font-semibold py-3 rounded-xl"
+                  >
+                    Enquire / Get Dealership Quote
+                  </Button>
+                  {bike.brand?._id && (
+                    <Link to={`/showrooms?brand=${bike.brand._id}`} className="block">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        fullWidth
+                        icon={Compass}
+                        className="text-xs text-surface-200 hover:text-surface-50"
+                      >
+                        Find Authorized Dealerships Near You
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Active Promotional Offer Banner */}
         {bikeOffers.length > 0 && (

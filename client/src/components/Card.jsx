@@ -19,13 +19,13 @@ const Card = ({
 
   const variantStyles = {
     default:
-      'bg-background-card border border-border text-surface-100 shadow-card-dark',
+      'bg-white border border-border text-surface-100 shadow-card-dark',
     elevated:
-      'bg-gradient-to-b from-background-elevated to-background-card border border-border/80 text-surface-100 shadow-card-dark',
+      'bg-gradient-to-b from-white to-background-deep/40 border border-border text-surface-100 shadow-card-hover',
     glass:
-      'glass-surface border border-white/10 text-surface-100 shadow-glass',
+      'glass-surface border border-border text-surface-100 shadow-glass',
     accent:
-      'bg-background-card border border-brand-red/30 text-surface-100 shadow-glow-red/20'
+      'bg-white border border-brand-red/30 text-surface-100 shadow-glow-red/10'
   };
 
   const interactiveStyles = interactive

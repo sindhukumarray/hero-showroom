@@ -42,7 +42,7 @@ const CompareBar = () => {
         animate={shouldReduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
         exit={shouldReduceMotion ? { opacity: 0 } : { y: 100, opacity: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="fixed bottom-0 inset-x-0 z-40 bg-surface-900/95 backdrop-blur-md border-t border-border shadow-2xl py-3 px-4 sm:px-6"
+        className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-border shadow-2xl py-3 px-4 sm:px-6"
       >
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
           {/* Left: Section Header & Count */}

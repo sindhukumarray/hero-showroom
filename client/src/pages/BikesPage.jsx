@@ -19,10 +19,12 @@ import {
   Loading,
   ErrorState,
   EmptyState,
+  FavoriteButton,
   CompareButton
 } from '../components';
 import { bikeService, brandService } from '../services';
 import { formatPriceRange } from '../utils/formatters';
+import { getBikeImageUrl, handleImageError } from '../utils/bikeImages';
 import { useSEO } from '../hooks/useSEO';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import { pageTransition, getAccessibleVariant } from '../animations/variants';
@@ -193,8 +195,37 @@ const BikesPage = () => {
         </p>
       </motion.div>
 
+      {/* Horizontal Category Chips matching reference */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 -mt-2">
+        <button
+          type="button"
+          onClick={() => updateFilters({ category: '' })}
+          className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
+            !categoryParam
+              ? 'bg-brand-red text-white shadow-button'
+              : 'bg-white hover:bg-surface-800 text-surface-200 hover:text-surface-50 border border-border'
+          }`}
+        >
+          All Categories
+        </button>
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => updateFilters({ category: cat })}
+            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
+              categoryParam === cat
+                ? 'bg-brand-red text-white shadow-button'
+                : 'bg-white hover:bg-surface-800 text-surface-200 hover:text-surface-50 border border-border'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
       {/* Filter and Search Panel */}
-      <div className="glass-surface p-5 rounded-card border border-border space-y-4">
+      <div className="bg-white p-5 rounded-2xl border border-border shadow-xs space-y-4">
         {/* Search bar */}
         <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1 relative">
@@ -203,10 +234,10 @@ const BikesPage = () => {
               placeholder="Search by bike model name, tagline, or specs..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="bg-background-deep"
+              className="bg-white border-border"
             />
           </div>
-          <Button type="submit" variant="primary" size="md" icon={Search} className="shrink-0">
+          <Button type="submit" variant="primary" size="md" icon={Search} className="shrink-0 bg-brand-red hover:bg-brand-red-hover text-white">
             Search
           </Button>
           {hasActiveFilters && (
@@ -224,16 +255,16 @@ const BikesPage = () => {
         </form>
 
         {/* Dropdown Filters Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-border/60 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-border/80 text-xs">
           {/* Brand Filter */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-surface-200 mb-1">
               Brand
             </label>
             <select
               value={brandParam}
               onChange={(e) => updateFilters({ brand: e.target.value })}
-              className="w-full bg-background-elevated border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs"
+              className="w-full bg-white border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs shadow-xs"
             >
               <option value="">All Brands ({brands.length})</option>
               {brands.map((b) => (
@@ -246,13 +277,13 @@ const BikesPage = () => {
 
           {/* Category Filter */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-surface-200 mb-1">
               Category
             </label>
             <select
               value={categoryParam}
               onChange={(e) => updateFilters({ category: e.target.value })}
-              className="w-full bg-background-elevated border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs"
+              className="w-full bg-white border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs shadow-xs"
             >
               <option value="">All Categories</option>
               {CATEGORIES.map((cat) => (
@@ -265,13 +296,13 @@ const BikesPage = () => {
 
           {/* Fuel Type Filter */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-surface-200 mb-1">
               Fuel Type
             </label>
             <select
               value={fuelTypeParam}
               onChange={(e) => updateFilters({ fuelType: e.target.value })}
-              className="w-full bg-background-elevated border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs"
+              className="w-full bg-white border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs shadow-xs"
             >
               <option value="">All Fuel Types</option>
               {FUEL_TYPES.map((f) => (
@@ -284,13 +315,13 @@ const BikesPage = () => {
 
           {/* Sorting */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-surface-200 mb-1">
               Sort By
             </label>
             <select
               value={sortParam}
               onChange={(e) => updateFilters({ sort: e.target.value })}
-              className="w-full bg-background-elevated border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs"
+              className="w-full bg-white border border-border text-surface-100 rounded-lg px-3 py-2 outline-none focus:border-brand-red text-xs shadow-xs"
             >
               {SORT_OPTIONS.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -302,8 +333,8 @@ const BikesPage = () => {
         </div>
 
         {/* Price Range Filter Row */}
-        <form onSubmit={handlePriceApply} className="flex flex-wrap items-center gap-3 pt-3 border-t border-border/40 text-xs">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        <form onSubmit={handlePriceApply} className="flex flex-wrap items-center gap-3 pt-3 border-t border-border/80 text-xs">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-surface-200">
             Price Range (₹):
           </span>
           <div className="w-28">
@@ -312,30 +343,30 @@ const BikesPage = () => {
               placeholder="Min Price"
               value={minPriceInput}
               onChange={(e) => setMinPriceInput(e.target.value)}
-              className="w-full bg-background-elevated border border-border text-surface-100 rounded-lg px-2.5 py-1.5 outline-none focus:border-brand-red text-xs"
+              className="w-full bg-white border border-border text-surface-100 rounded-lg px-2.5 py-1.5 outline-none focus:border-brand-red text-xs shadow-xs"
             />
           </div>
-          <span className="text-muted-foreground">to</span>
+          <span className="text-surface-200">to</span>
           <div className="w-28">
             <input
               type="number"
               placeholder="Max Price"
               value={maxPriceInput}
               onChange={(e) => setMaxPriceInput(e.target.value)}
-              className="w-full bg-background-elevated border border-border text-surface-100 rounded-lg px-2.5 py-1.5 outline-none focus:border-brand-red text-xs"
+              className="w-full bg-white border border-border text-surface-100 rounded-lg px-2.5 py-1.5 outline-none focus:border-brand-red text-xs shadow-xs"
             />
           </div>
-          <Button type="submit" variant="secondary" size="sm" className="text-xs py-1.5 px-3">
+          <Button type="submit" variant="secondary" size="sm" className="text-xs py-1.5 px-3 bg-white hover:bg-surface-800 text-surface-100 border border-border">
             Apply Price
           </Button>
         </form>
       </div>
 
       {/* Results Header */}
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+      <div className="flex items-center justify-between text-xs text-surface-200">
         <span>
-          Showing <strong className="text-surface-100">{bikes.length}</strong> of{' '}
-          <strong className="text-surface-100">{meta.total}</strong> active models
+          Showing <strong className="text-surface-50">{bikes.length}</strong> of{' '}
+          <strong className="text-surface-50">{meta.total}</strong> active models
         </span>
         {meta.pages > 1 && (
           <span>
@@ -365,82 +396,104 @@ const BikesPage = () => {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bikes.map((bike) => (
-            <Card
-              key={bike._id}
-              variant="elevated"
-              interactive
-              className="flex flex-col justify-between space-y-5 group"
-            >
-              <div className="space-y-4">
-                {/* Header Badges */}
-                <div className="flex items-center justify-between gap-2">
-                  <Badge variant="brand" size="sm">
-                    {bike.brand?.name || 'Brand'}
-                  </Badge>
-                  <span className="text-[11px] text-muted-foreground font-semibold">
-                    {bike.category}
-                  </span>
+          {bikes.map((bike) => {
+            const imageUrl = getBikeImageUrl(bike);
+
+            return (
+              <Card
+                key={bike._id}
+                variant="elevated"
+                interactive
+                className="flex flex-col justify-between space-y-5 group bg-white border border-border shadow-card hover:shadow-card-hover rounded-2xl overflow-hidden p-5"
+              >
+                <div className="space-y-4">
+                  {/* Header Badges + Favorite Toggle */}
+                  <div className="flex items-center justify-between gap-2">
+                    <Badge variant="brand" size="sm">
+                      {bike.brand?.name || 'Brand'}
+                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-surface-200 font-semibold uppercase tracking-wider">
+                        {bike.category}
+                      </span>
+                      <FavoriteButton entityType="bike" entityId={bike._id} size="sm" />
+                    </div>
+                  </div>
+
+                  {/* Bike Image / Representation Box */}
+                  <div className="w-full h-44 rounded-xl bg-surface-900 border border-border/80 flex flex-col items-center justify-center p-2 text-center relative overflow-hidden group-hover:border-brand-red/30 transition-all">
+                    <img
+                      src={imageUrl}
+                      alt={bike.name}
+                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                      onError={handleImageError}
+                      loading="lazy"
+                    />
+                  </div>
+
+                  {/* Title & Tagline */}
+                  <div>
+                    <h3 className="font-display font-bold text-surface-50 text-base line-clamp-1 group-hover:text-brand-red transition-colors">
+                      {bike.name}
+                    </h3>
+                    {bike.tagline && (
+                      <p className="text-xs text-surface-200 truncate mt-0.5">
+                        {bike.tagline}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Technical Specs Indicators */}
+                  <div className="space-y-2 text-xs pt-1 border-t border-border/60">
+                    <div className="flex items-center justify-between text-surface-200">
+                      <span className="flex items-center gap-1.5 text-surface-200">
+                        <Gauge className="w-3.5 h-3.5 text-brand-red" /> Power & Engine
+                      </span>
+                      <span className="font-semibold text-surface-50">
+                        {bike.engine?.displacementCc ? `${bike.engine.displacementCc} cc` : bike.engine?.maxPower || 'Electric'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-surface-200">
+                      <span className="flex items-center gap-1.5 text-surface-200">
+                        <Fuel className="w-3.5 h-3.5 text-brand-red" /> Fuel & Mileage
+                      </span>
+                      <span className="font-semibold text-surface-50">
+                        {bike.mileage?.estimatedKmpl
+                          ? `${bike.mileage.estimatedKmpl} kmpl`
+                          : bike.mileage?.certifiedRangeKm
+                          ? `${bike.mileage.certifiedRangeKm} km`
+                          : bike.fuelType}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Bike Representation Box */}
-                <div className="w-full h-36 rounded-card bg-surface-900 border border-border/70 flex flex-col items-center justify-center p-4 text-center relative overflow-hidden group-hover:border-brand-red/30 transition-colors">
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-red/5 to-transparent pointer-events-none" />
-                  <BikeIcon className="w-12 h-12 text-surface-200 group-hover:text-brand-red transition-colors mb-2" />
-                  <span className="font-display font-bold text-surface-50 text-sm line-clamp-1">
-                    {bike.name}
-                  </span>
-                  {bike.tagline && (
-                    <span className="text-[11px] text-muted-foreground truncate max-w-[200px]">
-                      {bike.tagline}
-                    </span>
-                  )}
-                </div>
-
-                {/* Technical Specs Indicators */}
-                <div className="space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-surface-200">
-                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Gauge className="w-3.5 h-3.5 text-brand-red" /> Power & Engine
-                    </span>
-                    <span className="font-medium text-surface-100">
-                      {bike.engine?.displacementCc ? `${bike.engine.displacementCc} cc` : bike.engine?.maxPower || 'Electric'}
-                    </span>
+                {/* Pricing & CTA Buttons */}
+                <div className="pt-4 border-t border-border/80 flex items-center justify-between gap-2">
+                  <div>
+                    <div className="font-display font-black text-surface-50 text-base leading-tight">
+                      {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
+                    </div>
+                    <span className="text-[10px] text-surface-200">Ex-Showroom Range</span>
                   </div>
-                  <div className="flex items-center justify-between text-surface-200">
-                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Fuel className="w-3.5 h-3.5 text-brand-red" /> Fuel & Mileage
-                    </span>
-                    <span className="font-medium text-surface-100">
-                      {bike.mileage?.estimatedKmpl
-                        ? `${bike.mileage.estimatedKmpl} kmpl`
-                        : bike.mileage?.certifiedRangeKm
-                        ? `${bike.mileage.certifiedRangeKm} km`
-                        : bike.fuelType}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <CompareButton bike={bike} size="sm" />
+                    <Link to={`/bikes/${bike.slug}`}>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        icon={ArrowRight}
+                        iconPosition="right"
+                        className="text-xs bg-brand-red hover:bg-brand-red-hover text-white shadow-button px-3.5 py-1.5 rounded-lg font-semibold"
+                      >
+                        Details
+                      </Button>
+                    </Link>
                   </div>
                 </div>
-              </div>
-
-              {/* Pricing & CTA */}
-              <div className="pt-4 border-t border-border/60 flex items-center justify-between gap-2">
-                <div>
-                  <div className="font-display font-bold text-surface-50 text-base leading-tight">
-                    {formatPriceRange(bike.priceRange?.minPrice, bike.priceRange?.maxPrice)}
-                  </div>
-                  <span className="text-[10px] text-muted-foreground">Ex-Showroom Range</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CompareButton bike={bike} size="sm" />
-                  <Link to={`/bikes/${bike.slug}`}>
-                    <Button variant="outline" size="sm" icon={ArrowRight} iconPosition="right" className="text-xs">
-                      View Specs
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
 

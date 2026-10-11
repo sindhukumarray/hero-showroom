@@ -649,13 +649,13 @@ const AdminBikesPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-neutral-800">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-surface-50 tracking-tight flex items-center gap-2">
               <BikeIcon className="w-6 h-6 text-brand-red" />
               <span>Bike Catalogue Management</span>
             </h1>
             <Badge variant="brand" size="sm">Admin</Badge>
           </div>
-          <p className="text-sm text-neutral-400 mt-1">
+          <p className="text-sm text-surface-200 mt-1">
             Manage motorcycle models, pricing tiers, specifications, and trims.
           </p>
         </div>
@@ -666,7 +666,7 @@ const AdminBikesPage = () => {
             size="sm"
             icon={RefreshCw}
             onClick={loadBikes}
-            className="text-xs border-neutral-800 hover:border-neutral-700"
+            className="text-xs border-border hover:bg-surface-800 text-surface-200"
           >
             Refresh
           </Button>
@@ -691,21 +691,21 @@ const AdminBikesPage = () => {
             exit={{ opacity: 0, y: -10 }}
             className={`p-3.5 rounded-lg flex items-center justify-between text-xs font-medium border ${
               feedback.type === 'error'
-                ? 'bg-red-950/40 border-red-500/40 text-red-300'
-                : 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                ? 'bg-rose-50 border-rose-200 text-rose-700'
+                : 'bg-emerald-50 border-emerald-200 text-emerald-700'
             }`}
           >
             <div className="flex items-center gap-2">
               {feedback.type === 'error' ? (
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               ) : (
-                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
               )}
               <span>{feedback.message}</span>
             </div>
             <button
               onClick={() => setFeedback(null)}
-              className="text-neutral-400 hover:text-white p-1"
+              className="text-muted-foreground hover:text-surface-50 p-1"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -714,27 +714,31 @@ const AdminBikesPage = () => {
       </AnimatePresence>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Total Models</p>
-          <p className="text-2xl font-bold text-white mt-1">{meta.total}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Models</p>
+          <p className="text-2xl font-bold text-surface-50 mt-1">{meta.total}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Active Models</p>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">{activeCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Active Models</p>
+          <p className="text-2xl font-bold text-emerald-700 mt-1">{activeCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Featured Models</p>
-          <p className="text-2xl font-bold text-amber-400 mt-1">{featuredCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Featured Models</p>
+          <p className="text-2xl font-bold text-amber-700 mt-1">{featuredCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-purple-400">Page Variants</p>
-          <p className="text-2xl font-bold text-purple-400 mt-1">{totalVariantsCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-purple-700">Archived Models</p>
+          <p className="text-2xl font-bold text-purple-700 mt-1">{inactiveCount}</p>
+        </Card>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">Page Variants</p>
+          <p className="text-2xl font-bold text-sky-700 mt-1">{totalVariantsCount}</p>
         </Card>
       </div>
 
       {/* Filter and Search Bar */}
-      <Card className="p-4 bg-neutral-900/30 border-neutral-800">
+      <Card className="p-4 border-border/80">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
           {/* Search Input */}
           <div className="md:col-span-4 relative">
@@ -747,7 +751,7 @@ const AdminBikesPage = () => {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-9 pr-4 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/50"
+              className="w-full pl-9 pr-4 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             />
           </div>
 
@@ -760,7 +764,7 @@ const AdminBikesPage = () => {
                 setBrandFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="all">All Brands</option>
               {brands.map((b) => (
@@ -780,7 +784,7 @@ const AdminBikesPage = () => {
                 setCategoryFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="all">All Categories</option>
               {CATEGORIES.map((c) => (
@@ -800,7 +804,7 @@ const AdminBikesPage = () => {
                 setFuelTypeFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="all">All Fuel Types</option>
               {FUEL_TYPES.map((f) => (
@@ -817,7 +821,7 @@ const AdminBikesPage = () => {
               aria-label="Sort by"
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="newest">Newest First</option>
               <option value="priceLow">Price: Low to High</option>
@@ -916,13 +920,13 @@ const AdminBikesPage = () => {
           {bikes.map((bike) => (
             <Card
               key={bike._id}
-              className={`flex flex-col justify-between p-5 bg-neutral-900/40 border transition-all duration-200 hover:border-neutral-700 ${
-                bike.isActive ? 'border-neutral-800' : 'border-neutral-800/50 opacity-75'
+              className={`flex flex-col justify-between p-5 border-border/80 border transition-all duration-200 hover:border-border hover:shadow-card-hover group ${
+                bike.isActive ? 'border-border/80' : 'border-border/50 opacity-75'
               }`}
             >
               <div>
                 {/* Image and Header */}
-                <div className="relative w-full h-40 bg-neutral-950 rounded-lg overflow-hidden border border-neutral-800 mb-4 flex items-center justify-center">
+                <div className="relative w-full h-40 bg-surface-800 rounded-lg overflow-hidden border border-border/80 mb-4 flex items-center justify-center">
                   {bike.images?.heroImage ? (
                     <img
                       src={bike.images.heroImage}
@@ -931,7 +935,7 @@ const AdminBikesPage = () => {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center text-neutral-600 gap-1">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground gap-1">
                       <BikeIcon className="w-10 h-10 stroke-1" />
                       <span className="text-[11px]">No Image Provided</span>
                     </div>
@@ -946,8 +950,8 @@ const AdminBikesPage = () => {
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
                         bike.isActive
-                          ? 'bg-emerald-950/70 border-emerald-500/40 text-emerald-300'
-                          : 'bg-neutral-900 border-neutral-700 text-neutral-400'
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                          : 'bg-surface-800 border-border text-muted-foreground'
                       }`}
                     >
                       {bike.isActive ? 'Active' : 'Inactive'}
@@ -955,7 +959,7 @@ const AdminBikesPage = () => {
                   </div>
 
                   <div className="absolute bottom-2 left-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-neutral-950/80 backdrop-blur-sm border border-neutral-800 text-neutral-300">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/90 backdrop-blur-sm border border-border text-surface-50">
                       {bike.category}
                     </span>
                   </div>
@@ -964,10 +968,10 @@ const AdminBikesPage = () => {
                 {/* Bike Model Details */}
                 <div className="space-y-1">
                   <div className="flex items-baseline justify-between gap-2">
-                    <h2 className="text-base font-bold text-white group-hover:text-brand-red transition-colors line-clamp-1">
+                    <h2 className="text-base font-bold text-surface-50 group-hover:text-brand-red transition-colors line-clamp-1">
                       {bike.name}
                     </h2>
-                    <span className="text-xs font-semibold text-neutral-400 shrink-0">
+                    <span className="text-xs font-semibold text-muted-foreground shrink-0">
                       {bike.brand?.name || 'Hero'}
                     </span>
                   </div>
@@ -996,24 +1000,24 @@ const AdminBikesPage = () => {
                 </div>
 
                 {/* Price Range */}
-                <div className="mt-3 p-2.5 rounded-lg bg-neutral-950/60 border border-neutral-800/60 flex items-center justify-between">
-                  <span className="text-[11px] uppercase tracking-wider text-neutral-400 font-medium">Ex-Showroom</span>
-                  <span className="text-xs font-bold text-emerald-400">
+                <div className="mt-3 p-2.5 rounded-lg bg-surface-500 border border-border flex items-center justify-between">
+                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Ex-Showroom</span>
+                  <span className="text-xs font-bold text-emerald-700">
                     {formatPriceINR(bike.priceRange?.minPrice)} - {formatPriceINR(bike.priceRange?.maxPrice)}
                   </span>
                 </div>
               </div>
 
               {/* Actions & Variants Footer */}
-              <div className="mt-4 pt-3.5 border-t border-neutral-800 flex flex-col gap-2.5">
+              <div className="mt-4 pt-3.5 border-t border-border flex flex-col gap-2.5">
                 {/* Manage Variants Button */}
                 <button
                   type="button"
                   onClick={() => handleOpenVariantManagement(bike)}
-                  className="w-full py-1.5 px-3 rounded-lg bg-neutral-800/70 hover:bg-neutral-800 border border-neutral-700/60 text-xs font-semibold text-neutral-200 transition-colors flex items-center justify-between"
+                  className="w-full py-1.5 px-3 rounded-lg bg-surface-500 hover:bg-surface-600 border border-border text-xs font-semibold text-surface-100 transition-colors flex items-center justify-between"
                 >
                   <span className="flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-purple-400" />
+                    <Layers className="w-3.5 h-3.5 text-purple-600" />
                     <span>Manage Variants</span>
                   </span>
                   <Badge variant="purple" size="sm" className="text-[10px]">
@@ -1028,8 +1032,8 @@ const AdminBikesPage = () => {
                     onClick={() => handleToggleBikeStatus(bike)}
                     className={`text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors flex items-center gap-1.5 ${
                       bike.isActive
-                        ? 'border-neutral-800 hover:border-amber-500/40 hover:bg-amber-950/20 text-neutral-400 hover:text-amber-300'
-                        : 'border-emerald-800/40 bg-emerald-950/30 text-emerald-300 hover:bg-emerald-900/40'
+                        ? 'border-border hover:border-amber-500/40 hover:bg-amber-50 text-surface-200 hover:text-amber-700'
+                        : 'border-emerald-500/40 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                     }`}
                   >
                     {bike.isActive ? (
@@ -1050,7 +1054,7 @@ const AdminBikesPage = () => {
                       type="button"
                       onClick={() => handleOpenEditBike(bike)}
                       aria-label="Edit bike model"
-                      className="p-1.5 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-950 text-neutral-300 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg border border-border hover:border-surface-200 bg-white text-surface-200 hover:text-surface-50 transition-colors shadow-sm"
                       title="Edit Bike"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -1059,7 +1063,7 @@ const AdminBikesPage = () => {
                       type="button"
                       onClick={() => setDeleteBikeTarget(bike)}
                       aria-label="Delete or deactivate bike model"
-                      className="p-1.5 rounded-lg border border-neutral-800 hover:border-red-900/40 bg-neutral-950 text-neutral-400 hover:text-red-400 hover:bg-red-950/20 transition-colors"
+                      className="p-1.5 rounded-lg border border-border hover:border-red-400 bg-white text-muted-foreground hover:text-red-600 hover:bg-red-50 transition-colors shadow-sm"
                       title="Delete or Safe-Deactivate"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -1181,18 +1185,18 @@ const AdminBikesPage = () => {
                         slug: !editingBike ? slugify(nameVal) : prev.slug
                       }));
                     }}
-                    className={`w-full px-3 py-2 bg-neutral-950 border rounded-lg text-sm text-white focus:outline-none ${
-                      bikeFormErrors.name ? 'border-red-500' : 'border-neutral-800 focus:border-red-500/50'
+                    className={`w-full px-3 py-2 bg-white border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red ${
+                      bikeFormErrors.name ? 'border-red-500' : 'border-border'
                     }`}
                   />
                   {bikeFormErrors.name && (
-                    <p className="text-[11px] text-red-400 mt-1">{bikeFormErrors.name}</p>
+                    <p className="text-[11px] text-red-500 mt-1">{bikeFormErrors.name}</p>
                   )}
                 </div>
 
                 {/* Bike Slug */}
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     URL Slug *
                   </label>
                   <input
@@ -1201,12 +1205,12 @@ const AdminBikesPage = () => {
                     placeholder="e.g. hero-splendor-plus-xtec"
                     value={bikeFormData.slug}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, slug: e.target.value })}
-                    className={`w-full px-3 py-2 bg-neutral-950 border rounded-lg text-sm text-white font-mono focus:outline-none ${
-                      bikeFormErrors.slug ? 'border-red-500' : 'border-neutral-800 focus:border-red-500/50'
+                    className={`w-full px-3 py-2 bg-white border rounded-lg text-sm text-surface-50 font-mono focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red ${
+                      bikeFormErrors.slug ? 'border-red-500' : 'border-border'
                     }`}
                   />
                   {bikeFormErrors.slug && (
-                    <p className="text-[11px] text-red-400 mt-1">{bikeFormErrors.slug}</p>
+                    <p className="text-[11px] text-red-500 mt-1">{bikeFormErrors.slug}</p>
                   )}
                 </div>
               </div>
@@ -1214,15 +1218,15 @@ const AdminBikesPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Brand Selector */}
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Brand *
                   </label>
                   <select
                     required
                     value={bikeFormData.brand}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, brand: e.target.value })}
-                    className={`w-full px-3 py-2 bg-neutral-950 border rounded-lg text-sm text-white focus:outline-none ${
-                      bikeFormErrors.brand ? 'border-red-500' : 'border-neutral-800 focus:border-red-500/50'
+                    className={`w-full px-3 py-2 bg-white border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red ${
+                      bikeFormErrors.brand ? 'border-red-500' : 'border-border'
                     }`}
                   >
                     <option value="" disabled>Select Brand</option>
@@ -1233,20 +1237,20 @@ const AdminBikesPage = () => {
                     ))}
                   </select>
                   {bikeFormErrors.brand && (
-                    <p className="text-[11px] text-red-400 mt-1">{bikeFormErrors.brand}</p>
+                    <p className="text-[11px] text-red-500 mt-1">{bikeFormErrors.brand}</p>
                   )}
                 </div>
 
                 {/* Category */}
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Category *
                   </label>
                   <select
                     required
                     value={bikeFormData.category}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, category: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   >
                     {CATEGORIES.map((c) => (
                       <option key={c} value={c}>{c}</option>
@@ -1256,9 +1260,9 @@ const AdminBikesPage = () => {
               </div>
 
               {/* Price Range */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-lg bg-neutral-950 border border-neutral-800/80">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-lg bg-surface-500 border border-border">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Min Ex-Showroom Price (₹) *
                   </label>
                   <input
@@ -1268,17 +1272,17 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 75000"
                     value={bikeFormData.minPrice}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, minPrice: e.target.value })}
-                    className={`w-full px-3 py-2 bg-neutral-900 border rounded-lg text-sm text-white focus:outline-none ${
-                      bikeFormErrors.minPrice ? 'border-red-500' : 'border-neutral-800 focus:border-red-500/50'
+                    className={`w-full px-3 py-2 bg-white border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red ${
+                      bikeFormErrors.minPrice ? 'border-red-500' : 'border-border'
                     }`}
                   />
                   {bikeFormErrors.minPrice && (
-                    <p className="text-[11px] text-red-400 mt-1">{bikeFormErrors.minPrice}</p>
+                    <p className="text-[11px] text-red-500 mt-1">{bikeFormErrors.minPrice}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Max Ex-Showroom Price (₹) *
                   </label>
                   <input
@@ -1288,19 +1292,19 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 85000"
                     value={bikeFormData.maxPrice}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, maxPrice: e.target.value })}
-                    className={`w-full px-3 py-2 bg-neutral-900 border rounded-lg text-sm text-white focus:outline-none ${
-                      bikeFormErrors.maxPrice ? 'border-red-500' : 'border-neutral-800 focus:border-red-500/50'
+                    className={`w-full px-3 py-2 bg-white border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red ${
+                      bikeFormErrors.maxPrice ? 'border-red-500' : 'border-border'
                     }`}
                   />
                   {bikeFormErrors.maxPrice && (
-                    <p className="text-[11px] text-red-400 mt-1">{bikeFormErrors.maxPrice}</p>
+                    <p className="text-[11px] text-red-500 mt-1">{bikeFormErrors.maxPrice}</p>
                   )}
                 </div>
               </div>
 
               {/* Tagline */}
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                <label className="block text-xs font-medium text-surface-200 mb-1">
                   Marketing Tagline
                 </label>
                 <input
@@ -1308,13 +1312,13 @@ const AdminBikesPage = () => {
                   placeholder="e.g. India's Most Trusted Commuter"
                   value={bikeFormData.tagline}
                   onChange={(e) => setBikeFormData({ ...bikeFormData, tagline: e.target.value })}
-                  className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                  className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                <label className="block text-xs font-medium text-surface-200 mb-1">
                   Full Description
                 </label>
                 <textarea
@@ -1322,7 +1326,7 @@ const AdminBikesPage = () => {
                   placeholder="Comprehensive model description..."
                   value={bikeFormData.description}
                   onChange={(e) => setBikeFormData({ ...bikeFormData, description: e.target.value })}
-                  className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                  className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                 />
               </div>
             </div>
@@ -1333,7 +1337,7 @@ const AdminBikesPage = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Displacement (cc)
                   </label>
                   <input
@@ -1342,11 +1346,11 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 97.2"
                     value={bikeFormData.displacementCc}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, displacementCc: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Max Power
                   </label>
                   <input
@@ -1354,11 +1358,11 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 8.02 PS @ 8000 rpm"
                     value={bikeFormData.maxPower}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, maxPower: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Max Torque
                   </label>
                   <input
@@ -1366,20 +1370,20 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 8.05 Nm @ 6000 rpm"
                     value={bikeFormData.maxTorque}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, maxTorque: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Fuel Type
                   </label>
                   <select
                     value={bikeFormData.fuelType}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, fuelType: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   >
                     {FUEL_TYPES.map((f) => (
                       <option key={f} value={f}>{f}</option>
@@ -1387,7 +1391,7 @@ const AdminBikesPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Transmission
                   </label>
                   <input
@@ -1395,17 +1399,17 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 4 Speed Constant Mesh"
                     value={bikeFormData.transmission}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, transmission: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Cooling System
                   </label>
                   <select
                     value={bikeFormData.cooling}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, cooling: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   >
                     {COOLING_TYPES.map((c) => (
                       <option key={c} value={c}>{c}</option>
@@ -1416,7 +1420,7 @@ const AdminBikesPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Estimated Mileage (kmpl)
                   </label>
                   <input
@@ -1425,11 +1429,11 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 65"
                     value={bikeFormData.estimatedKmpl}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, estimatedKmpl: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Certified Range / Battery (km)
                   </label>
                   <input
@@ -1438,20 +1442,20 @@ const AdminBikesPage = () => {
                     placeholder="e.g. 0 (or range for EV)"
                     value={bikeFormData.certifiedRangeKm}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, certifiedRangeKm: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Front Brake
                   </label>
                   <select
                     value={bikeFormData.frontBrake}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, frontBrake: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   >
                     {BRAKE_TYPES.map((b) => (
                       <option key={b} value={b}>{b}</option>
@@ -1459,13 +1463,13 @@ const AdminBikesPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Rear Brake
                   </label>
                   <select
                     value={bikeFormData.rearBrake}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, rearBrake: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   >
                     {BRAKE_TYPES.map((b) => (
                       <option key={b} value={b}>{b}</option>
@@ -1473,13 +1477,13 @@ const AdminBikesPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     ABS Type
                   </label>
                   <select
                     value={bikeFormData.absType}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, absType: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   >
                     {ABS_TYPES.map((a) => (
                       <option key={a} value={a}>{a}</option>
@@ -1494,7 +1498,7 @@ const AdminBikesPage = () => {
           {bikeFormTab === 'media' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                <label className="block text-xs font-medium text-surface-200 mb-1">
                   Hero Image URL
                 </label>
                 <input
@@ -1502,12 +1506,12 @@ const AdminBikesPage = () => {
                   placeholder="https://images.example.com/bikes/hero-splendor.jpg"
                   value={bikeFormData.heroImage}
                   onChange={(e) => setBikeFormData({ ...bikeFormData, heroImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                  className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                <label className="block text-xs font-medium text-surface-200 mb-1">
                   Gallery Image URLs (one per line)
                 </label>
                 <textarea
@@ -1515,27 +1519,27 @@ const AdminBikesPage = () => {
                   placeholder="https://images.example.com/bikes/gallery-1.jpg&#10;https://images.example.com/bikes/gallery-2.jpg"
                   value={bikeFormData.galleryText}
                   onChange={(e) => setBikeFormData({ ...bikeFormData, galleryText: e.target.value })}
-                  className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-white font-mono focus:outline-none focus:border-red-500/50"
+                  className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 font-mono focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                 />
               </div>
 
               <div className="pt-2 flex items-center gap-6">
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-neutral-200">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-surface-100">
                   <input
                     type="checkbox"
                     checked={bikeFormData.isFeatured}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, isFeatured: e.target.checked })}
-                    className="w-4 h-4 rounded bg-neutral-950 border-neutral-700 text-brand-red focus:ring-0"
+                    className="w-4 h-4 rounded border-border text-brand-red focus:ring-brand-red focus:ring-offset-white"
                   />
                   <span>Featured on Home / Top of Catalogue</span>
                 </label>
 
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-neutral-200">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-surface-100">
                   <input
                     type="checkbox"
                     checked={bikeFormData.isActive}
                     onChange={(e) => setBikeFormData({ ...bikeFormData, isActive: e.target.checked })}
-                    className="w-4 h-4 rounded bg-neutral-950 border-neutral-700 text-brand-red focus:ring-0"
+                    className="w-4 h-4 rounded border-border text-brand-red focus:ring-brand-red focus:ring-offset-white"
                   />
                   <span>Active in Public Catalogue</span>
                 </label>
@@ -1544,7 +1548,7 @@ const AdminBikesPage = () => {
           )}
 
           {/* Form Actions Footer */}
-          <div className="pt-4 border-t border-neutral-800 flex items-center justify-between">
+          <div className="pt-4 border-t border-border flex items-center justify-between">
             <Button
               type="button"
               variant="outline"
@@ -1657,16 +1661,16 @@ const AdminBikesPage = () => {
 
           {/* Variant Form (Create/Edit) */}
           {isVariantFormOpen ? (
-            <Card className="p-4 bg-neutral-950 border-neutral-800">
-              <div className="flex items-center justify-between pb-3 border-b border-neutral-800 mb-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <Card className="p-4 bg-surface-500 border-border">
+              <div className="flex items-center justify-between pb-3 border-b border-border mb-3">
+                <h3 className="text-sm font-bold text-surface-50 flex items-center gap-2">
                   <Palette className="w-4 h-4 text-brand-red" />
                   <span>{editingVariant ? `Edit Variant: ${editingVariant.name}` : 'New Variant Trim'}</span>
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsVariantFormOpen(false)}
-                  className="text-xs text-neutral-400 hover:text-white"
+                  className="text-xs text-muted-foreground hover:text-surface-50"
                 >
                   Back to List
                 </button>
@@ -1674,7 +1678,7 @@ const AdminBikesPage = () => {
 
               <form onSubmit={handleSubmitVariant} className="space-y-4">
                 {variantFormErrors.general && (
-                  <div className="p-3 rounded-lg bg-red-950/40 border border-red-500/40 text-red-300 text-xs">
+                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs">
                     {variantFormErrors.general}
                   </div>
                 )}
@@ -1682,7 +1686,7 @@ const AdminBikesPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {/* Variant Name */}
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-neutral-300 mb-1">
+                    <label className="block text-xs font-medium text-surface-200 mb-1">
                       Variant Name *
                     </label>
                     <input
@@ -1698,16 +1702,16 @@ const AdminBikesPage = () => {
                           slug: !editingVariant ? slugify(val) : prev.slug
                         }));
                       }}
-                      className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                      className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                     />
                     {variantFormErrors.name && (
-                      <p className="text-[11px] text-red-400 mt-1">{variantFormErrors.name}</p>
+                      <p className="text-[11px] text-red-500 mt-1">{variantFormErrors.name}</p>
                     )}
                   </div>
 
                   {/* Ex-Showroom Price */}
                   <div>
-                    <label className="block text-xs font-medium text-neutral-300 mb-1">
+                    <label className="block text-xs font-medium text-surface-200 mb-1">
                       Ex-Showroom Price (₹) *
                     </label>
                     <input
@@ -1717,17 +1721,17 @@ const AdminBikesPage = () => {
                       placeholder="e.g. 78000"
                       value={variantFormData.exShowroomPrice}
                       onChange={(e) => setVariantFormData({ ...variantFormData, exShowroomPrice: e.target.value })}
-                      className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-sm text-white focus:outline-none focus:border-red-500/50"
+                      className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                     />
                     {variantFormErrors.exShowroomPrice && (
-                      <p className="text-[11px] text-red-400 mt-1">{variantFormErrors.exShowroomPrice}</p>
+                      <p className="text-[11px] text-red-500 mt-1">{variantFormErrors.exShowroomPrice}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Slug */}
                 <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  <label className="block text-xs font-medium text-surface-200 mb-1">
                     Variant Slug *
                   </label>
                   <input
@@ -1736,17 +1740,17 @@ const AdminBikesPage = () => {
                     placeholder="e.g. self-start-drum-alloy"
                     value={variantFormData.slug}
                     onChange={(e) => setVariantFormData({ ...variantFormData, slug: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-sm text-white font-mono focus:outline-none focus:border-red-500/50"
+                    className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 font-mono focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                   />
                   {variantFormErrors.slug && (
-                    <p className="text-[11px] text-red-400 mt-1">{variantFormErrors.slug}</p>
+                    <p className="text-[11px] text-red-500 mt-1">{variantFormErrors.slug}</p>
                   )}
                 </div>
 
                 {/* Colorways Dynamic Editor */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-medium text-neutral-300">
+                    <label className="text-xs font-medium text-surface-200">
                       Colorways & Hex Codes
                     </label>
                     <button
@@ -1765,7 +1769,7 @@ const AdminBikesPage = () => {
                           type="color"
                           value={color.hexCode || '#000000'}
                           onChange={(e) => handleColorChange(idx, 'hexCode', e.target.value)}
-                          className="w-9 h-8 rounded bg-neutral-900 border border-neutral-800 cursor-pointer p-0.5 shrink-0"
+                          className="w-9 h-8 rounded bg-white border border-border cursor-pointer p-0.5 shrink-0"
                           title="Choose Color Hex"
                         />
                         <input
@@ -1773,20 +1777,20 @@ const AdminBikesPage = () => {
                           placeholder="Color Name (e.g. Canvas Black)"
                           value={color.name}
                           onChange={(e) => handleColorChange(idx, 'name', e.target.value)}
-                          className="flex-1 px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-xs text-white focus:outline-none"
+                          className="flex-1 px-3 py-1.5 bg-white border border-border rounded-lg text-xs text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                         />
                         <input
                           type="url"
                           placeholder="Image URL (optional)"
                           value={color.image}
                           onChange={(e) => handleColorChange(idx, 'image', e.target.value)}
-                          className="flex-1 px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-xs text-white focus:outline-none hidden sm:block"
+                          className="flex-1 px-3 py-1.5 bg-white border border-border rounded-lg text-xs text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red hidden sm:block"
                         />
                         {variantFormData.colors.length > 1 && (
                           <button
                             type="button"
                             onClick={() => handleRemoveColorRow(idx)}
-                            className="p-1.5 text-neutral-500 hover:text-red-400"
+                            className="p-1.5 text-muted-foreground hover:text-red-500"
                             title="Remove Color"
                           >
                             <X className="w-3.5 h-3.5" />
@@ -1798,9 +1802,9 @@ const AdminBikesPage = () => {
                 </div>
 
                 {/* Key Specifications */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-lg bg-neutral-900/60 border border-neutral-800/80">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-lg bg-surface-500 border border-border">
                   <div>
-                    <label className="block text-[11px] font-medium text-neutral-400 mb-1">
+                    <label className="block text-[11px] font-medium text-muted-foreground mb-1">
                       Kerb Weight (kg)
                     </label>
                     <input
@@ -1809,11 +1813,11 @@ const AdminBikesPage = () => {
                       placeholder="e.g. 112"
                       value={variantFormData.kerbWeightKg}
                       onChange={(e) => setVariantFormData({ ...variantFormData, kerbWeightKg: e.target.value })}
-                      className="w-full px-2.5 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs text-white focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-neutral-400 mb-1">
+                    <label className="block text-[11px] font-medium text-muted-foreground mb-1">
                       Fuel Tank (L)
                     </label>
                     <input
@@ -1822,11 +1826,11 @@ const AdminBikesPage = () => {
                       placeholder="e.g. 9.8"
                       value={variantFormData.fuelCapacityLitres}
                       onChange={(e) => setVariantFormData({ ...variantFormData, fuelCapacityLitres: e.target.value })}
-                      className="w-full px-2.5 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs text-white focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-neutral-400 mb-1">
+                    <label className="block text-[11px] font-medium text-muted-foreground mb-1">
                       Seat Height (mm)
                     </label>
                     <input
@@ -1835,11 +1839,11 @@ const AdminBikesPage = () => {
                       placeholder="e.g. 785"
                       value={variantFormData.seatHeightMm}
                       onChange={(e) => setVariantFormData({ ...variantFormData, seatHeightMm: e.target.value })}
-                      className="w-full px-2.5 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs text-white focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium text-neutral-400 mb-1">
+                    <label className="block text-[11px] font-medium text-muted-foreground mb-1">
                       Ground Clear. (mm)
                     </label>
                     <input
@@ -1848,7 +1852,7 @@ const AdminBikesPage = () => {
                       placeholder="e.g. 165"
                       value={variantFormData.groundClearanceMm}
                       onChange={(e) => setVariantFormData({ ...variantFormData, groundClearanceMm: e.target.value })}
-                      className="w-full px-2.5 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs text-white focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                     />
                   </div>
                 </div>
@@ -1856,7 +1860,7 @@ const AdminBikesPage = () => {
                 {/* Key Features & Status */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-neutral-300 mb-1">
+                    <label className="block text-xs font-medium text-surface-200 mb-1">
                       Key Highlights (comma-separated)
                     </label>
                     <input
@@ -1864,17 +1868,17 @@ const AdminBikesPage = () => {
                       placeholder="e.g. i3S Technology, LED Headlamp, Digital Meter"
                       value={variantFormData.keyFeaturesText}
                       onChange={(e) => setVariantFormData({ ...variantFormData, keyFeaturesText: e.target.value })}
-                      className="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-lg text-xs text-white focus:outline-none"
+                      className="w-full px-3 py-1.5 bg-white border border-border rounded-lg text-xs text-surface-50 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
                     />
                   </div>
 
                   <div className="pt-4">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-neutral-200">
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-surface-100">
                       <input
                         type="checkbox"
                         checked={variantFormData.isActive}
                         onChange={(e) => setVariantFormData({ ...variantFormData, isActive: e.target.checked })}
-                        className="w-4 h-4 rounded bg-neutral-950 border-neutral-700 text-brand-red focus:ring-0"
+                        className="w-4 h-4 rounded border-border text-brand-red focus:ring-brand-red focus:ring-offset-white"
                       />
                       <span>Active Variant</span>
                     </label>
@@ -1882,7 +1886,7 @@ const AdminBikesPage = () => {
                 </div>
 
                 {/* Buttons */}
-                <div className="pt-3 border-t border-neutral-800 flex items-center justify-end gap-2">
+                <div className="pt-3 border-t border-border flex items-center justify-end gap-2">
                   <Button
                     type="button"
                     variant="outline"
@@ -1911,14 +1915,14 @@ const AdminBikesPage = () => {
               <Loading />
             </div>
           ) : variantError ? (
-            <div className="p-4 rounded-lg bg-red-950/30 border border-red-500/30 text-red-200 text-xs">
+            <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs">
               {variantError}
             </div>
           ) : variants.length === 0 ? (
-            <div className="text-center py-10 bg-neutral-950/50 rounded-xl border border-neutral-800/60 p-6">
-              <Layers className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-white">No variants configured yet</p>
-              <p className="text-xs text-neutral-400 mt-1 mb-4">
+            <div className="text-center py-10 bg-surface-500 rounded-xl border border-border p-6">
+              <Layers className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm font-semibold text-surface-50">No variants configured yet</p>
+              <p className="text-xs text-muted-foreground mt-1 mb-4">
                 Add trims like Drum Brake, Disc Brake, Alloy Wheels, or XTEC editions.
               </p>
               <Button

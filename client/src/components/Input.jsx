@@ -57,7 +57,7 @@ const Input = ({
             error ? errorId : helperText ? helperId : undefined
           }
           className={`
-            w-full bg-background-elevated border text-surface-100 placeholder-muted-foreground
+            w-full bg-white border text-surface-100 placeholder-muted-foreground
             rounded-card text-sm font-sans px-4 py-3 min-h-[44px]
             transition-all duration-200 outline-none
             focus:border-brand-red focus:ring-1 focus:ring-brand-red

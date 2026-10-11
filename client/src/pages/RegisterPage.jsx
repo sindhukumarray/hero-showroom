@@ -169,7 +169,7 @@ const RegisterPage = () => {
                   type="text"
                   label="Full Name"
                   required
-                  placeholder="Aarav Sharma"
+                  placeholder="er_sindhu"
                   autoComplete="name"
                   value={formData.name}
                   onChange={handleChange}
@@ -183,7 +183,7 @@ const RegisterPage = () => {
                   type="email"
                   label="Email Address"
                   required
-                  placeholder="rider@example.com"
+                  placeholder="er_sindhu@heroshowroom.com"
                   autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -210,7 +210,7 @@ const RegisterPage = () => {
                   id="phone"
                   type="tel"
                   label="Phone Number (Optional)"
-                  placeholder="+91 98765 43210"
+                  placeholder="7479524973"
                   autoComplete="tel"
                   value={formData.phone}
                   onChange={handleChange}

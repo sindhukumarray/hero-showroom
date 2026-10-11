@@ -49,7 +49,7 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-surface-100 overflow-x-hidden w-full selection:bg-brand-red selection:text-white">
       {/* Top Administrative Chrome */}
-      <header className="sticky top-0 z-40 bg-surface-950/90 backdrop-blur-md border-b border-border/80">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-border shadow-sm">
         <Container className="py-3 flex items-center justify-between gap-4">
           {/* Brand & Portal Label */}
           <div className="flex items-center gap-3">
@@ -71,10 +71,10 @@ const AdminLayout = () => {
 
           {/* User Status & Exit Actions */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-900 border border-border/60 text-xs">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
-              <span className="text-surface-200 font-medium">{user?.name || 'Administrator'}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-800 border border-border text-xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+              <span className="text-surface-100 font-medium">{user?.name || 'Administrator'}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
 
             <Link to="/">
@@ -82,7 +82,7 @@ const AdminLayout = () => {
                 variant="ghost"
                 size="sm"
                 icon={ExternalLink}
-                className="text-xs text-muted-foreground hover:text-surface-100"
+                className="text-xs text-muted-foreground hover:text-surface-50"
               >
                 Public Site
               </Button>

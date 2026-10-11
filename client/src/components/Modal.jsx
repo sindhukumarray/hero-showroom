@@ -65,13 +65,13 @@ const Modal = ({
             exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 16 }}
             transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: 'easeOut' }}
             className={`
-              relative w-full ${maxWidth} bg-surface-900 border border-border
+              relative w-full ${maxWidth} bg-white border border-border
               rounded-card shadow-2xl z-10 overflow-hidden flex flex-col my-auto
               ${className}
             `}
           >
             {/* Header */}
-            <div className="flex items-start justify-between p-5 md:p-6 border-b border-border/80 bg-surface-950/60">
+            <div className="flex items-start justify-between p-5 md:p-6 border-b border-border bg-background-deep/40">
               <div className="space-y-1 pr-6">
                 {title && (
                   <h3 id="modal-title" className="typography-h3 text-surface-50 text-lg md:text-xl font-bold">

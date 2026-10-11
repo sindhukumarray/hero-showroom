@@ -26,13 +26,13 @@ const Button = ({
     primary:
       'bg-brand-red hover:bg-brand-red-hover text-white shadow-glow-red hover:shadow-glow-red-lg border border-transparent',
     secondary:
-      'bg-surface-800 hover:bg-surface-700 text-surface-100 border border-border hover:border-border-highlight',
+      'bg-white hover:bg-surface-800 text-surface-100 border border-border hover:border-brand-silver/50 shadow-sm',
     ghost:
-      'bg-transparent hover:bg-surface-800/70 text-surface-200 hover:text-white border border-transparent',
+      'bg-transparent hover:bg-surface-800 text-surface-200 hover:text-surface-100 border border-transparent',
     outline:
       'bg-transparent hover:bg-brand-red-subtle text-surface-100 hover:text-brand-red border border-border hover:border-brand-red/50',
     danger:
-      'bg-red-700 hover:bg-red-800 text-white shadow-sm border border-transparent'
+      'bg-red-600 hover:bg-red-700 text-white shadow-sm border border-transparent'
   };
 
   const sizeStyles = {

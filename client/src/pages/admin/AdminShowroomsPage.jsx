@@ -461,9 +461,9 @@ const AdminShowroomsPage = () => {
             <span className="p-2 rounded-lg bg-red-600/10 border border-red-500/20 text-red-500">
               <Building2 className="w-5 h-5" />
             </span>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Showroom & Dealership Management</h1>
+            <h1 className="text-2xl font-bold text-surface-50 tracking-tight">Showroom & Dealership Management</h1>
           </div>
-          <p className="text-sm text-neutral-400 mt-1">
+          <p className="text-sm text-surface-200 mt-1">
             Oversee authorized dealer outlets, Premia experience centers, and localized customer contact hubs.
           </p>
         </div>
@@ -474,7 +474,7 @@ const AdminShowroomsPage = () => {
             size="sm"
             onClick={fetchShowrooms}
             disabled={isLoading}
-            className="border-neutral-800 hover:bg-neutral-800/60 text-neutral-300"
+            className="border-border hover:bg-surface-800 text-surface-200"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
@@ -483,7 +483,7 @@ const AdminShowroomsPage = () => {
             variant="primary"
             size="sm"
             onClick={handleOpenCreateModal}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium shadow-lg shadow-red-900/30"
+            className="bg-brand-red hover:bg-brand-red-hover text-white font-medium shadow-md shadow-brand-red/20"
           >
             <Plus className="w-4 h-4 mr-1.5" />
             Add Showroom
@@ -493,26 +493,26 @@ const AdminShowroomsPage = () => {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Total Showrooms</p>
-          <p className="text-2xl font-bold text-white mt-1">{totalCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Showrooms</p>
+          <p className="text-2xl font-bold text-surface-50 mt-1">{totalCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Active Outlets</p>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">{activeCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Active Outlets</p>
+          <p className="text-2xl font-bold text-emerald-700 mt-1">{activeCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-purple-400">Premia Flagships</p>
-          <p className="text-2xl font-bold text-purple-400 mt-1">{flagshipCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-purple-700">Premia Flagships</p>
+          <p className="text-2xl font-bold text-purple-700 mt-1">{flagshipCount}</p>
         </Card>
-        <Card className="p-4 bg-neutral-900/40 border-neutral-800">
-          <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Inactive Outlets</p>
-          <p className="text-2xl font-bold text-amber-400 mt-1">{inactiveCount}</p>
+        <Card className="p-4 border-border/80">
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Inactive Outlets</p>
+          <p className="text-2xl font-bold text-amber-700 mt-1">{inactiveCount}</p>
         </Card>
       </div>
 
       {/* Filter and Search Bar */}
-      <Card className="p-4 bg-neutral-900/30 border-neutral-800">
+      <Card className="p-4 border-border/80">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
           <div className="md:col-span-4 relative">
             <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -521,7 +521,7 @@ const AdminShowroomsPage = () => {
               placeholder="Search by name, dealer, area, or address..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/50"
+              className="w-full pl-9 pr-4 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             />
           </div>
 
@@ -530,7 +530,7 @@ const AdminShowroomsPage = () => {
               aria-label="Filter by Brand"
               value={brandFilter}
               onChange={(e) => setBrandFilter(e.target.value)}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="all">All Brands</option>
               {brands.map((b) => (
@@ -546,7 +546,7 @@ const AdminShowroomsPage = () => {
               aria-label="Filter by City"
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="all">All Cities</option>
               {cities.map((c) => (
@@ -562,7 +562,7 @@ const AdminShowroomsPage = () => {
               aria-label="Filter by Showroom Type"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-300 focus:outline-none focus:border-red-500/50"
+              className="w-full px-3 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="all">All Types</option>
               {SHOWROOM_TYPES.map((t) => (
@@ -650,8 +650,8 @@ const AdminShowroomsPage = () => {
               key={showroom._id}
               className={`p-5 transition-all relative border flex flex-col justify-between ${
                 showroom.isActive
-                  ? 'bg-neutral-900/50 border-neutral-800/80 hover:border-neutral-700'
-                  : 'bg-neutral-950/70 border-neutral-900 opacity-75'
+                  ? 'border-border/80 hover:border-border hover:shadow-card-hover'
+                  : 'border-border/60 opacity-75'
               }`}
             >
               <div>
@@ -661,18 +661,18 @@ const AdminShowroomsPage = () => {
                     <span
                       className={`p-2 rounded-lg border ${
                         showroom.showroomType === 'Premia Flagship'
-                          ? 'bg-purple-950/40 border-purple-500/40 text-purple-300'
+                          ? 'bg-purple-50 border-purple-200 text-purple-700'
                           : showroom.isActive
-                          ? 'bg-red-950/30 border-red-500/30 text-red-400'
-                          : 'bg-neutral-800/50 border-neutral-700 text-neutral-500'
+                          ? 'bg-rose-50 border-rose-200 text-brand-red'
+                          : 'bg-surface-800 border-border text-muted-foreground'
                       }`}
                     >
                       <Building2 className="w-4 h-4" />
                     </span>
                     <div>
-                      <h3 className="font-semibold text-white text-base leading-snug">{showroom.name}</h3>
+                      <h3 className="font-semibold text-surface-50 text-base leading-snug">{showroom.name}</h3>
                       {showroom.dealerName && (
-                        <p className="text-xs text-neutral-400 font-medium">Dealer: {showroom.dealerName}</p>
+                        <p className="text-xs text-muted-foreground font-medium">Dealer: {showroom.dealerName}</p>
                       )}
                     </div>
                   </div>
@@ -697,12 +697,12 @@ const AdminShowroomsPage = () => {
 
                 {/* Brand & City pills */}
                 <div className="mt-3 flex items-center gap-2 flex-wrap">
-                  <span className="text-xs px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800 text-neutral-300 flex items-center gap-1">
-                    <Layers className="w-3 h-3 text-red-400" />
+                  <span className="text-xs px-2 py-0.5 rounded bg-surface-500 border border-border text-surface-200 flex items-center gap-1">
+                    <Layers className="w-3 h-3 text-brand-red" />
                     <span>{showroom.brand?.name || 'Brand'}</span>
                   </span>
-                  <span className="text-xs px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800 text-neutral-300 flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-emerald-400" />
+                  <span className="text-xs px-2 py-0.5 rounded bg-surface-500 border border-border text-surface-200 flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-emerald-600" />
                     <span>
                       {showroom.city?.name || 'City'}, {showroom.city?.state || ''}
                     </span>
@@ -799,7 +799,7 @@ const AdminShowroomsPage = () => {
           {/* Section: Core Identification */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Showroom Name *
               </label>
               <input
@@ -808,13 +808,13 @@ const AdminShowroomsPage = () => {
                 value={formData.name}
                 onChange={handleNameChange}
                 placeholder="e.g. Hero Premia Mumbai South"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
-              {formErrors.name && <p className="text-xs text-rose-400 mt-1">{formErrors.name}</p>}
+              {formErrors.name && <p className="text-xs text-rose-500 mt-1">{formErrors.name}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 URL Slug *
               </label>
               <input
@@ -823,23 +823,23 @@ const AdminShowroomsPage = () => {
                 value={formData.slug}
                 onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value.toLowerCase() }))}
                 placeholder="e.g. hero-premia-mumbai-south"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm font-mono text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm font-mono text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
-              {formErrors.slug && <p className="text-xs text-rose-400 mt-1">{formErrors.slug}</p>}
+              {formErrors.slug && <p className="text-xs text-rose-500 mt-1">{formErrors.slug}</p>}
             </div>
           </div>
 
           {/* Section: Relationships (Brand & City) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Manufacturer / Brand *
               </label>
               <select
                 required
                 value={formData.brand}
                 onChange={(e) => setFormData((prev) => ({ ...prev, brand: e.target.value }))}
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               >
                 <option value="">Select Brand</option>
                 {brands.map((b) => (
@@ -848,18 +848,18 @@ const AdminShowroomsPage = () => {
                   </option>
                 ))}
               </select>
-              {formErrors.brand && <p className="text-xs text-rose-400 mt-1">{formErrors.brand}</p>}
+              {formErrors.brand && <p className="text-xs text-rose-500 mt-1">{formErrors.brand}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Target City Location *
               </label>
               <select
                 required
                 value={formData.city}
                 onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))}
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               >
                 <option value="">Select City</option>
                 {cities.map((c) => (
@@ -868,14 +868,14 @@ const AdminShowroomsPage = () => {
                   </option>
                 ))}
               </select>
-              {formErrors.city && <p className="text-xs text-rose-400 mt-1">{formErrors.city}</p>}
+              {formErrors.city && <p className="text-xs text-rose-500 mt-1">{formErrors.city}</p>}
             </div>
           </div>
 
           {/* Dealer & Type */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Dealer / Operator Name
               </label>
               <input
@@ -883,18 +883,18 @@ const AdminShowroomsPage = () => {
                 value={formData.dealerName}
                 onChange={(e) => setFormData((prev) => ({ ...prev, dealerName: e.target.value }))}
                 placeholder="e.g. Apex Mobility LLP"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Showroom Tier / Format
               </label>
               <select
                 value={formData.showroomType}
                 onChange={(e) => setFormData((prev) => ({ ...prev, showroomType: e.target.value }))}
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-100 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               >
                 {SHOWROOM_TYPES.map((type) => (
                   <option key={type} value={type}>
@@ -907,7 +907,7 @@ const AdminShowroomsPage = () => {
 
           {/* Section: Address Details */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
               Full Physical Address *
             </label>
             <textarea
@@ -916,14 +916,14 @@ const AdminShowroomsPage = () => {
               value={formData.fullAddress}
               onChange={(e) => setFormData((prev) => ({ ...prev, fullAddress: e.target.value }))}
               placeholder="e.g. Plot 42, Senapati Bapat Marg, Lower Parel, Mumbai 400013"
-              className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+              className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             />
-            {formErrors.fullAddress && <p className="text-xs text-rose-400 mt-1">{formErrors.fullAddress}</p>}
+            {formErrors.fullAddress && <p className="text-xs text-rose-500 mt-1">{formErrors.fullAddress}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Street
               </label>
               <input
@@ -931,12 +931,12 @@ const AdminShowroomsPage = () => {
                 value={formData.street}
                 onChange={(e) => setFormData((prev) => ({ ...prev, street: e.target.value }))}
                 placeholder="Senapati Bapat Marg"
-                className="w-full px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded-lg text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3 py-1.5 bg-white border border-border rounded-lg text-xs text-surface-50 focus:outline-none focus:border-brand-red"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Area / Locality
               </label>
               <input
@@ -944,12 +944,12 @@ const AdminShowroomsPage = () => {
                 value={formData.area}
                 onChange={(e) => setFormData((prev) => ({ ...prev, area: e.target.value }))}
                 placeholder="Lower Parel"
-                className="w-full px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded-lg text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3 py-1.5 bg-white border border-border rounded-lg text-xs text-surface-50 focus:outline-none focus:border-brand-red"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Pincode
               </label>
               <input
@@ -957,7 +957,7 @@ const AdminShowroomsPage = () => {
                 value={formData.pincode}
                 onChange={(e) => setFormData((prev) => ({ ...prev, pincode: e.target.value }))}
                 placeholder="400013"
-                className="w-full px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded-lg text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3 py-1.5 bg-white border border-border rounded-lg text-xs text-surface-50 focus:outline-none focus:border-brand-red"
               />
             </div>
           </div>
@@ -965,7 +965,7 @@ const AdminShowroomsPage = () => {
           {/* Section: Contact Details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Primary Phone *
               </label>
               <input
@@ -973,14 +973,14 @@ const AdminShowroomsPage = () => {
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                placeholder="+91 98200 12345"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                placeholder="7479524973"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
-              {formErrors.phone && <p className="text-xs text-rose-400 mt-1">{formErrors.phone}</p>}
+              {formErrors.phone && <p className="text-xs text-rose-500 mt-1">{formErrors.phone}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Alternate Phone
               </label>
               <input
@@ -988,14 +988,14 @@ const AdminShowroomsPage = () => {
                 value={formData.alternatePhone}
                 onChange={(e) => setFormData((prev) => ({ ...prev, alternatePhone: e.target.value }))}
                 placeholder="022-24901234"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Contact Email
               </label>
               <input
@@ -1003,13 +1003,13 @@ const AdminShowroomsPage = () => {
                 value={formData.email}
                 onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                 placeholder="mumbai.south@heroshowroom.in"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
-              {formErrors.email && <p className="text-xs text-rose-400 mt-1">{formErrors.email}</p>}
+              {formErrors.email && <p className="text-xs text-rose-500 mt-1">{formErrors.email}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Dealer Website
               </label>
               <input
@@ -1017,41 +1017,41 @@ const AdminShowroomsPage = () => {
                 value={formData.website}
                 onChange={(e) => setFormData((prev) => ({ ...prev, website: e.target.value }))}
                 placeholder="https://dealer.heromotocorp.com"
-                className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3.5 py-2 bg-white border border-border rounded-lg text-sm text-surface-50 placeholder-muted-foreground focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
             </div>
           </div>
 
           {/* Coordinates */}
-          <div className="p-3 bg-neutral-950/60 border border-neutral-800/80 rounded-lg space-y-2">
-            <span className="text-xs font-semibold text-neutral-300 flex items-center space-x-1.5">
-              <Navigation className="w-3.5 h-3.5 text-neutral-400" />
+          <div className="p-3 bg-surface-500 border border-border rounded-lg space-y-2">
+            <span className="text-xs font-semibold text-surface-100 flex items-center space-x-1.5">
+              <Navigation className="w-3.5 h-3.5 text-muted-foreground" />
               <span>Geospatial Coordinates (for Radius / Nearby Discovery)</span>
             </span>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] text-neutral-500 mb-1">Latitude (-90 to 90)</label>
+                <label className="block text-[11px] text-muted-foreground mb-1">Latitude (-90 to 90)</label>
                 <input
                   type="number"
                   step="any"
                   value={formData.latitude}
                   onChange={(e) => setFormData((prev) => ({ ...prev, latitude: e.target.value }))}
                   placeholder="18.9950"
-                  className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                  className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                 />
-                {formErrors.latitude && <p className="text-[11px] text-rose-400 mt-1">{formErrors.latitude}</p>}
+                {formErrors.latitude && <p className="text-[11px] text-rose-500 mt-1">{formErrors.latitude}</p>}
               </div>
               <div>
-                <label className="block text-[11px] text-neutral-500 mb-1">Longitude (-180 to 180)</label>
+                <label className="block text-[11px] text-muted-foreground mb-1">Longitude (-180 to 180)</label>
                 <input
                   type="number"
                   step="any"
                   value={formData.longitude}
                   onChange={(e) => setFormData((prev) => ({ ...prev, longitude: e.target.value }))}
                   placeholder="72.8258"
-                  className="w-full px-2.5 py-1.5 bg-neutral-900 border border-neutral-800 rounded text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                  className="w-full px-2.5 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
                 />
-                {formErrors.longitude && <p className="text-[11px] text-rose-400 mt-1">{formErrors.longitude}</p>}
+                {formErrors.longitude && <p className="text-[11px] text-rose-500 mt-1">{formErrors.longitude}</p>}
               </div>
             </div>
           </div>
@@ -1059,7 +1059,7 @@ const AdminShowroomsPage = () => {
           {/* Opening hours & Facilities */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Opening Hours
               </label>
               <input
@@ -1067,12 +1067,12 @@ const AdminShowroomsPage = () => {
                 value={formData.openingHoursText}
                 onChange={(e) => setFormData((prev) => ({ ...prev, openingHoursText: e.target.value }))}
                 placeholder="9:00 AM - 8:00 PM"
-                className="w-full px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
                 Days Open
               </label>
               <input
@@ -1080,13 +1080,13 @@ const AdminShowroomsPage = () => {
                 value={formData.daysOpen}
                 onChange={(e) => setFormData((prev) => ({ ...prev, daysOpen: e.target.value }))}
                 placeholder="Monday to Sunday"
-                className="w-full px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+                className="w-full px-3 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-surface-200 mb-1.5">
               Available Facilities (comma separated)
             </label>
             <input
@@ -1094,7 +1094,7 @@ const AdminShowroomsPage = () => {
               value={formData.facilities}
               onChange={(e) => setFormData((prev) => ({ ...prev, facilities: e.target.value }))}
               placeholder="Test Rides Available, Authorized Service, EV Fast Charging"
-              className="w-full px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded text-xs text-neutral-200 focus:outline-none focus:border-red-500/60"
+              className="w-full px-3 py-1.5 bg-white border border-border rounded text-xs text-surface-50 focus:outline-none focus:border-brand-red"
             />
           </div>
 
@@ -1106,9 +1106,9 @@ const AdminShowroomsPage = () => {
                 id="showroomIsActive"
                 checked={formData.isActive}
                 onChange={(e) => setFormData((prev) => ({ ...prev, isActive: e.target.checked }))}
-                className="w-4 h-4 rounded bg-neutral-900 border-neutral-700 text-red-600 focus:ring-red-500 focus:ring-offset-neutral-900"
+                className="w-4 h-4 rounded border-border text-brand-red focus:ring-brand-red focus:ring-offset-white"
               />
-              <label htmlFor="showroomIsActive" className="text-sm font-medium text-neutral-300 cursor-pointer">
+              <label htmlFor="showroomIsActive" className="text-sm font-medium text-surface-100 cursor-pointer">
                 Active in Public Catalogue
               </label>
             </div>
@@ -1119,23 +1119,23 @@ const AdminShowroomsPage = () => {
                 id="showroomIsVerified"
                 checked={formData.isVerified}
                 onChange={(e) => setFormData((prev) => ({ ...prev, isVerified: e.target.checked }))}
-                className="w-4 h-4 rounded bg-neutral-900 border-neutral-700 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-neutral-900"
+                className="w-4 h-4 rounded border-border text-emerald-600 focus:ring-emerald-500 focus:ring-offset-white"
               />
-              <label htmlFor="showroomIsVerified" className="text-sm font-medium text-neutral-300 cursor-pointer">
+              <label htmlFor="showroomIsVerified" className="text-sm font-medium text-surface-100 cursor-pointer">
                 Verified Dealership Badge
               </label>
             </div>
           </div>
 
           {/* Modal Actions */}
-          <div className="pt-4 border-t border-neutral-800 flex justify-end space-x-2">
+          <div className="pt-4 border-t border-border flex justify-end space-x-2">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => setIsFormModalOpen(false)}
               disabled={isSubmitting}
-              className="border-neutral-800 text-neutral-300"
+              className="border-border text-surface-200"
             >
               Cancel
             </Button>

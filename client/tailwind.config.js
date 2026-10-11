@@ -9,37 +9,38 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#08090C',
-          deep: '#040507',
-          card: '#101319',
-          elevated: '#171B23',
-          glass: 'rgba(16, 19, 25, 0.75)',
+          DEFAULT: '#FDFCF9',      // Premium warm ivory / pearl canvas
+          deep: '#F4F2ED',         // Soft ivory contrast background
+          card: '#FFFFFF',         // Crisp pure white card surface
+          elevated: '#FFFFFF',     // Clean elevated surface
+          glass: 'rgba(255, 255, 255, 0.88)', // Frosted pearl glass
         },
         surface: {
-          50: '#F8F9FA',
-          100: '#E9ECEF',
-          200: '#CED4DA',
-          700: '#232834',
-          800: '#171B23',
-          900: '#101319',
+          50: '#111317',           // Near-black graphite primary headings
+          100: '#1E2229',          // Deep graphite body text
+          200: '#525B6A',          // Muted charcoal secondary text
+          700: '#E4E7EC',          // Refined light silver borders
+          800: '#F2F4F7',          // Soft light surface / pill background
+          900: '#F8F9FA',          // Ultra-light surface
+          950: '#FFFFFF',          // Pure white card surface
         },
         brand: {
-          red: '#E52328',
-          'red-hover': '#C7171C',
-          'red-glow': 'rgba(229, 35, 40, 0.25)',
-          'red-subtle': 'rgba(229, 35, 40, 0.10)',
-          silver: '#E2E8F0',
-          dark: '#08090C',
-          accent: '#FF4D4D',
+          red: '#ED1C24',          // Hero Red from original reference
+          'red-hover': '#D0181F',  // Rich crimson on hover
+          'red-glow': 'rgba(237, 28, 36, 0.22)',
+          'red-subtle': 'rgba(237, 28, 36, 0.08)',
+          silver: '#647082',       // Refined slate
+          dark: '#111317',         // Deep graphite
+          accent: '#E52328',       // Vibrant accent
         },
         border: {
-          subtle: '#1F2430',
-          DEFAULT: '#2A3142',
-          highlight: '#3E475E',
+          subtle: '#EEF0F4',       // Whisper-thin border
+          DEFAULT: '#E2E6EC',      // Refined neutral light border
+          highlight: '#CBD2DC',    // Structured border highlight
         },
         muted: {
-          DEFAULT: '#717B91',
-          foreground: '#9DA7BC',
+          DEFAULT: '#647082',      // Balanced readable secondary text
+          foreground: '#8491A2',   // Refined tertiary text
         }
       },
       fontFamily: {
@@ -47,15 +48,15 @@ export default {
         display: ['Outfit', 'Cabinet Grotesk', 'sans-serif'],
       },
       boxShadow: {
-        'glow-red': '0 0 25px -4px rgba(229, 35, 40, 0.35)',
-        'glow-red-lg': '0 0 45px -4px rgba(229, 35, 40, 0.45)',
-        'card-dark': '0 8px 30px -4px rgba(0, 0, 0, 0.65)',
-        'card-hover': '0 16px 40px -6px rgba(0, 0, 0, 0.75), 0 0 20px -2px rgba(229, 35, 40, 0.15)',
-        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'glow-red': '0 4px 18px -2px rgba(214, 31, 38, 0.28)',
+        'glow-red-lg': '0 8px 30px -4px rgba(214, 31, 38, 0.38)',
+        'card-dark': '0 2px 12px -2px rgba(17, 19, 23, 0.05), 0 1px 3px 0 rgba(17, 19, 23, 0.03)',
+        'card-hover': '0 16px 36px -8px rgba(17, 19, 23, 0.10), 0 4px 12px -2px rgba(17, 19, 23, 0.04)',
+        'glass': '0 8px 32px 0 rgba(17, 19, 23, 0.06)',
       },
       borderRadius: {
-        'card': '14px',
-        'card-lg': '20px',
+        'card': '12px',
+        'card-lg': '18px',
       },
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

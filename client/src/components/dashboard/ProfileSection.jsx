@@ -15,9 +15,9 @@ import Button from '../Button';
  * @param {function} props.onExplore - Navigation callback to motorcycle catalogue
  */
 const ProfileSection = ({ user, onLogout, onExplore }) => {
-  const displayName = user?.name || 'Rider';
-  const userEmail = user?.email || 'Not provided';
-  const userPhone = user?.phone && user.phone.trim() ? user.phone.trim() : 'Not provided';
+  const displayName = user?.name || 'er_sindhu';
+  const userEmail = user?.email || 'er_sindhu@heroshowroom.com';
+  const userPhone = user?.phone && user.phone.trim() ? user.phone.trim() : '7479524973';
   const userRole = user?.role ? user.role.toUpperCase() : 'CUSTOMER';
   const accountStatus = user?.isActive !== false ? 'Active' : 'Inactive';
   const memberSince = user?.createdAt
@@ -52,7 +52,7 @@ const ProfileSection = ({ user, onLogout, onExplore }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium bg-emerald-950/40 border border-emerald-800/60 px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
               <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" />
               <span>{accountStatus} Account</span>
             </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Compass, Bike, GitCompare, LogIn, UserPlus, LogOut, User as UserIcon, Home, Tag } from 'lucide-react';
+import { Menu, X, Compass, Bike, GitCompare, LogIn, UserPlus, LogOut, User as UserIcon, Home, Tag, Search, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Container from './Container';
 import Button from './Button';
@@ -9,7 +9,7 @@ import { useCompare } from '../context/CompareContext';
 
 /**
  * Refined Global Header Component
- * Provides responsive navigation, active route styling, session controls, and accessible mobile controls.
+ * Compact professional navbar with Hero logo, navigation, search, notifications, favorites, and profile state.
  */
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -32,43 +32,43 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full glass-surface border-b border-border/80 transition-all">
-      <Container className="h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full glass-surface border-b border-border/80 backdrop-blur-md transition-all">
+      <Container className="h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <NavLink
           to="/"
-          className="flex items-center gap-3 text-surface-50 focus-visible:ring-2 focus-visible:ring-brand-red rounded-lg p-1 group"
+          className="flex items-center gap-2.5 text-surface-50 focus-visible:ring-2 focus-visible:ring-brand-red rounded-lg p-1 group"
         >
-          <div className="w-10 h-10 rounded-card bg-brand-red flex items-center justify-center font-display font-black text-white text-xl shadow-glow-red tracking-wider group-hover:scale-105 transition-transform">
+          <div className="w-8 h-8 rounded-md bg-brand-red flex items-center justify-center font-display font-black text-white text-base shadow-glow-red tracking-wider group-hover:scale-105 transition-transform">
             H
           </div>
           <div className="flex flex-col">
-            <span className="font-display font-black text-lg tracking-wider uppercase text-surface-50 leading-none">
+            <span className="font-display font-black text-base tracking-wider uppercase text-surface-50 leading-none">
               HERO<span className="text-brand-red">.</span>
             </span>
-            <span className="text-[10px] uppercase font-bold tracking-[0.25em] text-muted-foreground leading-tight">
+            <span className="text-[9px] uppercase font-bold tracking-[0.25em] text-muted-foreground leading-tight">
               Showroom
             </span>
           </div>
         </NavLink>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2" aria-label="Main Navigation">
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main Navigation">
           {navLinks.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `px-4 py-2 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-1.5 ${
+                `px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all inline-flex items-center gap-1.5 ${
                   isActive
-                    ? 'text-white bg-surface-800/90 border border-border shadow-sm'
-                    : 'text-surface-200 hover:text-white hover:bg-surface-800/40'
+                    ? 'text-brand-red bg-brand-red-subtle border border-brand-red/20 shadow-xs'
+                    : 'text-surface-200 hover:text-surface-50 hover:bg-surface-800'
                 }`
               }
             >
               <span>{item.label}</span>
               {item.to === '/compare' && compareCount > 0 && (
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-brand-red text-white leading-none">
+                <span className="px-1.5 py-0.5 text-[9px] font-bold rounded-full bg-brand-red text-white leading-none">
                   {compareCount}
                 </span>
               )}
@@ -76,14 +76,34 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Desktop Authentication / Session Links */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Desktop Search, Favorites & Authentication / Session Links */}
+        <div className="hidden md:flex items-center gap-2">
+          {/* Quick Search Trigger */}
+          <NavLink
+            to="/bikes"
+            className="p-2 rounded-lg text-surface-200 hover:text-surface-50 hover:bg-surface-800 transition-colors focus-visible:ring-2 focus-visible:ring-brand-red"
+            title="Search Motorcycle Catalogue"
+            aria-label="Search Motorcycle Catalogue"
+          >
+            <Search className="w-4 h-4" />
+          </NavLink>
+
+          {/* Favorites Link */}
+          <NavLink
+            to="/dashboard"
+            className="p-2 rounded-lg text-surface-200 hover:text-brand-red hover:bg-surface-800 transition-colors focus-visible:ring-2 focus-visible:ring-brand-red"
+            title="Saved Favorites"
+            aria-label="Saved Favorites"
+          >
+            <Heart className="w-4 h-4" />
+          </NavLink>
+
           {isAuthenticated ? (
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 pl-2 border-l border-border/60">
               <NotificationBell />
               <NavLink to="/dashboard">
-                <Button variant="ghost" size="sm" icon={UserIcon} className="text-xs">
-                  {user?.name?.split(' ')[0] || 'Dashboard'}
+                <Button variant="ghost" size="sm" icon={UserIcon} className="text-xs h-8 px-2.5">
+                  {user?.name?.split(' ')[0] || 'Profile'}
                 </Button>
               </NavLink>
               <Button
@@ -91,24 +111,32 @@ const Header = () => {
                 size="sm"
                 icon={LogOut}
                 onClick={handleLogout}
-                className="text-xs"
+                className="text-xs h-8 px-2.5"
               >
                 Sign Out
               </Button>
             </div>
           ) : (
-            <>
-              <NavLink to="/register">
-                <Button variant="ghost" size="sm" icon={UserPlus} className="text-xs">
-                  Register
-                </Button>
+            <div className="flex items-center gap-2 pl-2 border-l border-border/60">
+              <NavLink
+                to="/register"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-surface-200 hover:text-surface-50 px-2.5 py-1.5 rounded-lg transition-colors"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Register</span>
               </NavLink>
               <NavLink to="/login">
-                <Button variant="primary" size="sm" icon={LogIn} className="text-xs">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  icon={LogIn}
+                  iconPosition="right"
+                  className="text-xs h-8 px-3.5 font-bold rounded-lg shadow-glow-red"
+                >
                   Sign In
                 </Button>
               </NavLink>
-            </>
+            </div>
           )}
         </div>
 
@@ -118,7 +146,7 @@ const Header = () => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-card text-surface-200 hover:text-white hover:bg-surface-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
+            className="p-2.5 rounded-card text-surface-200 hover:text-surface-50 hover:bg-surface-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
             aria-label="Toggle navigation menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -136,10 +164,10 @@ const Header = () => {
               to={item.to}
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-3 rounded-card text-base font-medium transition-all ${
+                `flex items-center gap-3 px-3.5 py-3 rounded-card text-base font-semibold transition-all ${
                   isActive
-                    ? 'text-white bg-surface-800 border border-border'
-                    : 'text-surface-200 hover:text-white hover:bg-surface-800/60'
+                    ? 'text-brand-red bg-brand-red-subtle border border-brand-red/20 shadow-sm'
+                    : 'text-surface-200 hover:text-surface-50 hover:bg-surface-800/80'
                 }`
               }
             >
