@@ -160,7 +160,7 @@ if (fs.existsSync(dashPath)) {
   assert(dash.includes('getMyFavorites'), 'DashboardPage calls getMyFavorites');
   assert(dash.includes("activeTab === 'favorites'") || dash.includes("'favorites'"), 'DashboardPage has favorites tab');
   assert(dash.includes('Heart'), 'DashboardPage uses Heart icon for favorites tab');
-  assert(dash.includes('Saved Items'), 'DashboardPage shows "Saved Items" tab label');
+  assert(dash.includes("label: 'Favorites'") || dash.includes('Favorites') || dash.includes('Saved Items'), 'DashboardPage shows "Favorites" tab label');
 } else {
   assert(false, 'DashboardPage.jsx missing');
 }

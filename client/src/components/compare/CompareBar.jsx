@@ -80,7 +80,7 @@ const CompareBar = () => {
             {compareCount < maxAllowed && (
               <Link
                 to="/bikes"
-                className="flex items-center gap-2 border border-dashed border-border/80 hover:border-brand-red/50 rounded-card p-2 px-3 text-muted-foreground hover:text-white bg-surface-950/40 hover:bg-surface-800/40 transition-colors shrink-0 text-xs"
+                className="flex items-center gap-2 border border-dashed border-border/80 hover:border-brand-red/50 rounded-card p-2 px-3 text-muted-foreground hover:text-surface-50 bg-surface-900/60 hover:bg-surface-800/60 transition-colors shrink-0 text-xs"
                 title="Add another motorcycle from catalogue"
               >
                 <div className="w-7 h-7 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground group-hover:text-brand-red">

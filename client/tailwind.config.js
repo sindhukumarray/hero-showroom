@@ -18,7 +18,7 @@ export default {
         surface: {
           50: '#111317',           // Near-black graphite primary headings
           100: '#1E2229',          // Deep graphite body text
-          200: '#525B6A',          // Muted charcoal secondary text
+          200: '#3D4554',          // High-contrast deep slate secondary text (WCAG AA 9.6:1)
           700: '#E4E7EC',          // Refined light silver borders
           800: '#F2F4F7',          // Soft light surface / pill background
           900: '#F8F9FA',          // Ultra-light surface
@@ -29,7 +29,7 @@ export default {
           'red-hover': '#D0181F',  // Rich crimson on hover
           'red-glow': 'rgba(237, 28, 36, 0.22)',
           'red-subtle': 'rgba(237, 28, 36, 0.08)',
-          silver: '#647082',       // Refined slate
+          silver: '#525B6A',       // Refined slate
           dark: '#111317',         // Deep graphite
           accent: '#E52328',       // Vibrant accent
         },
@@ -39,8 +39,8 @@ export default {
           highlight: '#CBD2DC',    // Structured border highlight
         },
         muted: {
-          DEFAULT: '#647082',      // Balanced readable secondary text
-          foreground: '#8491A2',   // Refined tertiary text
+          DEFAULT: '#363F4D',      // Strong readable charcoal secondary text (WCAG AA 10.5:1)
+          foreground: '#4B5565',   // High-contrast slate tertiary text (WCAG AA 7.5:1)
         }
       },
       fontFamily: {

@@ -123,7 +123,7 @@ const ShowroomDetailPage = () => {
           size="sm"
           icon={ArrowLeft}
           onClick={() => navigate(-1)}
-          className="text-muted-foreground hover:text-white"
+          className="text-muted-foreground hover:text-surface-50"
         >
           Back
         </Button>
@@ -261,7 +261,7 @@ const ShowroomDetailPage = () => {
               </Link>
               {showroomOffers.length > 1 && (
                 <Link to={`/offers?showroom=${showroom._id}`}>
-                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-white">
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-surface-50">
                     All Offers ({showroomOffers.length})
                   </Button>
                 </Link>

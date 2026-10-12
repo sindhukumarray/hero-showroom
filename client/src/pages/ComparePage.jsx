@@ -196,7 +196,7 @@ const ComparePage = () => {
                 size="sm"
                 icon={ArrowLeft}
                 onClick={() => navigate('/bikes')}
-                className="text-xs text-muted-foreground hover:text-white px-2 py-1 -ml-2"
+                className="text-xs text-muted-foreground hover:text-surface-50 px-2 py-1 -ml-2"
               >
                 Catalogue
               </Button>
@@ -223,7 +223,7 @@ const ComparePage = () => {
                     ${
                       highlightDiffs
                         ? 'bg-brand-red/15 text-brand-red border-brand-red shadow-sm'
-                        : 'bg-surface-800/80 text-surface-200 border-border hover:text-white hover:bg-surface-800'
+                        : 'bg-surface-800 text-surface-100 border-border hover:text-brand-red hover:bg-surface-700/60'
                     }
                   `}
                   title="Toggle highlight on differing specifications"
@@ -301,7 +301,7 @@ const ComparePage = () => {
                   <button
                     type="button"
                     onClick={() => removeBike(compareBikes[0]._id)}
-                    className="p-1.5 rounded-lg text-muted-foreground hover:text-white hover:bg-surface-700/80 transition-colors"
+                    className="p-1.5 rounded-lg text-muted-foreground hover:text-surface-50 hover:bg-surface-800 transition-colors"
                     aria-label={`Remove ${compareBikes[0].name} from comparison`}
                   >
                     <X className="w-4 h-4" />
@@ -411,7 +411,7 @@ const ComparePage = () => {
                     <button
                       type="button"
                       onClick={() => removeBike(bike._id)}
-                      className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-white hover:bg-surface-700/80 transition-colors z-10"
+                      className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-surface-50 hover:bg-surface-800 transition-colors z-10"
                       aria-label={`Remove ${bike.name} from comparison`}
                       title="Remove model"
                     >

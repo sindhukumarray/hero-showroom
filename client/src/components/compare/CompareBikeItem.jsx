@@ -55,7 +55,7 @@ const CompareBikeItem = ({ bike, onRemove }) => {
           onRemove(bike._id);
         }}
         aria-label={`Remove ${bike.name || 'bike'} from comparison`}
-        className="w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground hover:text-white hover:bg-surface-700/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red transition-colors shrink-0"
+        className="w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground hover:text-brand-red hover:bg-brand-red-subtle focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red transition-colors shrink-0"
       >
         <X className="w-3.5 h-3.5" aria-hidden="true" />
       </button>

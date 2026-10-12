@@ -130,7 +130,7 @@ const HomePage = () => {
 
     // 3. Fetch Featured Bikes
     bikeService
-      .getBikes({ limit: 4, sort: 'newest' })
+      .getBikes({ limit: 4, sort: 'newest', isActive: 'true' })
       .then((res) => {
         if (res.success && res.data) setBikes(res.data);
       })

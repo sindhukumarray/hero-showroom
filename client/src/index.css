@@ -94,14 +94,14 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 1rem;
     line-height: 1.65;
-    color: #525B6A;
+    color: #2D333F;
   }
 
   .typography-small {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: #647082;
+    color: #3D4554;
   }
 
   .typography-label {
@@ -110,7 +110,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #8491A2;
+    color: #4B5565;
   }
 
   .typography-button {

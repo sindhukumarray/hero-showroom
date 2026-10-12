@@ -72,9 +72,9 @@ export const CompareProvider = ({ children }) => {
       setIsLoading(true);
       setError(null);
 
-      // Fetch all catalogue bikes in a single efficient request
-      const res = await bikeService.getBikes({ limit: 100 });
-      const catalogue = res?.data || [];
+      // Fetch all active catalogue bikes in a single efficient request
+      const res = await bikeService.getBikes({ limit: 100, isActive: 'true' });
+      const catalogue = (res?.data || []).filter((b) => b.isActive !== false);
 
       // Find matching bikes preserving the order of idsToLoad
       const matchedBikes = [];

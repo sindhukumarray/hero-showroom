@@ -222,7 +222,7 @@ const CinematicHero = ({ videoSrc = '/videos/hero-motorcycle.mp4', onExploreClic
               {/* Supporting Subtitle */}
               <motion.p
                 variants={accessibleHeadline}
-                className="text-surface-200 text-sm sm:text-base md:text-lg leading-relaxed max-w-lg"
+                className="text-surface-100 font-medium text-sm sm:text-base md:text-lg leading-relaxed max-w-lg"
               >
                 Connect directly with verified dealerships, explore official technical specifications, compare models head-to-head, and schedule priority test rides.
               </motion.p>
@@ -247,7 +247,7 @@ const CinematicHero = ({ videoSrc = '/videos/hero-motorcycle.mp4', onExploreClic
                     variant="secondary"
                     size="lg"
                     icon={BikeIcon}
-                    className="bg-white hover:bg-surface-800 text-surface-100 border border-border shadow-sm font-semibold rounded-xl px-5 py-3 text-sm md:text-base"
+                    className="bg-white hover:bg-surface-800 text-surface-50 border border-border shadow-sm font-semibold rounded-xl px-5 py-3 text-sm md:text-base"
                   >
                     Browse Catalogue
                   </Button>
@@ -257,7 +257,7 @@ const CinematicHero = ({ videoSrc = '/videos/hero-motorcycle.mp4', onExploreClic
                   size="lg"
                   icon={Play}
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="border-border bg-white/90 backdrop-blur-md hover:bg-white text-surface-50 hover:text-brand-red shadow-xs font-semibold rounded-xl px-4 py-3 text-sm md:text-base"
+                  className="border-border bg-white hover:bg-surface-800 text-surface-50 hover:text-brand-red shadow-xs font-semibold rounded-xl px-4 py-3 text-sm md:text-base"
                 >
                   Watch Film
                 </Button>

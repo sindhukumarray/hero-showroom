@@ -117,7 +117,7 @@ const OfferDetailPage = () => {
           size="sm"
           icon={ArrowLeft}
           onClick={() => navigate('/offers')}
-          className="text-muted-foreground hover:text-white"
+          className="text-muted-foreground hover:text-surface-50"
         >
           All Offers
         </Button>

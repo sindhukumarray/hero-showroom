@@ -77,8 +77,8 @@ const NotificationBell = ({ className = '' }) => {
           focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red
           ${
             isOpen
-              ? 'bg-surface-800 text-white border-brand-red shadow-glow-red/20'
-              : 'bg-surface-800/60 hover:bg-surface-800 text-surface-200 hover:text-white border-border/80'
+              ? 'bg-surface-800 text-brand-red border-brand-red shadow-sm'
+              : 'bg-surface-900/80 hover:bg-surface-800 text-surface-100 hover:text-surface-50 border-border/80'
           }
         `}
       >

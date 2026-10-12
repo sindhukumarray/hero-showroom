@@ -62,7 +62,7 @@ const Header = () => {
                 `px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all inline-flex items-center gap-1.5 ${
                   isActive
                     ? 'text-brand-red bg-brand-red-subtle border border-brand-red/20 shadow-xs'
-                    : 'text-surface-200 hover:text-surface-50 hover:bg-surface-800'
+                    : 'text-surface-100 hover:text-brand-red hover:bg-surface-800'
                 }`
               }
             >

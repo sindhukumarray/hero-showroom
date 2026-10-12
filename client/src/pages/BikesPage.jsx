@@ -109,7 +109,8 @@ const BikesPage = () => {
       const params = {
         page: pageParam,
         limit: 12,
-        sort: sortParam
+        sort: sortParam,
+        isActive: 'true'
       };
       if (brandParam) params.brand = brandParam;
       if (categoryParam) params.category = categoryParam;

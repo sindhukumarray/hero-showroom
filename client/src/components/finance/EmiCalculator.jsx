@@ -122,7 +122,7 @@ const EmiCalculator = ({
             size="sm"
             icon={RotateCcw}
             onClick={handleReset}
-            className="text-xs py-1 px-2.5 text-muted-foreground hover:text-white"
+            className="text-xs py-1 px-2.5 text-muted-foreground hover:text-surface-50"
             title="Reset to default terms"
           >
             Reset
@@ -191,7 +191,7 @@ const EmiCalculator = ({
                   className={`px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
                     downPaymentPercent === pct
                       ? 'bg-brand-red text-white border-brand-red shadow-sm'
-                      : 'bg-surface-900/60 text-muted-foreground border-border/80 hover:text-white hover:border-brand-red/40'
+                      : 'bg-surface-900/60 text-muted-foreground border-border/80 hover:text-surface-50 hover:border-brand-red/40'
                   }`}
                 >
                   {pct}%
@@ -203,7 +203,7 @@ const EmiCalculator = ({
                 className={`px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
                   downPayment === vehiclePrice && vehiclePrice > 0
                     ? 'bg-brand-red text-white border-brand-red shadow-sm'
-                    : 'bg-surface-900/60 text-muted-foreground border-border/80 hover:text-white hover:border-brand-red/40'
+                    : 'bg-surface-900/60 text-muted-foreground border-border/80 hover:text-surface-50 hover:border-brand-red/40'
                 }`}
               >
                 100% (No Loan)
@@ -251,7 +251,7 @@ const EmiCalculator = ({
                   className={`px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
                     interestRate === rate
                       ? 'bg-brand-red text-white border-brand-red shadow-sm'
-                      : 'bg-surface-900/60 text-muted-foreground border-border/80 hover:text-white hover:border-brand-red/40'
+                      : 'bg-surface-900/60 text-muted-foreground border-border/80 hover:text-surface-50 hover:border-brand-red/40'
                   }`}
                 >
                   {rate === 0 ? '0% Zero Interest' : `${rate}%`}
@@ -300,7 +300,7 @@ const EmiCalculator = ({
                   className={`px-2 py-1.5 rounded-lg text-xs font-semibold border transition-all text-center ${
                     tenureMonths === opt.months
                       ? 'bg-brand-red text-white border-brand-red shadow-sm font-bold'
-                      : 'bg-surface-900/60 text-surface-200 border-border/80 hover:text-white hover:bg-surface-800'
+                      : 'bg-surface-900/60 text-surface-200 border-border/80 hover:text-surface-50 hover:bg-surface-800'
                   }`}
                 >
                   {opt.months} Mo

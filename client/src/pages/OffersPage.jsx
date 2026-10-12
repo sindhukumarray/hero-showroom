@@ -151,7 +151,7 @@ const OffersPage = () => {
             icon={RefreshCw}
             onClick={fetchOffers}
             disabled={loading}
-            className="text-xs text-muted-foreground hover:text-white"
+            className="text-xs text-muted-foreground hover:text-surface-50"
           >
             Refresh
           </Button>

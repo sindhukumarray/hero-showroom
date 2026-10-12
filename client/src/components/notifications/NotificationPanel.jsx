@@ -51,7 +51,7 @@ const NotificationPanel = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded-lg text-surface-400 hover:text-white hover:bg-surface-800 transition-colors"
+              className="p-1 rounded-lg text-surface-200 hover:text-surface-50 hover:bg-surface-800 transition-colors"
               aria-label="Close notifications panel"
             >
               <X className="w-4 h-4" />
@@ -77,7 +77,7 @@ const NotificationPanel = ({
         <Link
           to="/dashboard"
           onClick={onClose}
-          className="w-full text-center py-2 px-3 rounded-lg text-xs font-semibold text-surface-100 hover:text-white bg-surface-800/80 hover:bg-surface-700/80 border border-border/60 transition-all flex items-center justify-center gap-1.5 group"
+          className="w-full text-center py-2 px-3 rounded-lg text-xs font-semibold text-surface-50 hover:text-brand-red bg-surface-800/80 hover:bg-surface-800 border border-border/60 transition-all flex items-center justify-center gap-1.5 group"
         >
           <span>View All in Dashboard</span>
           <ArrowUpRight className="w-3.5 h-3.5 text-brand-red group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

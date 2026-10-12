@@ -138,7 +138,7 @@ const BikeDetailPage = () => {
           size="sm"
           icon={ArrowLeft}
           onClick={() => navigate(-1)}
-          className="text-muted-foreground hover:text-white"
+          className="text-muted-foreground hover:text-surface-50"
         >
           Back to Catalogue
         </Button>
@@ -265,16 +265,22 @@ const BikeDetailPage = () => {
                     </div>
                   </div>
 
-                  {/* Calculated Quick EMI */}
+                  {/* Calculated Quick EMI Indicator */}
                   <div className="p-3.5 rounded-xl bg-white border border-border space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-surface-200 font-medium">Estimated EMI:</span>
-                      <span className="font-bold text-brand-red">
-                        {formatCurrency(quickEmi.monthlyEmi)}/mo*
+                      <span className="text-surface-200 font-medium">
+                        Est. EMI from:
                       </span>
+                      <a
+                        href="#emi-calculator"
+                        className="font-bold text-brand-red hover:underline flex items-center gap-1"
+                        aria-label="Estimated EMI from ₹{quickEmi.monthlyEmi} per month, customize in EMI calculator"
+                      >
+                        {quickEmi?.monthlyEmi > 0 ? `${formatCurrency(quickEmi.monthlyEmi)}/mo*` : 'Calculate EMI'}
+                      </a>
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/60">
-                      <span>Based on 20% down</span>
+                      <span>Based on 20% down, 36 mo</span>
                       <a
                         href="#emi-calculator"
                         className="text-brand-red hover:underline font-semibold"
@@ -376,7 +382,7 @@ const BikeDetailPage = () => {
               </Link>
               {bikeOffers.length > 1 && (
                 <Link to={`/offers?bike=${bike._id}`}>
-                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-white">
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-surface-50">
                     All Offers ({bikeOffers.length})
                   </Button>
                 </Link>
