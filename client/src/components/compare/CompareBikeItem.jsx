@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Bike as BikeIcon } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatters';
+import { getBikeImageUrl } from '../../utils/bikeImages';
 
 /**
  * CompareBikeItem Component
@@ -12,7 +13,7 @@ const CompareBikeItem = ({ bike, onRemove }) => {
   if (!bike) return null;
 
   const minPrice = bike.priceRange?.minPrice;
-  const heroImage = bike.images?.heroImage;
+  const heroImage = getBikeImageUrl(bike);
 
   return (
     <div className="relative group flex items-center gap-2.5 bg-surface-800/90 hover:bg-surface-800 border border-border/80 hover:border-brand-red/40 rounded-card p-2 pr-3 transition-all duration-200 min-w-[150px] sm:min-w-[180px] max-w-[220px]">

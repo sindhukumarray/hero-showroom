@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CompareBar from '../components/compare/CompareBar';
+import ApiStatusBadge from '../components/ApiStatusBadge';
 import { useCompare } from '../context/CompareContext';
 
 /**
@@ -29,11 +30,8 @@ const RootLayout = () => {
       {/* Persistent Compare Bar */}
       <CompareBar />
 
-      {/* Reference Status Signal */}
-      <div className="fixed bottom-3 right-3 z-40 hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-border shadow-md text-[11px] font-mono text-surface-200 pointer-events-none">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-        <span>DEV API: CONNECTED</span>
-      </div>
+      {/* Dynamic Environment & Connectivity Signal */}
+      <ApiStatusBadge />
     </div>
   );
 };

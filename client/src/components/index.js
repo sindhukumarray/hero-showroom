@@ -35,3 +35,4 @@ export { default as CompareBar } from './compare/CompareBar';
 export { default as CompareEmptyState } from './compare/CompareEmptyState';
 export { default as EmiCalculator } from './finance/EmiCalculator';
 export { default as CinematicHero } from './CinematicHero';
+export { default as ApiStatusBadge } from './ApiStatusBadge';
