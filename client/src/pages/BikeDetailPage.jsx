@@ -210,6 +210,12 @@ const BikeDetailPage = () => {
             tenureMonths: 36
           });
 
+          const VIEW_LABELS = [
+            'Studio Profile Showcase',
+            'CAD Chassis & Powertrain Blueprint',
+            'Digital Cockpit & Telemetry Console'
+          ];
+
           return (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6">
               {/* Left/Center: Large Motorcycle Showcase & Thumbnail Strip */}
@@ -220,10 +226,11 @@ const BikeDetailPage = () => {
                     src={activeSrc}
                     alt={`${bike.name} showcase`}
                     className="w-full h-full object-cover rounded-xl transition-all duration-500 group-hover:scale-102"
-                    onError={handleImageError}
+                    onError={(e) => handleImageError(e, bike)}
                   />
-                  <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-md text-[11px] font-semibold text-white">
-                    Photo {activeImageIndex + 1} of {gallery.length}
+                  <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white flex items-center gap-2 border border-white/10 shadow-lg">
+                    <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
+                    <span>View {activeImageIndex + 1} of {gallery.length}: {VIEW_LABELS[activeImageIndex] || 'Vehicle Showcase'}</span>
                   </div>
                 </div>
 
@@ -235,6 +242,8 @@ const BikeDetailPage = () => {
                         key={idx}
                         type="button"
                         onClick={() => setActiveImageIndex(idx)}
+                        title={VIEW_LABELS[idx] || `View ${idx + 1}`}
+                        aria-label={`${bike.name} - ${VIEW_LABELS[idx] || `View ${idx + 1}`}`}
                         className={`w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${
                           activeImageIndex === idx
                             ? 'border-brand-red ring-2 ring-brand-red/20 scale-102'
@@ -243,9 +252,9 @@ const BikeDetailPage = () => {
                       >
                         <img
                           src={imgSrc}
-                          alt={`${bike.name} angle ${idx + 1}`}
+                          alt={`${bike.name} - ${VIEW_LABELS[idx] || `View ${idx + 1}`}`}
                           className="w-full h-full object-cover"
-                          onError={handleImageError}
+                          onError={(e) => handleImageError(e, bike)}
                         />
                       </button>
                     ))}

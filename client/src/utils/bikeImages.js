@@ -353,7 +353,7 @@ function buildProfileSvg({ name, brandName, specSubtitle, theme, cat }) {
   <g transform="translate(400, 395)">
     <text x="0" y="0" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" fill="#F8FAFC" letter-spacing="1">${name.toUpperCase()}</text>
     <text x="0" y="24" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" fill="${theme.accent}" letter-spacing="2.5">${specSubtitle.toUpperCase()}</text>
-    <text x="0" y="44" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="500" fill="#64748B" letter-spacing="1.5">OFFICIAL AUTOMOTIVE SHOWCASE &bull; VERIFIED OEM SPECIFICATION</text>
+    <text x="0" y="44" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="500" fill="#64748B" letter-spacing="1.5">OFFICIAL AUTOMOTIVE SHOWCASE &#8226; VERIFIED OEM SPECIFICATION</text>
   </g>
 </svg>`;
 }
@@ -409,7 +409,7 @@ function buildBlueprintSvg({ name, brandName, specSubtitle, theme, cat }) {
   <g transform="translate(400, 395)">
     <text x="0" y="0" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#F8FAFC" letter-spacing="1">${name.toUpperCase()}</text>
     <text x="0" y="22" text-anchor="middle" font-family="monospace" font-size="11" font-weight="600" fill="#38BDF8" letter-spacing="2">POWERTRAIN CHASSIS BLUEPRINT VIEW</text>
-    <text x="0" y="42" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="500" fill="#64748B" letter-spacing="1.5">OEM RIGID TUBULAR DIAMOND FRAMEWORK &bull; ISO-CERTIFIED GEOMETRY</text>
+    <text x="0" y="42" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="500" fill="#64748B" letter-spacing="1.5">OEM RIGID TUBULAR DIAMOND FRAMEWORK &#8226; ISO-CERTIFIED GEOMETRY</text>
   </g>
 </svg>`;
 }
@@ -451,7 +451,7 @@ function buildCockpitSvg({ name, brandName, specSubtitle, theme, cat }) {
   <line x1="280" y1="240" x2="520" y2="240" stroke="#1E293B" stroke-width="4" stroke-linecap="round"/>
   <line x1="280" y1="240" x2="420" y2="240" stroke="${theme.primary}" stroke-width="4" stroke-linecap="round"/>
   <text x="280" y="258" font-family="monospace" font-size="9" fill="#94A3B8">GEAR: N</text>
-  <text x="520" y="258" text-anchor="end" font-family="monospace" font-size="9" fill="${theme.accent}">READY &bull; BLUETOOTH ON</text>
+  <text x="520" y="258" text-anchor="end" font-family="monospace" font-size="9" fill="${theme.accent}">READY &#8226; BLUETOOTH ON</text>
 
   <!-- Aerodynamic Handlebars Silhouette Line -->
   <path d="M 120 230 Q 230 190 320 200 L 400 205 L 480 200 Q 570 190 680 230" stroke="#CBD5E1" stroke-width="5" fill="none" stroke-linecap="round"/>
@@ -465,7 +465,7 @@ function buildCockpitSvg({ name, brandName, specSubtitle, theme, cat }) {
   <g transform="translate(400, 395)">
     <text x="0" y="0" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="800" fill="#F8FAFC" letter-spacing="1">${name.toUpperCase()}</text>
     <text x="0" y="22" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" fill="${theme.accent}" letter-spacing="2">COCKPIT &amp; ERGONOMIC CONTROL VIEW</text>
-    <text x="0" y="42" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="500" fill="#64748B" letter-spacing="1.5">FULL DIGITAL LCD INSTRUMENT CLUSTER &bull; INTEGRATED TELEMATICS</text>
+    <text x="0" y="42" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="500" fill="#64748B" letter-spacing="1.5">FULL DIGITAL LCD INSTRUMENT CLUSTER &#8226; INTEGRATED TELEMATICS</text>
   </g>
 </svg>`;
 }
@@ -490,7 +490,14 @@ export const FALLBACK_BIKE_IMAGE = svgToDataUri(
 export const handleImageError = (e, bike = null) => {
   if (e && e.currentTarget) {
     e.currentTarget.onerror = null;
-    e.currentTarget.src = bike ? getBikeImageUrl(bike) : FALLBACK_BIKE_IMAGE;
+    try {
+      const fallback = bike ? getBikeImageUrl(bike) : FALLBACK_BIKE_IMAGE;
+      if (e.currentTarget.src !== fallback) {
+        e.currentTarget.src = fallback;
+      }
+    } catch {
+      e.currentTarget.src = FALLBACK_BIKE_IMAGE;
+    }
   }
 };
 
