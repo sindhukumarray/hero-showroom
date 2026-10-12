@@ -130,9 +130,17 @@ const HomePage = () => {
 
     // 3. Fetch Featured Bikes
     bikeService
-      .getBikes({ limit: 4, sort: 'newest', isActive: 'true' })
+      .getBikes({ limit: 6, sort: 'newest', isActive: 'true' })
       .then((res) => {
-        if (res.success && res.data) setBikes(res.data);
+        if (res.success && res.data) {
+          const liveBikes = res.data.filter((b) => {
+            if (!b || b.isActive === false) return false;
+            const slug = (b.slug || '').toLowerCase();
+            const name = (b.name || '').toLowerCase();
+            return !slug.startsWith('fav-test-bike') && !slug.startsWith('inactive-fav-bike') && !name.includes('test bike');
+          });
+          setBikes(liveBikes.slice(0, 4));
+        }
       })
       .catch((err) => setBikesError(err.message || 'Failed to load bikes'))
       .finally(() => setBikesLoading(false));

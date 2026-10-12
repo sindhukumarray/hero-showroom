@@ -74,7 +74,12 @@ export const CompareProvider = ({ children }) => {
 
       // Fetch all active catalogue bikes in a single efficient request
       const res = await bikeService.getBikes({ limit: 100, isActive: 'true' });
-      const catalogue = (res?.data || []).filter((b) => b.isActive !== false);
+      const catalogue = (res?.data || []).filter((b) => {
+        if (!b || b.isActive === false) return false;
+        const slug = (b.slug || '').toLowerCase();
+        const name = (b.name || '').toLowerCase();
+        return !slug.startsWith('fav-test-bike') && !slug.startsWith('inactive-fav-bike') && !name.includes('test bike');
+      });
 
       // Find matching bikes preserving the order of idsToLoad
       const matchedBikes = [];

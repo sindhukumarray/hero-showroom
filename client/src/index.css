@@ -64,6 +64,7 @@
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.03em;
+    color: #111317;
   }
 
   .typography-h1 {
@@ -72,6 +73,7 @@
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.025em;
+    color: #111317;
   }
 
   .typography-h2 {
@@ -80,6 +82,7 @@
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.02em;
+    color: #111317;
   }
 
   .typography-h3 {
@@ -88,6 +91,7 @@
     font-weight: 600;
     line-height: 1.35;
     letter-spacing: -0.015em;
+    color: #111317;
   }
 
   .typography-body {

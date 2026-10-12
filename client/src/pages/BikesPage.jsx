@@ -49,6 +49,15 @@ const SORT_OPTIONS = [
   { value: 'nameDesc', label: 'Model Name (Z to A)' }
 ];
 
+const isLiveBike = (b) => {
+  if (!b || b.isActive === false) return false;
+  const slug = (b.slug || '').toLowerCase();
+  const name = (b.name || '').toLowerCase();
+  if (slug.startsWith('fav-test-bike') || slug.startsWith('inactive-fav-bike')) return false;
+  if (name.includes('test bike') || name.includes('inactive bike')) return false;
+  return true;
+};
+
 const BikesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const shouldReduceMotion = usePrefersReducedMotion();
@@ -121,8 +130,9 @@ const BikesPage = () => {
 
       const res = await bikeService.getBikes(params);
       if (res.success) {
-        setBikes(res.data || []);
-        setMeta(res.meta || { page: 1, limit: 12, total: 0, pages: 1 });
+        const liveBikes = (res.data || []).filter(isLiveBike);
+        setBikes(liveBikes);
+        setMeta(res.meta || { page: 1, limit: 12, total: liveBikes.length, pages: 1 });
       } else {
         setError(res.message || 'Failed to retrieve bikes.');
       }
